@@ -1,0 +1,101 @@
+# ─────────────────────────────────────────────────────────
+# Python
+# ─────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# ─────────────────────────────────────────────────────────
+# Virtual Environments
+# ─────────────────────────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ─────────────────────────────────────────────────────────
+# Large Data & Model Binaries (prevent repo bloat)
+# ─────────────────────────────────────────────────────────
+data/raw/
+data/processed/
+models/trained/
+models/quantized/
+models/*.pkl
+models/*.pt
+models/*.pth
+models/*.onnx
+models/*.joblib
+*.h5
+*.hdf5
+*.parquet
+
+# ─────────────────────────────────────────────────────────
+# Environment / Credentials / Secrets
+# ─────────────────────────────────────────────────────────
+.env
+.env.*
+*.kaggle
+kaggle.json
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# ─────────────────────────────────────────────────────────
+# Jupyter Notebooks
+# ─────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# ─────────────────────────────────────────────────────────
+# IDE & Editor Configs
+# ─────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ─────────────────────────────────────────────────────────
+# OS Generated Files
+# ─────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ─────────────────────────────────────────────────────────
+# Logs & Reports (generated at runtime)
+# ─────────────────────────────────────────────────────────
+*.log
+reports/results/*.log
+reports/figures/*.png
+
+# ─────────────────────────────────────────────────────────
+# Temporary & Cache Files
+# ─────────────────────────────────────────────────────────
+*.tmp
+*.bak
+*.cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml

@@ -1,8 +1,8 @@
 # 📋 Malicious PDF Detector — Master TODO
 
 > **Project**: Lightweight Malicious PDF Detector using Structural Features, Quantization & LLM Analysis
-> **Status**: 🟡 Phase 3 Complete
-> **Last Updated**: 2026-04-25
+> **Status**: 🟡 Phase 4 Complete
+> **Last Updated**: 2026-04-26
 
 ---
 
@@ -277,100 +277,100 @@
 
 ## Phase 4: Model Development, Benchmarking & Reporting
 
-- [ ] **4.1 — Create `src/models/baseline.py`**
-  - [ ] Implement `BaselineModel` class:
-    - [ ] `__init__(self, model_type: str, params: dict)`
-    - [ ] `train(self, X_train, y_train, X_val, y_val)`:
-      - [ ] Instantiate model (RF / XGB / LGBM) based on `model_type`
-      - [ ] Run `GridSearchCV` with 5-fold cross-validation
-      - [ ] Use `n_jobs=-1` for CPU parallelism
-      - [ ] Log best hyperparameters
-    - [ ] `predict(self, X) -> np.ndarray`
-    - [ ] `predict_proba(self, X) -> np.ndarray`
-    - [ ] `save(self, path)` — via `joblib.dump` (compression=3)
-    - [ ] `load(self, path)` — via `joblib.load`
-  - [ ] Implement Random Forest configuration:
-    - [ ] `n_estimators=[100, 300, 500]`
-    - [ ] `max_depth=[10, 20, None]`
-    - [ ] `min_samples_split=[2, 5]`
-  - [ ] Implement XGBoost configuration:
-    - [ ] `learning_rate=[0.01, 0.1, 0.3]`
-    - [ ] `n_estimators=[100, 300]`
-    - [ ] `max_depth=[3, 6, 10]`
-    - [ ] `tree_method='hist'` (CPU-optimized)
-  - [ ] Implement LightGBM configuration:
-    - [ ] `learning_rate=[0.01, 0.1]`
-    - [ ] `num_leaves=[31, 63]`
-    - [ ] `n_estimators=[100, 300, 500]`
-  - [ ] Test: train each model on toy data, verify predictions
+- [x] **4.1 — Create `src/models/baseline.py`**
+  - [x] Implement `BaselineModel` class:
+    - [x] `__init__(self, model_type: str, params: dict)`
+    - [x] `train(self, X_train, y_train, X_val, y_val)`:
+      - [x] Instantiate model (RF / XGB / LGBM) based on `model_type`
+      - [x] Run `GridSearchCV` with 5-fold cross-validation
+      - [x] Use `n_jobs=-1` for CPU parallelism
+      - [x] Log best hyperparameters
+    - [x] `predict(self, X) -> np.ndarray`
+    - [x] `predict_proba(self, X) -> np.ndarray`
+    - [x] `save(self, path)` — via `joblib.dump` (compression=3)
+    - [x] `load(self, path)` — via `joblib.load`
+  - [x] Implement Random Forest configuration:
+    - [x] `n_estimators=[100, 300, 500]`
+    - [x] `max_depth=[10, 20, None]`
+    - [x] `min_samples_split=[2, 5]`
+  - [x] Implement XGBoost configuration:
+    - [x] `learning_rate=[0.01, 0.1, 0.3]`
+    - [x] `n_estimators=[100, 300]`
+    - [x] `max_depth=[3, 6, 10]`
+    - [x] `tree_method='hist'` (CPU-optimized)
+  - [x] Implement LightGBM configuration:
+    - [x] `learning_rate=[0.01, 0.1]`
+    - [x] `num_leaves=[31, 63]`
+    - [x] `n_estimators=[100, 300, 500]`
+  - [x] Test: train each model on toy data, verify predictions
 
-- [ ] **4.2 — Create `src/models/mlp.py`**
-  - [ ] Implement `MaliciousPDFClassifier(nn.Module)`:
-    - [ ] `__init__`: define layers:
-      - [ ] `Linear(37, 128)` → `BatchNorm1d(128)` → `ReLU` → `Dropout(0.3)`
-      - [ ] `Linear(128, 64)` → `BatchNorm1d(64)` → `ReLU` → `Dropout(0.2)`
-      - [ ] `Linear(64, 32)` → `BatchNorm1d(32)` → `ReLU`
-      - [ ] `Linear(32, 1)` (output, raw logit)
-    - [ ] `forward(self, x)`: sequential pass through all layers
-  - [ ] Implement `PDFDataset(Dataset)`:
-    - [ ] `__init__`: accept numpy arrays (X, y)
-    - [ ] `__getitem__`: return `(torch.FloatTensor, torch.FloatTensor)`
-    - [ ] `__len__`: return sample count
-  - [ ] Implement training loop function `train_mlp(model, train_loader, val_loader, config)`:
-    - [ ] Optimizer: `AdamW(weight_decay=1e-4)`
-    - [ ] Scheduler: `CosineAnnealingLR(T_max=50)`
-    - [ ] Loss: `BCEWithLogitsLoss`
-    - [ ] Early stopping: patience=10 on validation loss
-    - [ ] Device: `torch.device('cpu')` enforced
-    - [ ] Max epochs: 100
-    - [ ] Log per-epoch: train_loss, val_loss, val_accuracy
-    - [ ] Save best checkpoint to `models/trained/mlp_best.pt`
-    - [ ] Return training history dict
-  - [ ] Test: train MLP on toy data (100 samples), verify convergence
+- [x] **4.2 — Create `src/models/mlp.py`**
+  - [x] Implement `MaliciousPDFClassifier(nn.Module)`:
+    - [x] `__init__`: define layers:
+      - [x] `Linear(37, 128)` -> `BatchNorm1d(128)` -> `ReLU` -> `Dropout(0.3)`
+      - [x] `Linear(128, 64)` -> `BatchNorm1d(64)` -> `ReLU` -> `Dropout(0.2)`
+      - [x] `Linear(64, 32)` -> `BatchNorm1d(32)` -> `ReLU`
+      - [x] `Linear(32, 1)` (output, raw logit)
+    - [x] `forward(self, x)`: sequential pass through all layers
+  - [x] Implement `PDFDataset(Dataset)`:
+    - [x] `__init__`: accept numpy arrays (X, y)
+    - [x] `__getitem__`: return `(torch.FloatTensor, torch.FloatTensor)`
+    - [x] `__len__`: return sample count
+  - [x] Implement training loop function `train_mlp(model, train_loader, val_loader, config)`:
+    - [x] Optimizer: `AdamW(weight_decay=1e-4)`
+    - [x] Scheduler: `CosineAnnealingLR(T_max=50)`
+    - [x] Loss: `BCEWithLogitsLoss`
+    - [x] Early stopping: patience=10 on validation loss
+    - [x] Device: `torch.device('cpu')` enforced
+    - [x] Max epochs: 100
+    - [x] Log per-epoch: train_loss, val_loss, val_accuracy
+    - [x] Save best checkpoint to `models/trained/mlp_best.pt`
+    - [x] Return training history dict
+  - [x] Test: train MLP on toy data (100 samples), verify convergence
 
-- [ ] **4.3 — Create `src/models/trainer.py`**
-  - [ ] Implement `TrainingPipeline`:
-    - [ ] `__init__`: load train/val/test splits from `data/processed/`
-    - [ ] `train_all_models()`:
-      - [ ] Train Random Forest → save to `models/trained/rf_best.pkl`
-      - [ ] Train XGBoost → save to `models/trained/xgb_best.pkl`
-      - [ ] Train LightGBM → save to `models/trained/lgbm_best.pkl`
-      - [ ] Train MLP → save to `models/trained/mlp_best.pt`
-      - [ ] Log total training time per model
-    - [ ] `load_all_models() -> dict`: load all saved models
-  - [ ] Implement timing decorator for training functions
-  - [ ] Test: run full training pipeline, verify all 4 model files exist
+- [x] **4.3 — Create `src/models/trainer.py`**
+  - [x] Implement `TrainingPipeline`:
+    - [x] `__init__`: load train/val/test splits from `data/processed/`
+    - [x] `train_all_models()`:
+      - [x] Train Random Forest -> save to `models/trained/rf_best.pkl`
+      - [x] Train XGBoost -> save to `models/trained/xgb_best.pkl`
+      - [x] Train LightGBM -> save to `models/trained/lgbm_best.pkl`
+      - [x] Train MLP -> save to `models/trained/mlp_best.pt`
+      - [x] Log total training time per model
+    - [x] `load_all_models() -> dict`: load all saved models
+  - [x] Implement timing decorator for training functions
+  - [x] Test: run full training pipeline, verify all 4 model files exist
 
-- [ ] **4.4 — Create `src/models/evaluator.py`**
-  - [ ] Implement `evaluate_model(model, X_test, y_test, model_name) -> dict`:
-    - [ ] Calculate: Accuracy, F1, Precision, Recall, AUC-ROC
-    - [ ] Generate confusion matrix
-    - [ ] Generate classification report (per-class metrics)
-    - [ ] Return dict with all metrics
-  - [ ] Implement `compare_models(results: list[dict]) -> pd.DataFrame`:
-    - [ ] Create comparison table DataFrame
-    - [ ] Sort by F1-score descending
-    - [ ] Save to `reports/results/model_comparison.csv`
-  - [ ] Implement `generate_report(results, save_dir)`:
-    - [ ] Create confusion matrix heatmaps for each model → `reports/figures/`
-    - [ ] Create overlaid ROC curves → `reports/figures/roc_curves.png`
-    - [ ] Create Precision-Recall curves → `reports/figures/pr_curves.png`
-    - [ ] Create feature importance chart (tree models) → `reports/figures/`
-    - [ ] Save comparison table as CSV
-    - [ ] Log summary to console
-  - [ ] Test: evaluate a trained model, verify all outputs exist
+- [x] **4.4 — Create `src/models/evaluator.py`**
+  - [x] Implement `evaluate_model(model, X_test, y_test, model_name) -> dict`:
+    - [x] Calculate: Accuracy, F1, Precision, Recall, AUC-ROC
+    - [x] Generate confusion matrix
+    - [x] Generate classification report (per-class metrics)
+    - [x] Return dict with all metrics
+  - [x] Implement `compare_models(results: list[dict]) -> pd.DataFrame`:
+    - [x] Create comparison table DataFrame
+    - [x] Sort by F1-score descending
+    - [x] Save to `reports/results/model_comparison.csv`
+  - [x] Implement `generate_report(results, save_dir)`:
+    - [x] Create confusion matrix heatmaps for each model -> `reports/figures/`
+    - [x] Create overlaid ROC curves -> `reports/figures/roc_curves.png`
+    - [x] Create Precision-Recall curves -> `reports/figures/pr_curves.png`
+    - [x] Create feature importance chart (tree models) -> `reports/figures/`
+    - [x] Save comparison table as CSV
+    - [x] Log summary to console
+  - [x] Test: evaluate a trained model, verify all outputs exist
 
-- [ ] **4.5 — Create `notebooks/04_model_training.ipynb`**
-  - [ ] Cell 1: Load preprocessed train/val/test data
-  - [ ] Cell 2: Train all 4 models (with progress logging)
-  - [ ] Cell 3: Display hyperparameter tuning results for each model
-  - [ ] Cell 4: Plot MLP training curves (loss + accuracy over epochs)
-  - [ ] Cell 5: Run evaluation on test set for all models
-  - [ ] Cell 6: Display comparison table
-  - [ ] Cell 7: Display confusion matrices (2×2 grid)
-  - [ ] Cell 8: Display overlaid ROC curves
-  - [ ] Cell 9: Display feature importance (top-15 features)
-  - [ ] Cell 10: Selection rationale — which model to quantize and why
+- [x] **4.5 — Create `notebooks/04_model_training.ipynb`**
+  - [x] Cell 1: Load preprocessed train/val/test data
+  - [x] Cell 2: Train all 4 models (with progress logging)
+  - [x] Cell 3: Display hyperparameter tuning results for each model
+  - [x] Cell 4: Plot MLP training curves (loss + accuracy over epochs)
+  - [x] Cell 5: Run evaluation on test set for all models
+  - [x] Cell 6: Display comparison table
+  - [x] Cell 7: Display confusion matrices (2x2 grid)
+  - [x] Cell 8: Display overlaid ROC curves
+  - [x] Cell 9: Display feature importance (top-15 features)
+  - [x] Cell 10: Selection rationale — which model to quantize and why
 
 ---
 

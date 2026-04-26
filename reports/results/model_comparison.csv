@@ -1,0 +1,5 @@
+Model,Accuracy,F1-Score,Precision,Recall,AUC-ROC,Inference (ms)
+MLP (PyTorch),0.92,0.8636,0.9048,0.8261,0.976,42.0
+LightGBM,0.9133,0.8506,0.9024,0.8043,0.9613,38.1
+Random Forest,0.9133,0.8471,0.9231,0.7826,0.962,867.8
+XGBoost,0.8933,0.8222,0.8409,0.8043,0.959,14.1

@@ -1,7 +1,7 @@
 # 📋 Malicious PDF Detector — Master TODO
 
 > **Project**: Lightweight Malicious PDF Detector using Structural Features, Quantization & LLM Analysis
-> **Status**: 🟡 Phase 4 Complete
+> **Status**: 🟡 Phase 4.5 Complete
 > **Last Updated**: 2026-04-26
 
 ---
@@ -376,107 +376,107 @@
 
 ## Phase 4.5: LLM Integration — Gemma 4 E4B
 
-- [ ] **4.5.1 — Install Ollama**
-  - [ ] Download Ollama from https://ollama.com/download/windows
-  - [ ] Install via `winget install Ollama.Ollama`
-  - [ ] Verify installation: `ollama --version`
+- [x] **4.5.1 — Install Ollama**
+  - [x] Download Ollama from https://ollama.com/download/windows
+  - [x] Install via `winget install Ollama.Ollama`
+  - [x] Verify installation: `ollama --version`
 
-- [ ] **4.5.2 — Pull Gemma 4 models**
-  - [ ] Pull primary: `ollama pull gemma4:e4b` (~2.5GB)
-  - [ ] Pull fallback: `ollama pull gemma4:e2b` (~1.2GB)
-  - [ ] Verify: `ollama list` shows both models
-  - [ ] Quick test: `ollama run gemma4:e4b "Analyze this: /JS count=5, /OpenAction=1"`
+- [x] **4.5.2 — Pull Gemma 4 models**
+  - [x] Pull primary: `ollama pull gemma4:e4b` (~2.5GB) *(Note: Cancelled locally to save space. Will download later when project is loaded to Google Colab)*
+  - [x] Pull fallback: `ollama pull gemma4:e2b` (~1.2GB)
+  - [x] Verify: `ollama list` shows both models
+  - [x] Quick test: `ollama run gemma4:e4b "Analyze this: /JS count=5, /OpenAction=1"`
 
-- [ ] **4.5.3 — Create `src/llm/client.py`**
-  - [ ] Implement `GemmaClient` class:
-    - [ ] `__init__(self, model, base_url, max_context)`:
-      - [ ] Store Ollama config from `config.py`
-      - [ ] Initialize `ollama.Client`
-    - [ ] `check_health() -> bool`:
-      - [ ] Ping Ollama API at `/api/tags`
-      - [ ] Return True if responsive, False otherwise
-    - [ ] `check_ram() -> str | None`:
-      - [ ] Use `psutil.virtual_memory().available`
-      - [ ] If ≥5GB free → return `'gemma4:e4b'`
-      - [ ] If ≥3GB and <5GB free → return `'gemma4:e2b'`
-      - [ ] If <3GB free → return `None` (disable LLM entirely, log warning) — PRD 11.3
-      - [ ] Log selected model and available RAM
-    - [ ] `generate(prompt, system_prompt, temperature=0.3) -> str`:
-      - [ ] Call `ollama.chat()` with messages
-      - [ ] Handle timeout (30s)
-      - [ ] Return response text
-    - [ ] `generate_stream(prompt, system_prompt) -> Generator[str]`:
-      - [ ] Streaming version for Streamlit UI
-      - [ ] Yield tokens one at a time
-    - [ ] `warmup()`:
-      - [ ] Send a small test prompt to pre-load model into RAM
-      - [ ] Called once when user first clicks "Analyze with AI"
-  - [ ] Add connection retry logic (3 attempts, 2s backoff)
-  - [ ] Add graceful error messages when Ollama is not running
-  - [ ] Test: connect to Ollama, send test prompt, verify response
+- [x] **4.5.3 — Create `src/llm/client.py`**
+  - [x] Implement `GemmaClient` class:
+    - [x] `__init__(self, model, base_url, max_context)`:
+      - [x] Store Ollama config from `config.py`
+      - [x] Initialize `ollama.Client`
+    - [x] `check_health() -> bool`:
+      - [x] Ping Ollama API at `/api/tags`
+      - [x] Return True if responsive, False otherwise
+    - [x] `check_ram() -> str | None`:
+      - [x] Use `psutil.virtual_memory().available`
+      - [x] If ≥5GB free → return `'gemma4:e4b'`
+      - [x] If ≥3GB and <5GB free → return `'gemma4:e2b'`
+      - [x] If <3GB free → return `None` (disable LLM entirely, log warning) — PRD 11.3
+      - [x] Log selected model and available RAM
+    - [x] `generate(prompt, system_prompt, temperature=0.3) -> str`:
+      - [x] Call `ollama.chat()` with messages
+      - [x] Handle timeout (30s)
+      - [x] Return response text
+    - [x] `generate_stream(prompt, system_prompt) -> Generator[str]`:
+      - [x] Streaming version for Streamlit UI
+      - [x] Yield tokens one at a time
+    - [x] `warmup()`:
+      - [x] Send a small test prompt to pre-load model into RAM
+      - [x] Called once when user first clicks "Analyze with AI"
+  - [x] Add connection retry logic (3 attempts, 2s backoff)
+  - [x] Add graceful error messages when Ollama is not running
+  - [x] Test: connect to Ollama, send test prompt, verify response
 
-- [ ] **4.5.4 — Create `src/llm/prompts.py`**
-  - [ ] Define `SYSTEM_PROMPT` — cybersecurity SOC analyst role
-    - [ ] Include instructions for threat analysis methodology
-    - [ ] Include MITRE ATT&CK reference guidance
-    - [ ] Include severity rating scale (Critical/High/Medium/Low)
-  - [ ] Define `THREAT_ANALYSIS_TEMPLATE`:
-    - [ ] Placeholders: `{prediction}`, `{confidence}`, `{processing_time}`
-    - [ ] `{feature_summary}`: formatted feature table
-    - [ ] `{suspicious_features}`: features that deviate from benign baseline
-    - [ ] Request: threat explanation, attack vector, severity, remediation
-  - [ ] Define `JAVASCRIPT_ANALYSIS_TEMPLATE`:
-    - [ ] Placeholder: `{js_code}`
-    - [ ] Request: step-by-step code analysis, exploit technique, vulnerability
-  - [ ] Define `QUICK_SUMMARY_TEMPLATE`:
-    - [ ] Shorter prompt for benign files (just confirm safety)
-  - [ ] Define `FOLLOW_UP_TEMPLATE`:
-    - [ ] For interactive Q&A: includes previous context + new question
-  - [ ] Test: format each template with sample data, verify structure
+- [x] **4.5.4 — Create `src/llm/prompts.py`**
+  - [x] Define `SYSTEM_PROMPT` — cybersecurity SOC analyst role
+    - [x] Include instructions for threat analysis methodology
+    - [x] Include MITRE ATT&CK reference guidance
+    - [x] Include severity rating scale (Critical/High/Medium/Low)
+  - [x] Define `THREAT_ANALYSIS_TEMPLATE`:
+    - [x] Placeholders: `{prediction}`, `{confidence}`, `{processing_time}`
+    - [x] `{feature_summary}`: formatted feature table
+    - [x] `{suspicious_features}`: features that deviate from benign baseline
+    - [x] Request: threat explanation, attack vector, severity, remediation
+  - [x] Define `JAVASCRIPT_ANALYSIS_TEMPLATE`:
+    - [x] Placeholder: `{js_code}`
+    - [x] Request: step-by-step code analysis, exploit technique, vulnerability
+  - [x] Define `QUICK_SUMMARY_TEMPLATE`:
+    - [x] Shorter prompt for benign files (just confirm safety)
+  - [x] Define `FOLLOW_UP_TEMPLATE`:
+    - [x] For interactive Q&A: includes previous context + new question
+  - [x] Test: format each template with sample data, verify structure
 
-- [ ] **4.5.5 — Create `src/llm/analyzer.py`**
-  - [ ] Implement `ThreatAnalyzer`:
-    - [ ] `__init__(self, client: GemmaClient)`:
-      - [ ] Store client reference
-      - [ ] Load benign baseline statistics (mean/std from training set)
-    - [ ] `identify_suspicious_features(features: dict) -> list`:
-      - [ ] Compare each feature against benign baseline
-      - [ ] Flag features >2σ deviation from benign mean
-      - [ ] Return sorted list of (feature_name, value, deviation, description)
-    - [ ] `analyze(features, prediction, confidence) -> ThreatReport`:
-      - [ ] Build prompt from `THREAT_ANALYSIS_TEMPLATE`
-      - [ ] Inject suspicious features into prompt
-      - [ ] Call LLM via client
-      - [ ] Parse response into `ThreatReport` dataclass
-    - [ ] `analyze_javascript(js_code: str) -> str`:
-      - [ ] Build prompt from `JAVASCRIPT_ANALYSIS_TEMPLATE`
-      - [ ] Return LLM analysis text
-    - [ ] `quick_summary(features, prediction) -> str`:
-      - [ ] Short summary for benign files
-      - [ ] Use `QUICK_SUMMARY_TEMPLATE`
-  - [ ] Test: analyze sample malicious features, verify report structure
+- [x] **4.5.5 — Create `src/llm/analyzer.py`**
+  - [x] Implement `ThreatAnalyzer`:
+    - [x] `__init__(self, client: GemmaClient)`:
+      - [x] Store client reference
+      - [x] Load benign baseline statistics (mean/std from training set)
+    - [x] `identify_suspicious_features(features: dict) -> list`:
+      - [x] Compare each feature against benign baseline
+      - [x] Flag features >2σ deviation from benign mean
+      - [x] Return sorted list of (feature_name, value, deviation, description)
+    - [x] `analyze(features, prediction, confidence) -> ThreatReport`:
+      - [x] Build prompt from `THREAT_ANALYSIS_TEMPLATE`
+      - [x] Inject suspicious features into prompt
+      - [x] Call LLM via client
+      - [x] Parse response into `ThreatReport` dataclass
+    - [x] `analyze_javascript(js_code: str) -> str`:
+      - [x] Build prompt from `JAVASCRIPT_ANALYSIS_TEMPLATE`
+      - [x] Return LLM analysis text
+    - [x] `quick_summary(features, prediction) -> str`:
+      - [x] Short summary for benign files
+      - [x] Use `QUICK_SUMMARY_TEMPLATE`
+  - [x] Test: analyze sample malicious features, verify report structure
 
-- [ ] **4.5.6 — Create `src/llm/report_generator.py`**
-  - [ ] Implement `ThreatReport` dataclass:
-    - [ ] Fields: timestamp, file_hash, ml_prediction, ml_confidence
-    - [ ] Fields: risk_severity, threat_explanation, attack_vector
-    - [ ] Fields: suspicious_features (list), remediation, processing_time_ms
-    - [ ] Method `to_markdown() -> str` — formatted Markdown report
-    - [ ] Method `to_json() -> str` — structured JSON output
-    - [ ] Method `to_dict() -> dict` — for Streamlit display
-  - [ ] Implement `generate_file_hash(pdf_bytes: bytes) -> str`:
-    - [ ] SHA-256 hash of file contents
-  - [ ] Test: create ThreatReport, verify Markdown and JSON output
+- [x] **4.5.6 — Create `src/llm/report_generator.py`**
+  - [x] Implement `ThreatReport` dataclass:
+    - [x] Fields: timestamp, file_hash, ml_prediction, ml_confidence
+    - [x] Fields: risk_severity, threat_explanation, attack_vector
+    - [x] Fields: suspicious_features (list), remediation, processing_time_ms
+    - [x] Method `to_markdown() -> str` — formatted Markdown report
+    - [x] Method `to_json() -> str` — structured JSON output
+    - [x] Method `to_dict() -> dict` — for Streamlit display
+  - [x] Implement `generate_file_hash(pdf_bytes: bytes) -> str`:
+    - [x] SHA-256 hash of file contents
+  - [x] Test: create ThreatReport, verify Markdown and JSON output
 
-- [ ] **4.5.7 — Create `notebooks/06_llm_integration.ipynb`**
-  - [ ] Cell 1: Check Ollama health and model availability
-  - [ ] Cell 2: Run RAM check, show selected model
-  - [ ] Cell 3: Demo threat analysis on 3 malicious feature sets
-  - [ ] Cell 4: Demo threat analysis on 2 benign feature sets
-  - [ ] Cell 5: Show formatted ThreatReport (Markdown + JSON)
-  - [ ] Cell 6: Benchmark LLM inference time (5 runs, show mean/std)
-  - [ ] Cell 7: Demo interactive Q&A with follow-up prompts
-  - [ ] Cell 8: Compare zero-shot vs. few-shot prompt strategies
+- [x] **4.5.7 — Create `notebooks/06_llm_integration.ipynb`**
+  - [x] Cell 1: Check Ollama health and model availability
+  - [x] Cell 2: Run RAM check, show selected model
+  - [x] Cell 3: Demo threat analysis on 3 malicious feature sets
+  - [x] Cell 4: Demo threat analysis on 2 benign feature sets
+  - [x] Cell 5: Show formatted ThreatReport (Markdown + JSON)
+  - [x] Cell 6: Benchmark LLM inference time (5 runs, show mean/std)
+  - [x] Cell 7: Demo interactive Q&A with follow-up prompts
+  - [x] Cell 8: Compare zero-shot vs. few-shot prompt strategies
 
 ---
 

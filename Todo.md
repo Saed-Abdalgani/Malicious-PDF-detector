@@ -1,8 +1,8 @@
 # 📋 Malicious PDF Detector — Master TODO
 
 > **Project**: Lightweight Malicious PDF Detector using Structural Features, Quantization & LLM Analysis
-> **Status**: 🟡 Not Started
-> **Last Updated**: 2026-04-06
+> **Status**: 🟡 Phase 3 Complete
+> **Last Updated**: 2026-04-25
 
 ---
 
@@ -198,80 +198,80 @@
 
 ## Phase 3: Feature Engineering (Static PDF Analysis)
 
-- [ ] **3.1 — Create `src/features/structural.py`**
-  - [ ] Implement `extract_structural_features(pdf_path: str) -> dict`:
-    - [ ] Read raw PDF bytes with `open(pdf_path, 'rb')`
-    - [ ] Count keyword occurrences via regex:
-      - [ ] `/JS` → `js_count`
-      - [ ] `/JavaScript` → `javascript_count`
-      - [ ] `/OpenAction` → `openaction_count`
-      - [ ] `/Action` → `action_count`
-      - [ ] `/AA` → `aa_count`
-      - [ ] `/Launch` → `launch_count`
-      - [ ] `/URI` → `uri_count`
-      - [ ] `/SubmitForm` → `submitform_count`
-      - [ ] `/AcroForm` → `acroform_count`
-      - [ ] `/XFA` → `xfa_count`
-      - [ ] `/RichMedia` → `richmedia_count`
-      - [ ] `/JBig2Decode` → `jbig2decode_count`
-      - [ ] `/Colors` → `colors_count`
-    - [ ] Count structural markers:
-      - [ ] `obj` / `endobj` → `obj_count`, `endobj_count`
-      - [ ] `stream` / `endstream` → `stream_count`, `endstream_count`
-      - [ ] `xref` → `xref_count`
-      - [ ] `trailer` → `trailer_count`
-      - [ ] `startxref` → `startxref_count`
-      - [ ] `/ObjStm` → `objstm_count`
-      - [ ] `/Filter` → `filter_count`
-    - [ ] Calculate `avg_stream_size` (total stream bytes / stream count)
-    - [ ] Count indirect objects → `indirect_obj_count`
-    - [ ] Detect obfuscation patterns (hex-encoded `#XX` sequences) → `obfuscation_count`
-  - [ ] Add 30-second timeout for large files
-  - [ ] Add error handling for corrupted/unreadable PDFs (return zeroed dict)
-  - [ ] Test: extract features from a known benign and malicious PDF
+- [x] **3.1 — Create `src/features/structural.py`**
+  - [x] Implement `extract_structural_features(pdf_path: str) -> dict`:
+    - [x] Read raw PDF bytes with `open(pdf_path, 'rb')`
+    - [x] Count keyword occurrences via regex:
+      - [x] `/JS` → `js_count`
+      - [x] `/JavaScript` → `javascript_count`
+      - [x] `/OpenAction` → `openaction_count`
+      - [x] `/Action` → `action_count`
+      - [x] `/AA` → `aa_count`
+      - [x] `/Launch` → `launch_count`
+      - [x] `/URI` → `uri_count`
+      - [x] `/SubmitForm` → `submitform_count`
+      - [x] `/AcroForm` → `acroform_count`
+      - [x] `/XFA` → `xfa_count`
+      - [x] `/RichMedia` → `richmedia_count`
+      - [x] `/JBig2Decode` → `jbig2decode_count`
+      - [x] `/Colors` → `colors_count`
+    - [x] Count structural markers:
+      - [x] `obj` / `endobj` → `obj_count`, `endobj_count`
+      - [x] `stream` / `endstream` → `stream_count`, `endstream_count`
+      - [x] `xref` → `xref_count`
+      - [x] `trailer` → `trailer_count`
+      - [x] `startxref` → `startxref_count`
+      - [x] `/ObjStm` → `objstm_count`
+      - [x] `/Filter` → `filter_count`
+    - [x] Calculate `avg_stream_size` (total stream bytes / stream count)
+    - [x] Count indirect objects → `indirect_obj_count`
+    - [x] Detect obfuscation patterns (hex-encoded `#XX` sequences) → `obfuscation_count`
+  - [x] Add 30-second timeout for large files
+  - [x] Add error handling for corrupted/unreadable PDFs (return zeroed dict)
+  - [x] Test: extract features from a known benign and malicious PDF
 
-- [ ] **3.2 — Create `src/features/metadata.py`**
-  - [ ] Implement `extract_metadata_features(pdf_path: str) -> dict`:
-    - [ ] Use `PyPDF2.PdfReader` to parse PDF
-    - [ ] Extract `pdf_size` (file size in bytes via `os.path.getsize`)
-    - [ ] Extract `title_chars` (length of `/Title` metadata, 0 if missing)
-    - [ ] Extract `is_encrypted` (boolean → int: 0 or 1)
-    - [ ] Extract `metadata_size` (length of serialized metadata string)
-    - [ ] Extract `page_count` (number of pages)
-    - [ ] Extract `has_text` (check if any page has extractable text)
-    - [ ] Extract `image_count` (count `/XObject` → `/Image` in pages)
-    - [ ] Extract `obj_count_total` (total objects via `len(reader.objects)` or indirect)
-    - [ ] Extract `font_obj_count` (count `/Font` references)
-    - [ ] Extract `embedded_file_count` (count `/EmbeddedFile` in names tree)
-    - [ ] Extract `avg_embedded_media_size` (average size of embedded files)
-    - [ ] Extract `header_valid` (check PDF header `%PDF-1.X` presence → 0 or 1)
-  - [ ] Add error handling for corrupted PDFs
-  - [ ] Test: extract metadata from sample PDFs
+- [x] **3.2 — Create `src/features/metadata.py`**
+  - [x] Implement `extract_metadata_features(pdf_path: str) -> dict`:
+    - [x] Use `PyPDF2.PdfReader` to parse PDF
+    - [x] Extract `pdf_size` (file size in bytes via `os.path.getsize`)
+    - [x] Extract `title_chars` (length of `/Title` metadata, 0 if missing)
+    - [x] Extract `is_encrypted` (boolean → int: 0 or 1)
+    - [x] Extract `metadata_size` (length of serialized metadata string)
+    - [x] Extract `page_count` (number of pages)
+    - [x] Extract `has_text` (check if any page has extractable text)
+    - [x] Extract `image_count` (count `/XObject` → `/Image` in pages)
+    - [x] Extract `obj_count_total` (total objects via `len(reader.objects)` or indirect)
+    - [x] Extract `font_obj_count` (count `/Font` references)
+    - [x] Extract `embedded_file_count` (count `/EmbeddedFile` in names tree)
+    - [x] Extract `avg_embedded_media_size` (average size of embedded files)
+    - [x] Extract `header_valid` (check PDF header `%PDF-1.X` presence → 0 or 1)
+  - [x] Add error handling for corrupted PDFs
+  - [x] Test: extract metadata from sample PDFs
 
-- [ ] **3.3 — Create `src/features/vectorizer.py`**
-  - [ ] Implement `combine_features(structural: dict, metadata: dict) -> np.ndarray`:
-    - [ ] Merge both dicts into single 37-dimension vector
-    - [ ] Ensure column order matches `config.FEATURE_COLUMNS` exactly
-  - [ ] Implement `fit_scaler(X_train) -> StandardScaler`:
-    - [ ] Fit `sklearn.preprocessing.StandardScaler` on training data
-    - [ ] Save scaler to `models/scaler.pkl` via `joblib.dump`
-  - [ ] Implement `transform(X, scaler) -> np.ndarray`:
-    - [ ] Apply fitted scaler to transform features
-  - [ ] Implement `load_scaler() -> StandardScaler`:
-    - [ ] Load from `models/scaler.pkl`
-  - [ ] Implement `pdf_to_vector(pdf_path: str) -> np.ndarray`:
-    - [ ] End-to-end: extract structural + metadata → combine → scale
-    - [ ] Uses saved scaler from training
-    - [ ] This is the function called by the Streamlit app
-  - [ ] Test: convert 5 sample PDFs to vectors, verify shape is (37,)
+- [x] **3.3 — Create `src/features/vectorizer.py`**
+  - [x] Implement `combine_features(structural: dict, metadata: dict) -> np.ndarray`:
+    - [x] Merge both dicts into single 37-dimension vector
+    - [x] Ensure column order matches `config.FEATURE_COLUMNS` exactly
+  - [x] Implement `fit_scaler(X_train) -> StandardScaler`:
+    - [x] Fit `sklearn.preprocessing.StandardScaler` on training data
+    - [x] Save scaler to `models/scaler.pkl` via `joblib.dump`
+  - [x] Implement `transform(X, scaler) -> np.ndarray`:
+    - [x] Apply fitted scaler to transform features
+  - [x] Implement `load_scaler() -> StandardScaler`:
+    - [x] Load from `models/scaler.pkl`
+  - [x] Implement `pdf_to_vector(pdf_path: str) -> np.ndarray`:
+    - [x] End-to-end: extract structural + metadata → combine → scale
+    - [x] Uses saved scaler from training
+    - [x] This is the function called by the Streamlit app
+  - [x] Test: convert 5 sample PDFs to vectors, verify shape is (37,)
 
-- [ ] **3.4 — Create `notebooks/03_feature_engineering.ipynb`**
-  - [ ] Cell 1: Demo structural extraction on sample PDFs
-  - [ ] Cell 2: Demo metadata extraction on sample PDFs
-  - [ ] Cell 3: Show combined feature vectors as DataFrame
-  - [ ] Cell 4: Fit scaler on training data, show before/after normalization
-  - [ ] Cell 5: Compare extracted features with CIC ground truth (if sample PDFs available)
-  - [ ] Cell 6: Summary of feature engineering pipeline
+- [x] **3.4 — Create `notebooks/03_feature_engineering.ipynb`**
+  - [x] Cell 1: Demo structural extraction on sample PDFs
+  - [x] Cell 2: Demo metadata extraction on sample PDFs
+  - [x] Cell 3: Show combined feature vectors as DataFrame
+  - [x] Cell 4: Fit scaler on training data, show before/after normalization
+  - [x] Cell 5: Compare extracted features with CIC ground truth (if sample PDFs available)
+  - [x] Cell 6: Summary of feature engineering pipeline
 
 ---
 

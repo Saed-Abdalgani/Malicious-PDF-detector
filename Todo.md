@@ -482,61 +482,61 @@
 
 ## Phase 5: Model Optimization via Quantization
 
-- [ ] **5.1 — Create `src/optimization/quantizer.py`**
-  - [ ] Implement `ModelQuantizer`:
-    - [ ] `__init__(self, model: nn.Module, backend='fbgemm')`:
-      - [ ] Store model and set quantization backend
-    - [ ] `dynamic_quantize() -> nn.Module`:
-      - [ ] Apply `torch.quantization.quantize_dynamic`
-      - [ ] Target: `nn.Linear` layers
-      - [ ] Weight dtype: `torch.qint8`
-      - [ ] Return quantized model
-    - [ ] `static_quantize(calibration_loader) -> nn.Module`:
-      - [ ] Step 1: Fuse `Linear + BatchNorm + ReLU` layers
-        - [ ] Define fuse list based on MLP architecture
-        - [ ] Call `torch.quantization.fuse_modules`
-      - [ ] Step 2: Set `qconfig` for `fbgemm` backend
-      - [ ] Step 3: Insert observers via `torch.quantization.prepare`
-      - [ ] Step 4: Run calibration (500 training samples through model)
-      - [ ] Step 5: Convert via `torch.quantization.convert`
-      - [ ] Return quantized model
-    - [ ] `save_quantized(model, path)`:
-      - [ ] Save with `torch.save(model.state_dict(), path)`
-      - [ ] Also save as TorchScript via `torch.jit.script` for deployment
-    - [ ] `load_quantized(path) -> nn.Module`
-  - [ ] Test: quantize trained MLP, verify predictions still work
+- [x] **5.1 — Create `src/optimization/quantizer.py`**
+  - [x] Implement `ModelQuantizer`:
+    - [x] `__init__(self, model: nn.Module, backend='fbgemm')`:
+      - [x] Store model and set quantization backend
+    - [x] `dynamic_quantize() -> nn.Module`:
+      - [x] Apply `torch.quantization.quantize_dynamic`
+      - [x] Target: `nn.Linear` layers
+      - [x] Weight dtype: `torch.qint8`
+      - [x] Return quantized model
+    - [x] `static_quantize(calibration_loader) -> nn.Module`:
+      - [x] Step 1: Fuse `Linear + BatchNorm + ReLU` layers
+        - [x] Define fuse list based on MLP architecture
+        - [x] Call `torch.quantization.fuse_modules`
+      - [x] Step 2: Set `qconfig` for `fbgemm` backend
+      - [x] Step 3: Insert observers via `torch.quantization.prepare`
+      - [x] Step 4: Run calibration (500 training samples through model)
+      - [x] Step 5: Convert via `torch.quantization.convert`
+      - [x] Return quantized model
+    - [x] `save_quantized(model, path)`:
+      - [x] Save with `torch.save(model.state_dict(), path)`
+      - [x] Also save as TorchScript via `torch.jit.script` for deployment
+    - [x] `load_quantized(path) -> nn.Module`
+  - [x] Test: quantize trained MLP, verify predictions still work
 
-- [ ] **5.2 — Create `src/optimization/benchmark.py`**
-  - [ ] Implement `measure_model_size(model_path) -> float`:
-    - [ ] Return file size in MB
-  - [ ] Implement `measure_inference_time(model, X_sample, n_runs=100) -> dict`:
-    - [ ] Run `n_runs` inference passes
-    - [ ] Return: mean, std, min, max in milliseconds
-    - [ ] Use `time.perf_counter()` for precision
-  - [ ] Implement `measure_memory(model) -> float`:
-    - [ ] Estimate model RAM usage in MB
-  - [ ] Implement `compare_models(fp32_model, int8_model, test_data) -> pd.DataFrame`:
-    - [ ] Measure size, speed, memory, accuracy, F1 for both
-    - [ ] Calculate percentage change for each metric
-    - [ ] Return comparison DataFrame
-    - [ ] Save to `reports/results/quantization_comparison.csv`
-  - [ ] Implement `benchmark_all_models()`:
-    - [ ] Benchmark MLP FP32 vs INT8 (dynamic) vs INT8 (static)
-    - [ ] Benchmark tree models (RF, XGB, LGBM) sizes and speeds
-    - [ ] Create unified comparison table
-  - [ ] Test: run full benchmark, verify CSV output
+- [x] **5.2 — Create `src/optimization/benchmark.py`**
+  - [x] Implement `measure_model_size(model_path) -> float`:
+    - [x] Return file size in MB
+  - [x] Implement `measure_inference_time(model, X_sample, n_runs=100) -> dict`:
+    - [x] Run `n_runs` inference passes
+    - [x] Return: mean, std, min, max in milliseconds
+    - [x] Use `time.perf_counter()` for precision
+  - [x] Implement `measure_memory(model) -> float`:
+    - [x] Estimate model RAM usage in MB
+  - [x] Implement `compare_models(fp32_model, int8_model, test_data) -> pd.DataFrame`:
+    - [x] Measure size, speed, memory, accuracy, F1 for both
+    - [x] Calculate percentage change for each metric
+    - [x] Return comparison DataFrame
+    - [x] Save to `reports/results/quantization_comparison.csv`
+  - [x] Implement `benchmark_all_models()`:
+    - [x] Benchmark MLP FP32 vs INT8 (dynamic) vs INT8 (static)
+    - [x] Benchmark tree models (RF, XGB, LGBM) sizes and speeds
+    - [x] Create unified comparison table
+  - [x] Test: run full benchmark, verify CSV output
 
-- [ ] **5.3 — Create `notebooks/05_quantization.ipynb`**
-  - [ ] Cell 1: Load trained MLP (FP32) model
-  - [ ] Cell 2: Apply dynamic quantization, evaluate accuracy
-  - [ ] Cell 3: Apply static quantization with calibration, evaluate accuracy
-  - [ ] Cell 4: Model size comparison bar chart (FP32 vs Dynamic INT8 vs Static INT8)
-  - [ ] Cell 5: Inference time comparison (box plots from 100 runs)
-  - [ ] Cell 6: Accuracy/F1 comparison table — verify <1% drop
-  - [ ] Cell 7: Memory usage comparison
-  - [ ] Cell 8: Tree model size/speed benchmarks
-  - [ ] Cell 9: Final selection: best quantized model for deployment
-  - [ ] Cell 10: Save final quantized model to `models/quantized/`
+- [x] **5.3 — Create `notebooks/05_quantization.ipynb`**
+  - [x] Cell 1: Load trained MLP (FP32) model
+  - [x] Cell 2: Apply dynamic quantization, evaluate accuracy
+  - [x] Cell 3: Apply static quantization with calibration, evaluate accuracy
+  - [x] Cell 4: Model size comparison bar chart (FP32 vs Dynamic INT8 vs Static INT8)
+  - [x] Cell 5: Inference time comparison (box plots from 100 runs)
+  - [x] Cell 6: Accuracy/F1 comparison table — verify <1% drop
+  - [x] Cell 7: Memory usage comparison
+  - [x] Cell 8: Tree model size/speed benchmarks
+  - [x] Cell 9: Final selection: best quantized model for deployment
+  - [x] Cell 10: Save final quantized model to `models/quantized/`
 
 ---
 

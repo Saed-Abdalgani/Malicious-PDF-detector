@@ -698,35 +698,35 @@
 
 ## Phase 8: Final Report & Documentation
 
-- [ ] **8.1 — Create `notebooks/07_final_report.ipynb`**
-  - [ ] Section 1: Executive summary (key results, 3-4 sentences)
-  - [ ] Section 2: Problem statement and motivation
-  - [ ] Section 3: Dataset description and preprocessing summary
-  - [ ] Section 4: EDA key findings (embed top charts)
-  - [ ] Section 5: Feature engineering methodology
-  - [ ] Section 6: Model comparison results (embed comparison table + ROC curves)
-  - [ ] Section 7: Quantization analysis (embed before/after charts)
-  - [ ] Section 8: LLM integration and sample threat reports
-  - [ ] Section 9: Streamlit application screenshots
-  - [ ] Section 10: Conclusions and future work
-  - [ ] Export to PDF: `jupyter nbconvert --to pdf`
+- [x] **8.1 — Create `notebooks/07_final_report.ipynb`**
+  - [x] Section 1: Executive summary (key results, 3-4 sentences)
+  - [x] Section 2: Problem statement and motivation
+  - [x] Section 3: Dataset description and preprocessing summary
+  - [x] Section 4: EDA key findings (embed top charts)
+  - [x] Section 5: Feature engineering methodology
+  - [x] Section 6: Model comparison results (embed comparison table + ROC curves)
+  - [x] Section 7: Quantization analysis (embed before/after charts)
+  - [x] Section 8: LLM integration and sample threat reports
+  - [x] Section 9: Streamlit application screenshots
+  - [x] Section 10: Conclusions and future work
+  - [x] Export to PDF: `jupyter nbconvert --to pdf`
 
-- [ ] **8.2 — Create `README.md`**
-  - [ ] Project title and description
-  - [ ] Architecture diagram
-  - [ ] Installation instructions (step-by-step)
-  - [ ] Dataset setup instructions
-  - [ ] Ollama/LLM setup instructions
-  - [ ] Usage guide (how to run training, how to launch app)
-  - [ ] Project structure tree
-  - [ ] Results summary table
-  - [ ] Screenshots of Streamlit app
-  - [ ] License and credits
+- [x] **8.2 — Create `README.md`**
+  - [x] Project title and description
+  - [x] Architecture diagram
+  - [x] Installation instructions (step-by-step)
+  - [x] Dataset setup instructions
+  - [x] Ollama/LLM setup instructions
+  - [x] Usage guide (how to run training, how to launch app)
+  - [x] Project structure tree
+  - [x] Results summary table
+  - [x] Screenshots of Streamlit app
+  - [x] License and credits
 
-- [ ] **8.3 — Create `setup.py`**
-  - [ ] Package metadata: name, version, author, description
-  - [ ] `install_requires` from requirements.txt
-  - [ ] Entry points for CLI commands
+- [x] **8.3 — Create `setup.py`**
+  - [x] Package metadata: name, version, author, description
+  - [x] `install_requires` from requirements.txt
+  - [x] Entry points for CLI commands
 
 ---
 

@@ -542,97 +542,97 @@
 
 ## Phase 6: Streamlit Application & Local Deployment
 
-- [ ] **6.1 — Create `app/assets/style.css`**
-  - [ ] Define dark theme color variables (CSS custom properties)
-  - [ ] Style card components with glassmorphism (backdrop-filter: blur)
-  - [ ] Style verdict cards: green gradient (safe), red gradient (malicious)
-  - [ ] Style animated scan indicator (CSS keyframes pulse animation)
-  - [ ] Import Inter font from Google Fonts
-  - [ ] Style LLM chat bubbles (user vs AI messages)
-  - [ ] Style metric cards with subtle shadows
-  - [ ] Responsive breakpoints for layout
+- [x] **6.1 — Create `app/assets/style.css`**
+  - [x] Define dark theme color variables (CSS custom properties)
+  - [x] Style card components with glassmorphism (backdrop-filter: blur)
+  - [x] Style verdict cards: green gradient (safe), red gradient (malicious)
+  - [x] Style animated scan indicator (CSS keyframes pulse animation)
+  - [x] Import Inter font from Google Fonts
+  - [x] Style LLM chat bubbles (user vs AI messages)
+  - [x] Style metric cards with subtle shadows
+  - [x] Responsive breakpoints for layout
 
-- [ ] **6.2 — Create `app/components/uploader.py`**
-  - [ ] Implement `render_upload_zone() -> UploadedFile | None`:
-    - [ ] `st.file_uploader` with `type=['pdf']`, `accept_multiple_files=False`
-    - [ ] Server-side MIME type validation via `python-magic`
-    - [ ] File size check (reject >50MB)
-    - [ ] Process via `io.BytesIO` — no disk writes
-    - [ ] Sanitize filename for logging (strip path components)
-    - [ ] Return uploaded file object or None
+- [x] **6.2 — Create `app/components/uploader.py`**
+  - [x] Implement `render_upload_zone() -> UploadedFile | None`:
+    - [x] `st.file_uploader` with `type=['pdf']`, `accept_multiple_files=False`
+    - [x] Server-side MIME type validation via `python-magic`
+    - [x] File size check (reject >50MB)
+    - [x] Process via `io.BytesIO` — no disk writes
+    - [x] Sanitize filename for logging (strip path components)
+    - [x] Return uploaded file object or None
 
-- [ ] **6.3 — Create `app/components/analyzer.py`**
-  - [ ] Implement `PDFAnalyzer`:
-    - [ ] `__init__`: load quantized model + scaler into `st.session_state`
-      - [ ] Cache model to avoid reloading on every Streamlit rerun
-    - [ ] `analyze(uploaded_file) -> AnalysisResult`:
-      - [ ] Extract features from PDF bytes (call `pdf_to_vector`)
-      - [ ] Run inference through quantized model
-      - [ ] Measure processing time
-      - [ ] Return: prediction, confidence, features, time_ms, file_hash
-    - [ ] `get_feature_breakdown(features) -> pd.DataFrame`:
-      - [ ] Create formatted feature table for display
+- [x] **6.3 — Create `app/components/analyzer.py`**
+  - [x] Implement `PDFAnalyzer`:
+    - [x] `__init__`: load quantized model + scaler into `st.session_state`
+      - [x] Cache model to avoid reloading on every Streamlit rerun
+    - [x] `analyze(uploaded_file) -> AnalysisResult`:
+      - [x] Extract features from PDF bytes (call `pdf_to_vector`)
+      - [x] Run inference through quantized model
+      - [x] Measure processing time
+      - [x] Return: prediction, confidence, features, time_ms, file_hash
+    - [x] `get_feature_breakdown(features) -> pd.DataFrame`:
+      - [x] Create formatted feature table for display
 
-- [ ] **6.4 — Create `app/components/dashboard.py`**
-  - [ ] Implement `render_verdict(result: AnalysisResult)`:
-    - [ ] Show large verdict card: "✅ SAFE" or "⚠ MALICIOUS"
-    - [ ] Confidence percentage with color coding
-    - [ ] Processing time metric
-    - [ ] Animated transition on result
-  - [ ] Implement `render_confidence_gauge(confidence: float)`:
-    - [ ] Plotly gauge chart (0-100%)
-    - [ ] Green/yellow/red zones
-  - [ ] Implement `render_feature_radar(features, top_n=10)`:
-    - [ ] Plotly radar chart of top-10 features
-    - [ ] Overlay benign baseline for comparison
-  - [ ] Implement `render_scan_history(session_state)`:
-    - [ ] Table of all scans in current session
-    - [ ] Columns: filename, verdict, confidence, time, timestamp
+- [x] **6.4 — Create `app/components/dashboard.py`**
+  - [x] Implement `render_verdict(result: AnalysisResult)`:
+    - [x] Show large verdict card: "✅ SAFE" or "⚠ MALICIOUS"
+    - [x] Confidence percentage with color coding
+    - [x] Processing time metric
+    - [x] Animated transition on result
+  - [x] Implement `render_confidence_gauge(confidence: float)`:
+    - [x] Plotly gauge chart (0-100%)
+    - [x] Green/yellow/red zones
+  - [x] Implement `render_feature_radar(features, top_n=10)`:
+    - [x] Plotly radar chart of top-10 features
+    - [x] Overlay benign baseline for comparison
+  - [x] Implement `render_scan_history(session_state)`:
+    - [x] Table of all scans in current session
+    - [x] Columns: filename, verdict, confidence, time, timestamp
 
-- [ ] **6.5 — Create `app/components/llm_chat.py`**
-  - [ ] Implement `render_llm_panel(analysis_result)`:
-    - [ ] Check Ollama health → show status indicator (🟢/🔴)
-    - [ ] "Analyze with AI" button (loads LLM on-demand)
-    - [ ] Display threat analysis in formatted card
-    - [ ] Chat input for follow-up questions
-    - [ ] Streaming response display (token-by-token)
-    - [ ] "Generate Full Report" button → download as Markdown/JSON
-    - [ ] Graceful fallback: if Ollama offline, show message + skip LLM features
-  - [ ] Implement `render_report_download(report: ThreatReport)`:
-    - [ ] `st.download_button` for Markdown report
-    - [ ] `st.download_button` for JSON report
-  - [ ] Manage chat history in `st.session_state`
+- [x] **6.5 — Create `app/components/llm_chat.py`**
+  - [x] Implement `render_llm_panel(analysis_result)`:
+    - [x] Check Ollama health → show status indicator (🟢/🔴)
+    - [x] "Analyze with AI" button (loads LLM on-demand)
+    - [x] Display threat analysis in formatted card
+    - [x] Chat input for follow-up questions
+    - [x] Streaming response display (token-by-token)
+    - [x] "Generate Full Report" button → download as Markdown/JSON
+    - [x] Graceful fallback: if Ollama offline, show message + skip LLM features
+  - [x] Implement `render_report_download(report: ThreatReport)`:
+    - [x] `st.download_button` for Markdown report
+    - [x] `st.download_button` for JSON report
+  - [x] Manage chat history in `st.session_state`
 
-- [ ] **6.6 — Create `app/streamlit_app.py`**
-  - [ ] Set page config: title, icon, layout="wide"
-  - [ ] Load custom CSS from `app/assets/style.css`
-  - [ ] Implement sidebar navigation (5 pages)
-  - [ ] **Page 1 — 🔍 PDF Scanner**:
-    - [ ] Render upload zone
-    - [ ] On upload: run analyzer, show verdict dashboard
-    - [ ] Show feature breakdown in expandable section
-    - [ ] Download analysis as JSON button
-  - [ ] **Page 2 — 🤖 AI Threat Analyst**:
-    - [ ] Show LLM panel with threat analysis
-    - [ ] Interactive chat interface
-    - [ ] Report generation and download
-  - [ ] **Page 3 — 📊 Model Dashboard**:
-    - [ ] Load and display model comparison table from `reports/results/`
-    - [ ] Interactive ROC curves (Plotly)
-    - [ ] Confusion matrix heatmaps
-    - [ ] Quantization efficiency gains chart
-  - [ ] **Page 4 — 📈 Feature Explorer**:
-    - [ ] Interactive feature importance chart
-    - [ ] Upload PDF to see features vs dataset distribution
-    - [ ] Highlight suspicious features
-  - [ ] **Page 5 — ℹ️ About**:
-    - [ ] Project description and methodology
-    - [ ] Architecture diagram (Mermaid or image)
-    - [ ] Tech stack, dataset info
-    - [ ] LLM model specifications
-    - [ ] Performance benchmarks
-  - [ ] Test: run `streamlit run app/streamlit_app.py`
-  - [ ] Test: upload sample PDF, verify full pipeline works
+- [x] **6.6 — Create `app/streamlit_app.py`**
+  - [x] Set page config: title, icon, layout="wide"
+  - [x] Load custom CSS from `app/assets/style.css`
+  - [x] Implement sidebar navigation (5 pages)
+  - [x] **Page 1 — 🔍 PDF Scanner**:
+    - [x] Render upload zone
+    - [x] On upload: run analyzer, show verdict dashboard
+    - [x] Show feature breakdown in expandable section
+    - [x] Download analysis as JSON button
+  - [x] **Page 2 — 🤖 AI Threat Analyst**:
+    - [x] Show LLM panel with threat analysis
+    - [x] Interactive chat interface
+    - [x] Report generation and download
+  - [x] **Page 3 — 📊 Model Dashboard**:
+    - [x] Load and display model comparison table from `reports/results/`
+    - [x] Interactive ROC curves (Plotly)
+    - [x] Confusion matrix heatmaps
+    - [x] Quantization efficiency gains chart
+  - [x] **Page 4 — 📈 Feature Explorer**:
+    - [x] Interactive feature importance chart
+    - [x] Upload PDF to see features vs dataset distribution
+    - [x] Highlight suspicious features
+  - [x] **Page 5 — ℹ️ About**:
+    - [x] Project description and methodology
+    - [x] Architecture diagram (Mermaid or image)
+    - [x] Tech stack, dataset info
+    - [x] LLM model specifications
+    - [x] Performance benchmarks
+  - [x] Test: run `streamlit run app/streamlit_app.py`
+  - [x] Test: upload sample PDF, verify full pipeline works
 
 ---
 

@@ -5,15 +5,12 @@ This file is responsible for downloading the raw PDF malware dataset.
 It handles direct downloads, fallback mechanisms (e.g., GitHub mirrors), 
 hash verification, and basic dataset structure validation.
 """
-import os
 import hashlib
-import time
 import requests
 import pandas as pd
 import webbrowser
 from tqdm import tqdm
-from pathlib import Path
-from src.config import RAW_DATA_DIR, FEATURE_COLUMNS
+from src.config import RAW_DATA_DIR
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)

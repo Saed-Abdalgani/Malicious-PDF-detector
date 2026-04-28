@@ -43,3 +43,7 @@ psutil>=5.9.0                   # RAM monitoring for LLM model selection
 
 # --- Code Quality ---
 ruff>=0.4.0                     # PEP 8 linting (NFR-501)
+
+# --- Testing ---
+pytest>=7.0.0
+pytest-mock>=3.10.0

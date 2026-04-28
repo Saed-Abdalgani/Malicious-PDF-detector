@@ -15,7 +15,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import seaborn as sns
-from matplotlib.patches import FancyBboxPatch
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 from src.utils.logger import get_logger

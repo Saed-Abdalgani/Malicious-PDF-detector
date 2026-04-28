@@ -35,7 +35,6 @@ from src.config import (
     LLM_FALLBACK_MODEL,
     LLM_MAX_CONTEXT,
     LLM_MODEL,
-    RAM_THRESHOLD_MB,
 )
 from src.utils.logger import get_logger
 
@@ -496,18 +495,18 @@ if __name__ == "__main__":
     client = GemmaClient()
 
     # Health check
-    print(f"\n[1] Health check...")
+    print("\n[1] Health check...")
     healthy = client.check_health()
     print(f"    Ollama reachable: {healthy}")
 
     # RAM check
-    print(f"\n[2] RAM check...")
+    print("\n[2] RAM check...")
     selected = client.check_ram()
     print(f"    Selected model: {selected}")
 
     if healthy and selected:
         # Quick test
-        print(f"\n[3] Test generation...")
+        print("\n[3] Test generation...")
         try:
             response = client.generate(
                 "In one sentence, what is a /JS tag in a PDF file?",

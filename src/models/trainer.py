@@ -21,7 +21,7 @@ Usage:
 import time
 import functools
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -29,7 +29,6 @@ import pandas as pd
 from src.config import (
     FEATURE_COLUMNS,
     PROCESSED_DATA_DIR,
-    RANDOM_SEED,
     TRAINED_MODELS_DIR,
 )
 from src.utils.logger import get_logger

@@ -26,7 +26,7 @@ Usage:
 
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -484,7 +484,7 @@ if __name__ == "__main__":
         model, train_loader, val_loader, max_epochs=30, patience=10
     )
 
-    print(f"\nTraining complete!")
+    print("\nTraining complete!")
     print(f"  Epochs: {history['epochs_trained']}")
     print(f"  Best epoch: {history['best_epoch']+1}")
     print(f"  Final val accuracy: {history['val_accuracy'][-1]:.4f}")

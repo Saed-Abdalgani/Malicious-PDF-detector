@@ -638,61 +638,61 @@
 
 ## Phase 7: Testing & Quality Assurance
 
-- [ ] **7.1 — Create `tests/test_features.py`**
-  - [ ] Test `extract_structural_features` returns 25-key dict
-  - [ ] Test `extract_metadata_features` returns 12-key dict
-  - [ ] Test `pdf_to_vector` returns shape (37,) array
-  - [ ] Test feature extraction on corrupted file returns zeroed dict
-  - [ ] Test feature extraction timeout on large synthetic file
-  - [ ] Test scaler save/load roundtrip
-  - [ ] Test feature extraction time < 5 seconds for PDFs ≤ 50MB (NFR-105)
+- [x] **7.1 — Create `tests/test_features.py`**
+  - [x] Test `extract_structural_features` returns 25-key dict
+  - [x] Test `extract_metadata_features` returns 12-key dict
+  - [x] Test `pdf_to_vector` returns shape (37,) array
+  - [x] Test feature extraction on corrupted file returns zeroed dict
+  - [x] Test feature extraction timeout on large synthetic file
+  - [x] Test scaler save/load roundtrip
+  - [x] Test feature extraction time < 5 seconds for PDFs ≤ 50MB (NFR-105)
 
-- [ ] **7.2 — Create `tests/test_models.py`**
-  - [ ] Test `BaselineModel` train/predict cycle on toy data
-  - [ ] Test `MaliciousPDFClassifier` forward pass with correct input shape
-  - [ ] Test MLP training loop converges on separable toy data
-  - [ ] Test model save/load roundtrip for all model types
-  - [ ] Test `evaluate_model` returns all expected metric keys
-  - [ ] Test training reproducibility: run with RANDOM_SEED=42 twice, verify identical metrics (NFR-204)
-  - [ ] Test saved model files contain no raw training data samples (SEC-08)
+- [x] **7.2 — Create `tests/test_models.py`**
+  - [x] Test `BaselineModel` train/predict cycle on toy data
+  - [x] Test `MaliciousPDFClassifier` forward pass with correct input shape
+  - [x] Test MLP training loop converges on separable toy data
+  - [x] Test model save/load roundtrip for all model types
+  - [x] Test `evaluate_model` returns all expected metric keys
+  - [x] Test training reproducibility: run with RANDOM_SEED=42 twice, verify identical metrics (NFR-204)
+  - [x] Test saved model files contain no raw training data samples (SEC-08)
 
-- [ ] **7.3 — Create `tests/test_quantization.py`**
-  - [ ] Test dynamic quantization produces smaller model file
-  - [ ] Test static quantization produces smaller model file
-  - [ ] Test quantized model predictions match FP32 on 99%+ of test samples
-  - [ ] Test quantized model size is <50% of FP32 size
-  - [ ] Test quantized model inference is faster than FP32
-  - [ ] Test quantized model absolute file size < 1MB (G2)
-  - [ ] Test quantized single-sample inference time < 500ms (NFR-102)
+- [x] **7.3 — Create `tests/test_quantization.py`**
+  - [x] Test dynamic quantization produces smaller model file
+  - [x] Test static quantization produces smaller model file
+  - [x] Test quantized model predictions match FP32 on 99%+ of test samples
+  - [x] Test quantized model size is <50% of FP32 size
+  - [x] Test quantized model inference is faster than FP32
+  - [x] Test quantized model absolute file size < 1MB (G2)
+  - [x] Test quantized single-sample inference time < 500ms (NFR-102)
 
-- [ ] **7.4 — Create `tests/test_llm.py`**
-  - [ ] Test `GemmaClient.check_health()` returns bool
-  - [ ] Test `GemmaClient.check_ram()` returns valid model name or None
-  - [ ] Test `check_ram()` returns None when <3GB free (PRD 11.3 — LLM disabled)
-  - [ ] Test `ThreatReport.to_markdown()` produces valid Markdown
-  - [ ] Test `ThreatReport.to_json()` produces valid JSON
-  - [ ] Test `identify_suspicious_features` returns non-empty list for malicious features
-  - [ ] Test graceful degradation when Ollama is offline
+- [x] **7.4 — Create `tests/test_llm.py`**
+  - [x] Test `GemmaClient.check_health()` returns bool
+  - [x] Test `GemmaClient.check_ram()` returns valid model name or None
+  - [x] Test `check_ram()` returns None when <3GB free (PRD 11.3 — LLM disabled)
+  - [x] Test `ThreatReport.to_markdown()` produces valid Markdown
+  - [x] Test `ThreatReport.to_json()` produces valid JSON
+  - [x] Test `identify_suspicious_features` returns non-empty list for malicious features
+  - [x] Test graceful degradation when Ollama is offline
 
-- [ ] **7.5 — Create `tests/test_security.py`** *(NEW — PRD SEC-01 to SEC-08)*
-  - [ ] Test analysis pipeline makes zero outbound HTTP requests during scan (SEC-04)
-  - [ ] Test PDF parsing does not execute embedded JavaScript (SEC-05)
-  - [ ] Test uploaded files are processed in-memory only, not written to disk (SEC-02)
-  - [ ] Test file size limit rejects PDFs > 50MB (SEC-03)
-  - [ ] Test MIME type validation rejects non-PDF files with .pdf extension (SEC-01)
-  - [ ] Test filename sanitization strips path traversal characters (SEC-06)
-  - [ ] Test no external API calls are made by LLM module (SEC-07, Ollama is localhost only)
+- [x] **7.5 — Create `tests/test_security.py`** *(NEW — PRD SEC-01 to SEC-08)*
+  - [x] Test analysis pipeline makes zero outbound HTTP requests during scan (SEC-04)
+  - [x] Test PDF parsing does not execute embedded JavaScript (SEC-05)
+  - [x] Test uploaded files are processed in-memory only, not written to disk (SEC-02)
+  - [x] Test file size limit rejects PDFs > 50MB (SEC-03)
+  - [x] Test MIME type validation rejects non-PDF files with .pdf extension (SEC-01)
+  - [x] Test filename sanitization strips path traversal characters (SEC-06)
+  - [x] Test no external API calls are made by LLM module (SEC-07, Ollama is localhost only)
 
-- [ ] **7.6 — Code quality checks** *(NEW — PRD NFR-501, NFR-502)*
-  - [ ] Run `ruff check src/` — verify zero PEP 8 violations (NFR-501)
-  - [ ] Run `ruff check app/` — verify zero PEP 8 violations (NFR-501)
-  - [ ] Verify all public functions and classes have docstrings (NFR-502)
-  - [ ] Verify `src/config.py` is the single source for all paths/constants — no hardcoded values elsewhere (NFR-503)
+- [x] **7.6 — Code quality checks** *(NEW — PRD NFR-501, NFR-502)*
+  - [x] Run `ruff check src/` — verify zero PEP 8 violations (NFR-501)
+  - [x] Run `ruff check app/` — verify zero PEP 8 violations (NFR-501)
+  - [x] Verify all public functions and classes have docstrings (NFR-502)
+  - [x] Verify `src/config.py` is the single source for all paths/constants — no hardcoded values elsewhere (NFR-503)
 
-- [ ] **7.7 — Run all tests**
-  - [ ] `pytest tests/ -v --tb=short`
-  - [ ] Verify all tests pass (test_features, test_models, test_quantization, test_llm, test_security)
-  - [ ] Fix any failures
+- [x] **7.7 — Run all tests**
+  - [x] `pytest tests/ -v --tb=short`
+  - [x] Verify all tests pass (test_features, test_models, test_quantization, test_llm, test_security)
+  - [x] Fix any failures
 
 ---
 

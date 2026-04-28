@@ -1,8 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
-from typing import Dict, List
-import datetime
+from typing import Dict
 
 def render_verdict(prediction: str, confidence: float, time_ms: float):
     """Render the animated verdict card."""

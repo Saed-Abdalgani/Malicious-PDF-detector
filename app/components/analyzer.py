@@ -3,10 +3,9 @@ import time
 import tempfile
 import os
 import torch
-import numpy as np
 import pandas as pd
 from dataclasses import dataclass
-from typing import Dict, Tuple
+from typing import Dict
 
 from src.features.vectorizer import pdf_to_vector, load_scaler
 from src.models.mlp import MaliciousPDFClassifier

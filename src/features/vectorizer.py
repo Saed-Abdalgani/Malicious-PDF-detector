@@ -24,7 +24,6 @@ Usage (inference time / Streamlit app):
     vector = pdf_to_vector("uploads/suspicious.pdf")
 """
 
-import os
 from pathlib import Path
 from typing import Dict, Optional, Tuple, Union
 
@@ -36,7 +35,6 @@ from sklearn.preprocessing import StandardScaler
 from src.config import (
     FEATURE_COLUMNS,
     MODELS_DIR,
-    PROCESSED_DATA_DIR,
 )
 from src.features.metadata import extract_metadata_features
 from src.features.structural import extract_structural_features

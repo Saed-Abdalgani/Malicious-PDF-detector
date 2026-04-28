@@ -36,7 +36,7 @@ import hashlib
 import json
 from dataclasses import dataclass, field, asdict
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 from src.utils.logger import get_logger
 
@@ -148,8 +148,8 @@ class ThreatReport:
             "",
             "## 📋 Summary",
             "",
-            f"| Field | Value |",
-            f"|-------|-------|",
+            "| Field | Value |",
+            "|-------|-------|",
             f"| **File** | `{self.filename}` |",
             f"| **SHA-256** | `{self.file_hash[:16]}...{self.file_hash[-8:]}` |" if self.file_hash else "| **SHA-256** | _not available_ |",
             f"| **ML Verdict** | **{self.ml_prediction}** |",
@@ -446,7 +446,7 @@ if __name__ == "__main__":
 
     # Roundtrip test
     restored = ThreatReport.from_json(js)
-    print(f"\n--- Roundtrip Test ---")
+    print("\n--- Roundtrip Test ---")
     print(f"Hash match: {restored.file_hash == report.file_hash}")
     print(f"Prediction match: {restored.ml_prediction == report.ml_prediction}")
     print(f"Features match: {len(restored.suspicious_features) == len(report.suspicious_features)}")

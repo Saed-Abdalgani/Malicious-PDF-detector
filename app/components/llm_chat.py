@@ -1,6 +1,4 @@
 import streamlit as st
-import io
-import json
 from src.llm.client import GemmaClient
 from src.llm.analyzer import ThreatAnalyzer
 from app.components.analyzer import AnalysisResult

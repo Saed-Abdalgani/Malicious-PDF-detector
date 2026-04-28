@@ -25,7 +25,6 @@ Usage:
 """
 
 import re
-import signal
 import threading
 from pathlib import Path
 from typing import Dict, Union

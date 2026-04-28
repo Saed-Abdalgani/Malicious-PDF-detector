@@ -34,10 +34,8 @@ Usage:
 
 import re
 import time
-from pathlib import Path
 from typing import Dict, Generator, List, Optional, Tuple
 
-import numpy as np
 
 from src.config import FEATURE_COLUMNS, MODELS_DIR
 from src.llm.client import GemmaClient
@@ -207,7 +205,7 @@ class ThreatAnalyzer:
             if abs(deviation) > _DEVIATION_THRESHOLD:
                 description = FEATURE_DESCRIPTIONS.get(
                     feature_name,
-                    f"Feature value deviates significantly from benign baseline"
+                    "Feature value deviates significantly from benign baseline"
                 )
                 suspicious.append((feature_name, value, deviation, description))
 
@@ -215,7 +213,7 @@ class ThreatAnalyzer:
             elif feature_name in _HIGH_RISK_FEATURES and value > 0:
                 description = FEATURE_DESCRIPTIONS.get(
                     feature_name,
-                    f"High-risk feature with non-zero value"
+                    "High-risk feature with non-zero value"
                 )
                 suspicious.append((feature_name, value, deviation, description))
 

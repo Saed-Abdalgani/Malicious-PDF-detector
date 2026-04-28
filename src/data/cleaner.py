@@ -7,7 +7,6 @@ missing values (dropping / imputing), removing constant columns,
 and flagging outliers using IQR bounds.
 """
 import pandas as pd
-import numpy as np
 from src.config import PROCESSED_DATA_DIR, FEATURE_COLUMNS
 from src.utils.logger import get_logger
 

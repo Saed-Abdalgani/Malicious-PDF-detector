@@ -15,7 +15,7 @@ from app.components.uploader import render_upload_zone
 from app.components.analyzer import PDFAnalyzer
 from app.components.dashboard import render_verdict, render_confidence_gauge, render_feature_radar, render_scan_history
 from app.components.llm_chat import render_llm_panel
-from src.config import MODELS_DIR, PROJECT_ROOT
+from src.config import PROJECT_ROOT
 
 # Load Custom CSS
 def load_css():

@@ -47,6 +47,7 @@ from src.llm.prompts import (
     SYSTEM_PROMPT,
     THREAT_ANALYSIS_TEMPLATE,
     format_feature_summary,
+    format_shap_drivers,
     format_suspicious_features,
 )
 from src.llm.report_generator import ThreatReport, generate_file_hash
@@ -238,12 +239,13 @@ class ThreatAnalyzer:
         filename: str = "unknown.pdf",
         pdf_bytes: Optional[bytes] = None,
         processing_time_ms: float = 0.0,
+        ml_drivers: Optional[List[Tuple]] = None,
     ) -> ThreatReport:
         """Run full LLM-powered threat analysis on a classified PDF.
 
-        Constructs a detailed prompt with ML results and suspicious
-        feature highlights, sends it to the LLM, and parses the response
-        into a structured ``ThreatReport``.
+        Constructs a detailed prompt with ML results, suspicious feature
+        highlights, and (optionally) the model's SHAP decision drivers, sends
+        it to the LLM, and parses the response into a structured ``ThreatReport``.
 
         Args:
             features: Raw (unscaled) feature dictionary.
@@ -252,6 +254,9 @@ class ThreatAnalyzer:
             filename: Original PDF filename (sanitized).
             pdf_bytes: Raw PDF bytes for hash generation (optional).
             processing_time_ms: ML pipeline processing time.
+            ml_drivers: Optional SHAP drivers ``[(feature, shap_value, direction)]``
+                        from ``src.features.explain`` to ground the analysis in
+                        the model's actual decision logic.
 
         Returns:
             ThreatReport: Complete structured threat report.
@@ -272,13 +277,14 @@ class ThreatAnalyzer:
         else:
             template = QUICK_SUMMARY_TEMPLATE
 
-        # Build prompt
+        # Build prompt (ml_drivers kwarg is ignored by the quick-summary template)
         prompt = template.format(
             prediction=prediction,
             confidence=confidence * 100,
             processing_time=processing_time_ms,
             feature_summary=format_feature_summary(features),
             suspicious_features=format_suspicious_features(suspicious),
+            ml_drivers=format_shap_drivers(ml_drivers),
         )
 
         # Call LLM
@@ -348,6 +354,7 @@ class ThreatAnalyzer:
         features: Dict[str, float],
         prediction: str,
         confidence: float,
+        ml_drivers: Optional[List[Tuple]] = None,
     ) -> Generator[str, None, None]:
         """Stream LLM threat analysis token by token.
 
@@ -357,6 +364,7 @@ class ThreatAnalyzer:
             features: Raw feature dictionary.
             prediction: ML prediction.
             confidence: ML confidence.
+            ml_drivers: Optional SHAP decision drivers for grounding.
 
         Yields:
             str: Individual response tokens.
@@ -374,6 +382,7 @@ class ThreatAnalyzer:
             processing_time=0,
             feature_summary=format_feature_summary(features),
             suspicious_features=format_suspicious_features(suspicious),
+            ml_drivers=format_shap_drivers(ml_drivers),
         )
 
         yield from self.client.generate_stream(

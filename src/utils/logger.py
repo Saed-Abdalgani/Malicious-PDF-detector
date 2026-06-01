@@ -15,6 +15,14 @@ from src.config import RESULTS_DIR
 # Initialize colorama for cross-platform colored terminal output
 init(autoreset=True)
 
+# Ensure the console can render non-ASCII characters (e.g. arrows, sigma,
+# emojis) instead of crashing on Windows' default cp1252 code page.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 class ColoredFormatter(logging.Formatter):
     """Custom formatting for console output with colors based on level."""
     

@@ -1,0 +1,4 @@
+# Optional: pull simple public datasets (Hugging Face Hub) into data/external/
+# pip install -r requirements-optional-datasets.txt
+datasets>=2.14.0
+huggingface_hub>=0.20.0

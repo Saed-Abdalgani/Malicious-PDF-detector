@@ -689,3 +689,57 @@ def plot_outlier_summary(
     plt.tight_layout()
     _save_figure(fig, save_path)
     return fig
+
+
+def plot_calibration_curve(
+    curves: Dict[str, Dict[str, "np.ndarray"]],
+    save_path: Optional[str] = None,
+    title: str = "Calibration (Reliability) Curves",
+) -> plt.Figure:
+    """Plot reliability curves comparing predicted vs. observed probabilities.
+
+    A well-calibrated model lies on the diagonal: when it predicts 0.8, the
+    event truly occurs ~80% of the time. Useful for a security tool where
+    confidence scores must be trustworthy.
+
+    Args:
+        curves: ``{model_name: {"prob_pred": array, "prob_true": array,
+                 "brier": float}}`` (e.g. from ``sklearn.calibration.calibration_curve``).
+        save_path: Optional output path.
+        title: Figure title.
+
+    Returns:
+        plt.Figure: The calibration figure.
+    """
+    _apply_dark_theme()
+    logger.info("Generating calibration curves...")
+
+    fig, ax = plt.subplots(figsize=(9, 8))
+
+    # Perfectly-calibrated diagonal
+    ax.plot(
+        [0, 1], [0, 1],
+        color=COLORS["text_muted"], linewidth=1.2, linestyle="--",
+        alpha=0.7, label="Perfectly calibrated",
+    )
+
+    for idx, (name, data) in enumerate(curves.items()):
+        color = GRADIENT_PALETTE[idx % len(GRADIENT_PALETTE)]
+        brier = data.get("brier")
+        label = f"{name}" + (f" (Brier={brier:.4f})" if brier is not None else "")
+        ax.plot(
+            data["prob_pred"], data["prob_true"],
+            color=color, linewidth=2.5, marker="o", markersize=5,
+            alpha=0.9, label=label, zorder=3,
+        )
+
+    ax.set_title(title, pad=15)
+    ax.set_xlabel("Mean predicted probability", labelpad=10)
+    ax.set_ylabel("Fraction of positives (observed)", labelpad=10)
+    ax.set_xlim([-0.02, 1.02])
+    ax.set_ylim([-0.02, 1.02])
+    ax.legend(loc="upper left", fontsize=10)
+
+    plt.tight_layout()
+    _save_figure(fig, save_path)
+    return fig

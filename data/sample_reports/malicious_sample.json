@@ -1,0 +1,109 @@
+{
+  "timestamp": "2026-06-01T14:04:32.873389+00:00",
+  "file_hash": "6b294a46b1afa97be4e99b0173063335892bd0fbc23754d69ae8449a9cddf1b6",
+  "filename": "malicious_sample.pdf",
+  "ml_prediction": "Malicious",
+  "ml_confidence": 0.95,
+  "risk_severity": "Critical",
+  "threat_explanation": "This file exhibits structural indicators consistent with a malicious PDF. The static extractor flagged the following high-risk indicators: `xfa_count`=2, `js_count`=1, `javascript_count`=1, `openaction_count`=1, `aa_count`=1. The model's own decision drivers (SHAP) were: `avg_stream_size` (+0.242), `uri_count` (+0.219), `pdf_size` (-0.175), `indirect_obj_count` (-0.106), `obj_count_total` (-0.088). The presence of auto-execute and scripting actions, combined with obfuscation indicators, is characteristic of a JavaScript-based exploit chain delivered via a crafted document. _(Offline cached report — generated without the LLM.)_",
+  "attack_vector": "",
+  "suspicious_features": [
+    [
+      "xfa_count",
+      2.0,
+      20.0,
+      "/XFA tags — XML Forms Architecture, complex exploit surface"
+    ],
+    [
+      "js_count",
+      1.0,
+      10.0,
+      "/JS tags — JavaScript action references, primary exploit vector"
+    ],
+    [
+      "javascript_count",
+      1.0,
+      10.0,
+      "/JavaScript tags — explicit JavaScript action declarations"
+    ],
+    [
+      "openaction_count",
+      1.0,
+      10.0,
+      "/OpenAction tags — auto-execute on document open (high-risk)"
+    ],
+    [
+      "aa_count",
+      1.0,
+      10.0,
+      "/AA (Additional Actions) — triggered by page events, navigation"
+    ],
+    [
+      "launch_count",
+      1.0,
+      10.0,
+      "/Launch tags — execute external applications (critical risk)"
+    ],
+    [
+      "submitform_count",
+      1.0,
+      10.0,
+      "/SubmitForm tags — data exfiltration via form submission"
+    ],
+    [
+      "richmedia_count",
+      1.0,
+      10.0,
+      "/RichMedia tags — embedded Flash/multimedia content"
+    ],
+    [
+      "jbig2decode_count",
+      1.0,
+      10.0,
+      "/JBig2Decode — image decoder historically linked to CVE-2009-0658"
+    ]
+  ],
+  "remediation": "1. **Quarantine** — Isolate this file immediately\n2. **Do not open** — Do not open in any PDF reader\n3. **Investigate source** — Check the email/download origin\n4. **Alert security team** — Escalate for manual review\n5. **Block indicators** — Add file hash to blocklist",
+  "processing_time_ms": 0.7879000040702522,
+  "model_used": "offline-cache (no Ollama)",
+  "raw_llm_response": "This file exhibits structural indicators consistent with a malicious PDF. The static extractor flagged the following high-risk indicators: `xfa_count`=2, `js_count`=1, `javascript_count`=1, `openaction_count`=1, `aa_count`=1. The model's own decision drivers (SHAP) were: `avg_stream_size` (+0.242), `uri_count` (+0.219), `pdf_size` (-0.175), `indirect_obj_count` (-0.106), `obj_count_total` (-0.088). The presence of auto-execute and scripting actions, combined with obfuscation indicators, is characteristic of a JavaScript-based exploit chain delivered via a crafted document. _(Offline cached report — generated without the LLM.)_",
+  "feature_summary": {
+    "obj_count": 14.0,
+    "endobj_count": 14.0,
+    "stream_count": 3.0,
+    "endstream_count": 3.0,
+    "xref_count": 1.0,
+    "trailer_count": 1.0,
+    "startxref_count": 1.0,
+    "js_count": 1.0,
+    "javascript_count": 1.0,
+    "action_count": 4.0,
+    "openaction_count": 1.0,
+    "aa_count": 1.0,
+    "launch_count": 1.0,
+    "uri_count": 2.0,
+    "submitform_count": 1.0,
+    "acroform_count": 1.0,
+    "xfa_count": 2.0,
+    "richmedia_count": 1.0,
+    "jbig2decode_count": 1.0,
+    "colors_count": 1.0,
+    "objstm_count": 1.0,
+    "filter_count": 2.0,
+    "obfuscation_count": 0.0,
+    "avg_stream_size": 20.666666666666668,
+    "indirect_obj_count": 9.0,
+    "pdf_size": 1440.0,
+    "title_chars": 0.0,
+    "is_encrypted": 0.0,
+    "metadata_size": 0.0,
+    "page_count": 1.0,
+    "has_text": 0.0,
+    "image_count": 0.0,
+    "obj_count_total": 14.0,
+    "font_obj_count": 1.0,
+    "embedded_file_count": 0.0,
+    "avg_embedded_media_size": 0.0,
+    "header_valid": 1.0
+  }
+}

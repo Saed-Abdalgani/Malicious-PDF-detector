@@ -981,6 +981,83 @@ ollama run gemma4:e4b "Hello, are you ready for PDF malware analysis?"
 
 ---
 
+## Phase 10+: Path to Top Grade
+
+> **Status**: Phases 0–9 delivered the full scaffolding. Phase 10+ is about turning
+> a complete-but-unverified system into a **defensible, top-grade submission**.
+> The work is organised around what a university rubric actually rewards:
+> correct + honest results, reproducibility, methodological rigor, a genuine
+> differentiator, and a polished report/defense.
+
+### Reality check (what grounding revealed)
+
+Running the real artifacts surfaced three findings that drive this phase:
+
+| # | Finding | Consequence |
+|---|---------|-------------|
+| 1 | **README results were inflated.** README advertised F1 ≈ 99.8% / AUC ≈ 0.999, but `reports/results/model_comparison.csv` shows the real numbers (MLP F1 ≈ 0.864, LightGBM ≈ 0.851, RF ≈ 0.847, XGBoost ≈ 0.822). | Replace all reported numbers with the measured ones. Inflated claims are a credibility/marks risk. |
+| 2 | **Train/inference normalization mismatch (critical).** The CIC CSV features are min-max normalized to ≈[0,1] (the saved `StandardScaler` has per-feature mean ≈ 0.5, std ≈ 0.29). The live extractor (`src/features/`) emits **raw counts and byte sizes**. Passing raw values through that scaler pushes byte-size features to ~+1900σ, saturating the network, so every uploaded PDF collapses to a single verdict (the bundled `malicious_sample.pdf` is scored Benign). | The model is sound on properly-normalized test data (hence real F1 ≈ 0.86), but the **deployment path is broken**. The principled fix is to train on features extracted directly from the dataset PDFs so training == inference. |
+| 3 | **Quantization works and is honest.** Measured FP32 ≈ 0.068 MB → INT8 dynamic ≈ 0.028 MB (~59% smaller) on this machine; `fbgemm` is unavailable in this PyTorch build, so the quantizer now falls back to a supported engine. | Use measured numbers; keep the engine-fallback fix. |
+
+### Corrected results narrative (truthful)
+
+```text
+Model           Accuracy  F1      Precision  Recall   AUC-ROC  Inference(ms)
+MLP (PyTorch)   0.9200    0.8636  0.9048     0.8261   0.9760   42.0
+LightGBM        0.9133    0.8506  0.9024     0.8043   0.9613   38.1
+Random Forest   0.9133    0.8471  0.9231     0.7826   0.9620   867.8
+XGBoost         0.8933    0.8222  0.8409     0.8043   0.9590   14.1
+
+Quantization (MLP):  FP32 0.068 MB  →  INT8 dynamic 0.028 MB  (~59% smaller)
+```
+
+> These are the numbers that must appear in the README and the final report.
+> If the pipeline is later re-run on the full dataset (e.g. Colab), regenerate
+> `model_comparison.csv` and update both documents from that artifact.
+
+### Workstream A — Truth & Reproducibility
+- Rewrite the README results + quantization sections from the artifacts above.
+- New `src/run_all.py` (`python -m src.run_all`): download → clean → split → train →
+  quantize → evaluate, with graceful handling when the dataset is absent.
+- `--from-pdfs` mode: extract features straight from a PDF corpus so the training
+  representation matches inference (the fix for finding #2).
+- "Reproduce in 3 commands" block in the README, fixed `RANDOM_SEED=42`.
+
+### Workstream B — Scientific Rigor
+- `cross_validate_model()` (stratified k-fold, mean ± std) in `src/models/evaluator.py`.
+- `leakage_audit()` — exact/near-duplicate detection across train/test (the CIC set is
+  known to be easy; probing this honestly is a rigor signal).
+- `calibration_report()` + reliability curve in `src/utils/visualization.py`.
+- `src/features/consistency.py` — quantifies the CSV-vs-live mismatch (finding #2) so it
+  is demonstrated with evidence rather than asserted.
+
+### Workstream C — Differentiator 1: Adversarial Robustness
+- `src/security/adversarial.py`: a small evasion harness that mutates PDFs (keyword
+  obfuscation, padding, object-stream nesting, junk objects) and measures detection drift.
+- Output `reports/results/adversarial_robustness.csv` + a threat-model write-up that is
+  honest about where static-feature detection fails.
+
+### Workstream D — Differentiator 2: Grounded Explainability
+- `src/features/explain.py`: SHAP global + per-sample attributions for the MLP and trees.
+- Feed the top SHAP drivers into the LLM prompt (`src/llm/prompts.py`,
+  `ThreatAnalyzer.analyze()`), so the AI report explains the model's *actual* decision
+  drivers — a tight, defensible ML↔LLM coupling.
+
+### Workstream E — Bulletproof Demo
+- Cache `ThreatReport`s for the bundled samples in `data/sample_reports/`; `llm_chat.py`
+  falls back to them when Ollama is offline so the AI page always renders in a live demo.
+- Ship `models/quantized/mlp_quantized_dynamic.pt` + `scaler.pkl` so a clean clone runs
+  `streamlit run app/streamlit_app.py` without a training pass (document Git LFS guidance).
+- Document the Colab + Ollama path for the full Gemma 4 E4B experience.
+
+### Workstream F — Report & Presentation
+- Update `notebooks/07_final_report.ipynb` with the real metrics, a critical limitations
+  section (normalization mismatch, dataset easiness), ethics, and future work.
+- Add a "Defense Q&A" appendix anticipating grader questions.
+- Document the screenshot-capture procedure for the README image placeholders.
+
+---
+
 ## Verification Plan
 
 ### Automated Tests

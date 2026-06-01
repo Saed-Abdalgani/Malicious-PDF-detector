@@ -88,6 +88,14 @@ reports/results/*.log
 reports/figures/*.png
 
 # ─────────────────────────────────────────────────────────
+# Optional external dataset pulls (see data/external/README.md)
+# ─────────────────────────────────────────────────────────
+data/external/downloads/*
+!data/external/downloads/.gitkeep
+data/external/hf_cache/*
+!data/external/hf_cache/.gitkeep
+
+# ─────────────────────────────────────────────────────────
 # Temporary & Cache Files
 # ─────────────────────────────────────────────────────────
 *.tmp

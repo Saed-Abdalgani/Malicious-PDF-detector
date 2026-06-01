@@ -1,0 +1,4 @@
+Variant,Size (MB)
+MLP (FP32),0.0684
+MLP (INT8 dynamic),0.0283
+Size reduction (%),58.7

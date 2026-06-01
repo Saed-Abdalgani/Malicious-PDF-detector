@@ -200,10 +200,29 @@ class ModelQuantizer:
         backend: str = QUANTIZATION_BACKEND,
     ):
         self.fp32_model = model
-        self.backend    = backend
 
-        torch.backends.quantized.engine = backend
-        logger.info(f"ModelQuantizer initialised — backend: {backend}")
+        # Select a supported quantization engine. The configured backend
+        # (e.g. 'fbgemm') may be unavailable in some PyTorch builds; fall
+        # back to whatever the current build supports so quantization never
+        # hard-crashes on a non-x86/fbgemm-less environment.
+        supported = list(torch.backends.quantized.supported_engines)
+        supported = [e for e in supported if e != "none"]
+        if backend not in supported and supported:
+            chosen = "qnnpack" if "qnnpack" in supported else supported[0]
+            logger.warning(
+                f"Quantization backend '{backend}' unavailable in this "
+                f"PyTorch build (supported: {supported}). "
+                f"Falling back to '{chosen}'."
+            )
+            backend = chosen
+
+        self.backend = backend
+        try:
+            torch.backends.quantized.engine = backend
+        except RuntimeError as exc:
+            logger.warning(f"Could not set quantized engine '{backend}': {exc}")
+
+        logger.info(f"ModelQuantizer initialised — backend: {self.backend}")
 
     # ------------------------------------------------------------------
     # Dynamic quantization

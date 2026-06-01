@@ -106,6 +106,12 @@ THREAT_ANALYSIS_TEMPLATE = """\
 The following features deviate significantly (>2σ) from the benign baseline:
 {suspicious_features}
 
+### 🧠 ML Decision Drivers (SHAP)
+These are the features that *most influenced the model's own verdict*, with the
+direction each pushed the score (computed via SHAP, not guessed). Ground your
+analysis in these drivers:
+{ml_drivers}
+
 ---
 
 **Please provide a comprehensive threat analysis covering:**
@@ -253,6 +259,36 @@ def format_feature_summary(features: dict) -> str:
     return "\n".join(lines)
 
 
+def format_shap_drivers(drivers: list) -> str:
+    """Format SHAP decision drivers as readable Markdown bullets.
+
+    Args:
+        drivers: List of ``(feature_name, shap_value, direction)`` tuples, where
+                 direction is "increases"/"decreases" (the malicious score).
+
+    Returns:
+        str: Markdown bullet list, or a fallback note if no drivers are given.
+    """
+    if not drivers:
+        return (
+            "_SHAP attributions unavailable — falling back to baseline-deviation "
+            "analysis above._"
+        )
+    lines = []
+    for item in drivers:
+        if len(item) >= 3:
+            name, value, direction = item[:3]
+        else:
+            name, value = item[0], float(item[1])
+            direction = "increases" if value > 0 else "decreases"
+        arrow = "⬆️" if value > 0 else "⬇️"
+        lines.append(
+            f"- {arrow} **`{name}`** (SHAP {value:+.4f}) — {direction} the "
+            f"malicious score"
+        )
+    return "\n".join(lines)
+
+
 def format_suspicious_features(suspicious: list) -> str:
     """Format suspicious feature list as readable Markdown bullets.
 
@@ -355,12 +391,19 @@ if __name__ == "__main__":
         ("obfuscation_count", 12.0, 6.1, FEATURE_DESCRIPTIONS["obfuscation_count"]),
     ]
 
+    sample_drivers = [
+        ("openaction_count", 0.31, "increases"),
+        ("js_count", 0.22, "increases"),
+        ("obfuscation_count", 0.14, "increases"),
+    ]
+
     prompt = THREAT_ANALYSIS_TEMPLATE.format(
         prediction="Malicious",
         confidence=97.3,
         processing_time=42,
         feature_summary=format_feature_summary(sample_features),
         suspicious_features=format_suspicious_features(sample_suspicious),
+        ml_drivers=format_shap_drivers(sample_drivers),
     )
 
     print("\n--- THREAT_ANALYSIS_TEMPLATE (formatted) ---")

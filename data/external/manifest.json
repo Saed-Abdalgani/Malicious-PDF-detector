@@ -1,0 +1,78 @@
+[
+  {
+    "id": "cic-evasive-pdfmal2022",
+    "provider": "UNB_CIC",
+    "title": "CIC-Evasive-PDFMal2022 (primary benchmark for this repo)",
+    "simple": true,
+    "how": "Download from the official UNB page and save as data/raw/pdfmal2022.csv (or use Kaggle mirror + downloader.py).",
+    "url": "https://www.unb.ca/cic/datasets/pdfmal-2022.html"
+  },
+  {
+    "id": "zenodo-android-malware-csv",
+    "provider": "Zenodo",
+    "title": "Android malware dataset (tabular CSV, ~52 KB - Zenodo smoke test)",
+    "simple": true,
+    "zenodo_record_id": 18627925,
+    "file_key": "android_malware_dataset.csv",
+    "how": "python scripts/fetch_optional_datasets.py zenodo-get 18627925 android_malware_dataset.csv",
+    "url": "https://zenodo.org/records/18627925"
+  },
+  {
+    "id": "hf-phishing-url-sample",
+    "provider": "HuggingFace",
+    "title": "Phishing URL dataset (tabular; security-adjacent, easy HF load)",
+    "simple": true,
+    "hf_dataset": "pirocheto/phishing-url",
+    "hf_split": "train[:2000]",
+    "how": "pip install -r requirements-optional-datasets.txt && python scripts/fetch_optional_datasets.py hf-export pirocheto/phishing-url \"train[:2000]\" data/external/hf_cache/phishing_url_sample.csv",
+    "url": "https://huggingface.co/datasets/pirocheto/phishing-url"
+  },
+  {
+    "id": "google-dataset-search",
+    "provider": "GoogleDatasetSearch",
+    "title": "Cross-repository discovery",
+    "simple": true,
+    "how": "Open the pre-filled search (no API).",
+    "url": "https://datasetsearch.research.google.com/search?query=pdf%20malware%20dataset"
+  },
+  {
+    "id": "ieee-dataport",
+    "provider": "IEEEDataport",
+    "title": "IEEE security / ML datasets (often requires IEEE login)",
+    "simple": false,
+    "how": "Browse manually; many deposits need membership.",
+    "url": "https://ieee-dataport.org/"
+  },
+  {
+    "id": "virustotal",
+    "provider": "VirusTotal",
+    "title": "File/URL telemetry (API key + acceptable use)",
+    "simple": false,
+    "how": "Not bundled — use VT API or academic programs if your institution allows it.",
+    "url": "https://www.virustotal.com/gui/my-apikey"
+  },
+  {
+    "id": "malware-bazaar",
+    "provider": "MalwareBazaar",
+    "title": "Abuse.ch malware sample feed (research terms apply)",
+    "simple": false,
+    "how": "Use the official API only with institutional approval; do not auto-download live malware in coursework without supervision.",
+    "url": "https://bazaar.abuse.ch/"
+  },
+  {
+    "id": "contagio",
+    "provider": "Contagio",
+    "title": "Classic PDF/malware reference collections (manual download)",
+    "simple": false,
+    "how": "Manual download from the blog; no stable public API for batch fetch.",
+    "url": "https://contagiomidump.blogspot.com/"
+  },
+  {
+    "id": "mitre-attack",
+    "provider": "MITRE",
+    "title": "ATT&CK (taxonomy for explanations, not training CSVs)",
+    "simple": true,
+    "how": "Already referenced in LLM prompts (src/llm/prompts.py).",
+    "url": "https://attack.mitre.org/"
+  }
+]

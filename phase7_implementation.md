@@ -1,5 +1,7 @@
 # Phase 7 Implementation Report: Testing & Quality Assurance
 
+**Author:** Saed Abdalgani
+
 ## Overview
 This report documents the completion of **Phase 7: Testing & Quality Assurance** for the Malicious PDF Detector. The goal of this phase was to implement a comprehensive test suite using `pytest` to validate feature extraction, model performance, quantization optimization, LLM integration, and strict security constraints. 
 

@@ -1,5 +1,6 @@
 # 📋 Malicious PDF Detector — Master TODO
 
+> **Author:** Saed Abdalgani  
 > **Project**: Lightweight Malicious PDF Detector using Structural Features, Quantization & LLM Analysis
 > **Status**: 🟢 Phases 0–9 Complete · 🟡 Phase 10–12 (Path to Top Grade) In Progress
 > **Last Updated**: 2026-06-01

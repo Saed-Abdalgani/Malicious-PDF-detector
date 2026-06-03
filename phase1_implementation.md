@@ -1,6 +1,8 @@
 # 🚀 Phase 1 Implementation Report
 > **Malicious PDF Detector — Data Collection & Preprocessing**
 
+**Author:** Saed Abdalgani
+
 *A "Legendary" Achievement in Data Engineering* 🛠️✨
 
 ## 🌟 Executive Summary

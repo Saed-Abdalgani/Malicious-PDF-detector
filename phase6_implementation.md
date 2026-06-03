@@ -1,5 +1,7 @@
 # Phase 6 Implementation Report: Streamlit Application & Local Deployment
 
+**Author:** Saed Abdalgani
+
 This document summarizes the execution and completion of Phase 6 of the Malicious PDF Detector project.
 
 ## Overview

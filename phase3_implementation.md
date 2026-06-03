@@ -1,6 +1,8 @@
 # 🔧 Phase 3 Implementation Report
 > **Malicious PDF Detector — Feature Engineering (Static PDF Analysis)**
 
+**Author:** Saed Abdalgani
+
 *Professional-Grade PDF Feature Extraction Pipeline* 📐🔬
 
 ## 🌟 Executive Summary

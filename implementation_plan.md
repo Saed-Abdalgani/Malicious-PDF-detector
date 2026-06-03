@@ -1,5 +1,7 @@
 # Lightweight Malicious PDF Detector — Implementation Plan
 
+**Author:** Saed Abdalgani
+
 ## Project Overview
 
 Build an end-to-end intelligent system that detects malicious PDF files using static structural analysis, machine learning, and LLM-powered threat explanation — optimized for real-time local CPU inference via model quantization. The system replaces signature-based detection with learned patterns, enabling zero-day threat detection without cloud dependency.

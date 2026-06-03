@@ -1,6 +1,8 @@
 # 🤖 Phase 4.5 Implementation Report
 > **Malicious PDF Detector — LLM Integration (Gemma 4 E4B via Ollama)**
 
+**Author:** Saed Abdalgani
+
 *Production-Grade Threat Intelligence Pipeline: 4 Modules, 5 Prompt Templates, Full Streaming Support* 🏆🛡️
 
 ---

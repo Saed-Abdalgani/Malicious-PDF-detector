@@ -5,7 +5,7 @@
 |---|---|
 | **Document Version** | 1.0 |
 | **Date** | April 6, 2026 |
-| **Author** | Saed N. |
+| **Author** | Saed Abdalgani |
 | **Status** | Approved for Development |
 | **Classification** | Academic / Research Project |
 

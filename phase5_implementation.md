@@ -1,5 +1,7 @@
 # Phase 5 Implementation Report: Model Optimization via Quantization
 
+**Author:** Saed Abdalgani
+
 ## Overview
 
 This document outlines the completion of **Phase 5** for the Malicious PDF Detector. The goal of this phase was to implement PyTorch post-training quantization (PTQ) to dramatically reduce the size and inference latency of the custom Multilayer Perceptron (MLP) model, without sacrificing detection accuracy.

@@ -1,5 +1,7 @@
 # Optional external datasets
 
+**Author:** Saed Abdalgani
+
 This folder holds **curated pointers** and **simple downloads** from public hubs
 (Zenodo, Hugging Face, Google Dataset Search links, etc.). It does **not** replace
 `data/raw/pdfmal2022.csv` for the main CIC pipeline unless you adapt the schema

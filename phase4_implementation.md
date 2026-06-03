@@ -1,6 +1,8 @@
 # 🧠 Phase 4 Implementation Report
 > **Malicious PDF Detector — Model Development, Benchmarking & Reporting**
 
+**Author:** Saed Abdalgani
+
 *Legendary-Grade ML Pipeline: 4 Models, Full GridSearchCV, Dark-Theme Reports* 🏆🔬
 
 ---

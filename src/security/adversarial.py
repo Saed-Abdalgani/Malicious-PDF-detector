@@ -233,6 +233,8 @@ def _write_threat_model(df: pd.DataFrame) -> None:
 
     md = f"""# Adversarial Robustness — Threat Model
 
+*Author: Saed Abdalgani*
+
 ## Setup
 The detector relies on **static structural features** — counts of literal PDF
 tokens (`/JavaScript`, `/OpenAction`, `/Launch`, ...). We apply parser-faithful

@@ -148,6 +148,8 @@ elif page == "ℹ️ About":
     st.markdown("<h1>About Malicious PDF Detector</h1>", unsafe_allow_html=True)
     st.markdown("""
     <div class="glass-card">
+    <h3>Author</h3>
+    <p>Saed Abdalgani</p>
     <h3>Project Overview</h3>
     <p>This application is a lightweight, high-performance detector for malicious PDF files. 
     It extracts 37 structural and metadata features from PDFs and uses a quantized PyTorch MLP 

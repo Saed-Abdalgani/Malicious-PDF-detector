@@ -1,6 +1,8 @@
 # 🔬 Phase 2 Implementation Report
 > **Malicious PDF Detector — Exploratory Data Analysis (EDA)**
 
+**Author:** Saed Abdalgani
+
 *Comprehensive Data Investigation & Statistical Discovery* 📊✨
 
 ## 🌟 Executive Summary

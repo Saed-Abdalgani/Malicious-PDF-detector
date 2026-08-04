@@ -45,7 +45,7 @@ from typing import Callable, Dict, List
 import numpy as np
 import pandas as pd
 
-from src.config import RESULTS_DIR, SAMPLE_PDFS_DIR, TRAINED_MODELS_DIR
+from src.config import RESULTS_DIR, SAMPLE_PDFS_DIR
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -141,14 +141,12 @@ def _signal(features: Dict[str, float]) -> float:
     return float(sum(features.get(f, 0.0) for f in _SIGNAL_FEATURES))
 
 
-def _model_prob(features: Dict[str, float], scaler, model) -> float:
+def _model_prob(features: Dict[str, float], pipeline, model) -> float:
     """Run the (current deployment) model on a feature dict. Returns P(malicious)."""
     import torch
 
-    from src.config import FEATURE_COLUMNS
-
-    vec = np.array([float(features.get(c, 0.0)) for c in FEATURE_COLUMNS]).reshape(1, -1)
-    x = torch.tensor(scaler.transform(vec), dtype=torch.float32)
+    vec = pipeline.transform_record(features).to_numpy(dtype=np.float32)
+    x = torch.tensor(vec, dtype=torch.float32)
     with torch.no_grad():
         return float(torch.sigmoid(model(x)).item())
 
@@ -157,7 +155,13 @@ def _model_prob(features: Dict[str, float], scaler, model) -> float:
 # Harness
 # ---------------------------------------------------------------------------
 
-def run_harness(sample_dir: Path = SAMPLE_PDFS_DIR, save: bool = True) -> pd.DataFrame:
+def run_harness(
+    sample_dir: Path = SAMPLE_PDFS_DIR,
+    save: bool = True,
+    *,
+    pipeline=None,
+    verified_model=None,
+) -> pd.DataFrame:
     """Apply every mutation to every sample PDF and measure detector drift.
 
     Args:
@@ -167,17 +171,10 @@ def run_harness(sample_dir: Path = SAMPLE_PDFS_DIR, save: bool = True) -> pd.Dat
     Returns:
         pd.DataFrame: One row per (pdf, mutation) with feature/model drift.
     """
-    from src.features.vectorizer import load_scaler
-    from src.models.mlp import load_mlp
+    from src.features.vectorizer import load_feature_pipeline
 
-    scaler = load_scaler()
-    model = None
-    mlp_path = TRAINED_MODELS_DIR / "mlp_best.pt"
-    if mlp_path.exists():
-        try:
-            model = load_mlp(mlp_path)
-        except Exception as exc:  # noqa: BLE001
-            logger.warning(f"Could not load model for adversarial run: {exc}")
+    active_pipeline = pipeline or load_feature_pipeline()
+    model = verified_model
 
     rows: List[dict] = []
     pdfs = sorted(Path(sample_dir).glob("*.pdf"))
@@ -186,7 +183,7 @@ def run_harness(sample_dir: Path = SAMPLE_PDFS_DIR, save: bool = True) -> pd.Dat
         original = pdf.read_bytes()
         base_feats = _features_for_bytes(original)
         base_signal = _signal(base_feats)
-        base_prob = _model_prob(base_feats, scaler, model) if model else float("nan")
+        base_prob = _model_prob(base_feats, active_pipeline, model) if model else float("nan")
 
         # baseline row
         rows.append({
@@ -200,7 +197,7 @@ def run_harness(sample_dir: Path = SAMPLE_PDFS_DIR, save: bool = True) -> pd.Dat
             mutated = fn(original)
             feats = _features_for_bytes(mutated)
             signal = _signal(feats)
-            prob = _model_prob(feats, scaler, model) if model else float("nan")
+            prob = _model_prob(feats, active_pipeline, model) if model else float("nan")
             drop = (1 - signal / base_signal) * 100 if base_signal else 0.0
             rows.append({
                 "pdf": pdf.name, "mutation": name,

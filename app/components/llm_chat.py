@@ -18,11 +18,10 @@ ML detection always works independently of the LLM.
 """
 
 import json
-from pathlib import Path
 
 import streamlit as st
 
-from src.config import FEATURE_COLUMNS, PROJECT_ROOT
+from src.config import PROJECT_ROOT
 from src.llm.client import GemmaClient
 from src.llm.analyzer import ThreatAnalyzer
 from src.llm.report_generator import ThreatReport
@@ -51,29 +50,16 @@ def _load_cached_reports() -> dict:
 
 
 def _compute_shap_drivers(analysis_result: AnalysisResult):
-    """Best-effort SHAP decision drivers from the analysis features (cached)."""
+    """Return only remediated explanation drivers; legacy scaler SHAP is forbidden."""
     key = f"drivers_{analysis_result.file_hash[:16]}"
     if key in st.session_state:
         return st.session_state[key]
 
     drivers = []
-    try:
-        import numpy as np
-        from src.features.explain import explain_mlp, top_attributions
-        from src.features.vectorizer import load_scaler
-        from src.models.mlp import load_mlp
-        from src.config import TRAINED_MODELS_DIR
-
-        scaler = load_scaler()
-        model = load_mlp(TRAINED_MODELS_DIR / "mlp_best.pt")
-        vec = np.array(
-            [float(analysis_result.features.get(c, 0.0)) for c in FEATURE_COLUMNS]
-        ).reshape(1, -1)
-        scaled = scaler.transform(vec)
-        sv = explain_mlp(model, scaled, nsamples=100)
-        drivers = top_attributions(sv[0], k=6)
-    except Exception as exc:  # noqa: BLE001
-        st.caption(f"SHAP drivers unavailable ({exc}); using baseline analysis.")
+    st.caption(
+        "Decision-driver explanations remain unavailable until the remediated "
+        "Phase 6 explainer is bound to the checksummed schema-v2 pipeline/model."
+    )
 
     st.session_state[key] = drivers
     return drivers

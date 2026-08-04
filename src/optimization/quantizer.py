@@ -288,14 +288,28 @@ class ModelQuantizer:
         q_model = _QuantizableClassifier.from_mlp(self.fp32_model)
         q_model.eval()
 
-        # Step 2 — Fuse Linear + BN + ReLU
+        # Step 2 — Fold BatchNorm into each Linear layer first. Recent
+        # oneDNN-only PyTorch builds no longer expose an eager-mode
+        # Linear+BatchNorm1d+ReLU fuser, while Linear+ReLU remains portable.
+        from torch.nn.utils.fusion import fuse_linear_bn_eval
+
+        for index in (1, 2, 3):
+            linear_name, bn_name = f"linear{index}", f"bn{index}"
+            setattr(
+                q_model,
+                linear_name,
+                fuse_linear_bn_eval(
+                    getattr(q_model, linear_name), getattr(q_model, bn_name)
+                ),
+            )
+            setattr(q_model, bn_name, nn.Identity())
         fuse_list = [
-            ["linear1", "bn1", "relu1"],
-            ["linear2", "bn2", "relu2"],
-            ["linear3", "bn3", "relu3"],
+            ["linear1", "relu1"],
+            ["linear2", "relu2"],
+            ["linear3", "relu3"],
         ]
         torch.quantization.fuse_modules(q_model, fuse_list, inplace=True)
-        logger.info("Layer fusion complete: Linear+BN+ReLU fused.")
+        logger.info("Layer fusion complete: BN folded and Linear+ReLU fused.")
 
         # Step 3 — Set qconfig
         q_model.qconfig = torch.quantization.get_default_qconfig(self.backend)

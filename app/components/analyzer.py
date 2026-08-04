@@ -7,9 +7,15 @@ import pandas as pd
 from dataclasses import dataclass
 from typing import Dict
 
-from src.features.vectorizer import pdf_to_vector, load_scaler
+from src.artifacts import verify_deployable_model_artifact
+from src.experiment import create_experiment_identity, load_experiment_config
+from src.features.vectorizer import (
+    FEATURE_PIPELINE_PATH,
+    load_feature_pipeline,
+    pdf_to_pipeline_vector,
+)
 from src.models.mlp import MaliciousPDFClassifier
-from src.config import MODELS_DIR
+from src.config import DATA_REPORTS_DIR, MODELS_DIR, SPLITS_DIR, SPLIT_SCHEMA_VERSION
 
 @dataclass
 class AnalysisResult:
@@ -22,21 +28,38 @@ class AnalysisResult:
 class PDFAnalyzer:
     def __init__(self):
         """Initialize the analyzer by loading the quantized model and scaler into session state."""
-        if "model" not in st.session_state or "scaler" not in st.session_state:
+        if "model" not in st.session_state or "feature_pipeline" not in st.session_state:
             with st.spinner("Loading models..."):
-                # Load scaler
+                active_identity = create_experiment_identity(load_experiment_config())
+                # Load the same serialized feature pipeline used during training.
                 try:
-                    st.session_state.scaler = load_scaler()
+                    st.session_state.feature_pipeline = load_feature_pipeline(
+                        FEATURE_PIPELINE_PATH
+                    )
                 except Exception as e:
-                    st.error(f"Failed to load scaler: {e}")
-                    st.session_state.scaler = None
+                    st.error(f"Failed to load feature pipeline: {e}")
+                    st.session_state.feature_pipeline = None
 
                 # Load model
                 try:
                     # Try loading quantized model first if it exists
                     quantized_path = MODELS_DIR / "quantized" / "mlp_quantized_dynamic.pt"
-                    model = MaliciousPDFClassifier()
-                    if quantized_path.exists():
+                    trained_path = MODELS_DIR / "trained" / "mlp_best.pt"
+                    model_path = quantized_path if quantized_path.exists() else trained_path
+                    model_metadata = verify_deployable_model_artifact(
+                        model_path,
+                        active_identity,
+                        dataset_quality_path=DATA_REPORTS_DIR / "dataset_quality.json",
+                        split_manifest_path=(
+                            SPLITS_DIR / SPLIT_SCHEMA_VERSION / "split_manifest.json"
+                        ),
+                        feature_pipeline_path=FEATURE_PIPELINE_PATH,
+                    )
+                    st.session_state.threshold = float(model_metadata.extra["threshold"])
+
+                    input_dim = len(st.session_state.feature_pipeline.output_feature_names_)
+                    model = MaliciousPDFClassifier(input_dim=input_dim)
+                    if model_path == quantized_path:
                         # Note: If quantized, need to properly load state dict
                         model.load_state_dict(torch.load(quantized_path, map_location='cpu'))
                         model = torch.quantization.quantize_dynamic(
@@ -44,7 +67,6 @@ class PDFAnalyzer:
                         )
                     else:
                         # Fallback to trained FP32
-                        trained_path = MODELS_DIR / "trained" / "mlp_best.pt"
                         model.load_state_dict(torch.load(trained_path, map_location='cpu'))
                     
                     model.eval()
@@ -55,8 +77,8 @@ class PDFAnalyzer:
 
     def analyze(self, uploaded_file) -> AnalysisResult:
         """Run the end-to-end inference pipeline on the uploaded file."""
-        if not st.session_state.model or not st.session_state.scaler:
-            raise RuntimeError("Model or scaler not loaded.")
+        if not st.session_state.model or not st.session_state.feature_pipeline:
+            raise RuntimeError("Model or schema-v2 feature pipeline not loaded.")
 
         start_time = time.perf_counter()
         
@@ -66,8 +88,18 @@ class PDFAnalyzer:
             tmp_path = tmp.name
             
         try:
-            # 1. Extract features and scale
-            scaled_vector, raw_features = pdf_to_vector(tmp_path, scaler=st.session_state.scaler, return_raw=True)
+            # 1. Extract and apply the exact serialized training pipeline.
+            scaled_vector, raw_features, diagnostics = pdf_to_pipeline_vector(
+                tmp_path, pipeline=st.session_state.feature_pipeline
+            )
+            if diagnostics["abstain_recommended"]:
+                return AnalysisResult(
+                    prediction="Inconclusive",
+                    confidence=0.0,
+                    features=raw_features,
+                    time_ms=(time.perf_counter() - start_time) * 1000,
+                    file_hash=__import__("hashlib").sha256(uploaded_file.getvalue()).hexdigest(),
+                )
             
             # 2. Inference
             with torch.no_grad():
@@ -76,8 +108,9 @@ class PDFAnalyzer:
                 prob = torch.sigmoid(logit).item()
                 
             # 3. Format result
-            confidence = prob if prob >= 0.5 else 1 - prob
-            prediction = "Malicious" if prob >= 0.5 else "Benign"
+            threshold = st.session_state.threshold
+            confidence = prob if prob >= threshold else 1 - prob
+            prediction = "Malicious" if prob >= threshold else "Benign"
             
             # Calculate hash
             import hashlib

@@ -6,7 +6,6 @@ Tests for the security non-functional requirements (SEC-01 to SEC-08).
 
 import os
 import pytest
-import magic
 
 def test_sec04_sec07_no_external_http_requests(mocker):
     # SEC-04, SEC-07: Block all outbound HTTP requests except localhost
@@ -54,10 +53,12 @@ def test_sec03_file_size_limit():
     assert MAX_FILE_SIZE_MB == 50
 
 def test_sec01_mime_type_validation():
-    # Test magic library behavior on a fake PDF
+    from src.security.file_validation import validate_pdf_envelope
+
     fake_pdf_bytes = b"This is just some text with a .pdf extension"
-    mime_type = magic.from_buffer(fake_pdf_bytes, mime=True)
-    assert mime_type != 'application/pdf'
+    result = validate_pdf_envelope(fake_pdf_bytes)
+    assert not result.valid
+    assert result.mime_type != 'application/pdf'
     
 def test_sec06_filename_sanitization():
     # SEC-06: Filename sanitization strips path traversal characters

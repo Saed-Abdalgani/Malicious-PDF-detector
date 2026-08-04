@@ -2,14 +2,16 @@
 models — Malicious PDF Detection Models Package
 =================================================
 
-Provides four modules for training, evaluating, and deploying
-binary classification models for malicious PDF detection:
+Provides legacy compatibility APIs plus the versioned Phase 4–6 workflow.
 
 Modules:
     baseline:  Tree-based models (RF, XGBoost, LightGBM) with GridSearchCV
     mlp:       PyTorch MLP classifier with early stopping
-    trainer:   Unified training pipeline orchestrator
-    evaluator: Metrics computation, comparison, and report generation
+    trainer:   Compatibility facade that delegates to the gated Phase 4 runner
+    evaluator: Legacy candidate/debug metrics, never final sealed-test evidence
+    phase4:    Required fair training, calibration, thresholds, and selection
+    phase5:    One-shot sealed-test evaluation and error analysis
+    phase6:    Deep multi-method explainability without reopening sealed test
 """
 
 from src.models.baseline import BaselineModel
@@ -27,6 +29,9 @@ from src.models.evaluator import (
     evaluate_model,
     generate_report,
 )
+from src.models.bundle import Phase4ModelBundle
+from src.models.metrics import metric_definitions, metric_report, select_validation_thresholds
+from src.models.tabular_transformer import AsymmetricFocalLoss, FTTransformer
 
 __all__ = [
     # Baseline
@@ -44,4 +49,11 @@ __all__ = [
     "compare_models",
     "evaluate_model",
     "generate_report",
+    # Remediated Phase 4-5 APIs
+    "Phase4ModelBundle",
+    "FTTransformer",
+    "AsymmetricFocalLoss",
+    "metric_definitions",
+    "metric_report",
+    "select_validation_thresholds",
 ]

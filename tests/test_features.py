@@ -62,7 +62,9 @@ def test_scaler_save_load_roundtrip(dummy_feature_matrix, tmp_path):
     X, y = dummy_feature_matrix
     save_path = tmp_path / "scaler.pkl"
     
-    scaler = fit_scaler(X, save=True, save_path=save_path)
+    scaler = fit_scaler(
+        X, save=True, save_path=save_path, partition_name="train"
+    )
     loaded_scaler = load_scaler(save_path)
     
     assert loaded_scaler is not None

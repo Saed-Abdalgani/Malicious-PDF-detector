@@ -266,7 +266,7 @@ def plot_correlation_matrix(
 
     fig, ax = plt.subplots(figsize=(16, 14))
 
-    hm = sns.heatmap(
+    sns.heatmap(
         corr, mask=mask, cmap=cmap, center=0,
         annot=True, fmt=".2f", annot_kws={"size": 7},
         square=True, linewidths=0.5,
@@ -622,7 +622,7 @@ def plot_pvalue_heatmap(
     # Plot -log10(p-value) for better visual scaling
     neg_log_p = -np.log10(sorted_df["p_value"].clip(lower=1e-300))
 
-    bars = ax.barh(
+    ax.barh(
         sorted_df["feature"], neg_log_p,
         color=colors, edgecolor="none",
         height=0.7, alpha=0.85, zorder=3,

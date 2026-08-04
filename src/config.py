@@ -13,6 +13,10 @@ from pathlib import Path
 RANDOM_SEED = 42
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
+CONFIGS_DIR = PROJECT_ROOT / "configs"
+EXPERIMENT_CONFIG_PATH = CONFIGS_DIR / "experiment.yaml"
+DATA_SOURCES_CONFIG_PATH = CONFIGS_DIR / "data_sources.yaml"
+
 # --- Directories ---
 DATA_DIR = PROJECT_ROOT / "data"
 RAW_DATA_DIR = DATA_DIR / "raw"
@@ -26,27 +30,31 @@ QUANTIZED_MODELS_DIR = MODELS_DIR / "quantized"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 FIGURES_DIR = REPORTS_DIR / "figures"
 RESULTS_DIR = REPORTS_DIR / "results"
+DATA_REPORTS_DIR = REPORTS_DIR / "data"
+ARCHIVE_REPORTS_DIR = REPORTS_DIR / "archive"
+MANIFESTS_DIR = DATA_DIR / "manifests"
+SPLITS_DIR = DATA_DIR / "splits"
+
+# --- Scientific acceptance gates (Professor feedback remediation) ---
+FEATURE_SCHEMA_VERSION = "2.0.0"
+SPLIT_SCHEMA_VERSION = "2.0.0"
+MIN_TRAIN_ROWS = 2_000_000
+MIN_VALIDATION_ROWS = 250_000
+MIN_TEST_ROWS = 250_000
+MIN_BENIGN_PREVALENCE = 0.995
+LABEL_COLUMN = "Class"
+SAMPLE_ID_COLUMN = "sample_id"
+SOURCE_ID_COLUMN = "source_id"
+GROUP_ID_COLUMN = "group_id"
+FIRST_SEEN_COLUMN = "first_seen_at"
 
 # --- Machine Learning Setup ---
 TEST_SIZE = 0.15
 VAL_SIZE = 0.15
 
-FEATURE_COLUMNS = [
-    "obj_count", "endobj_count", "stream_count", "endstream_count",
-    "xref_count", "trailer_count", "startxref_count",
-    "js_count", "javascript_count", "action_count", "openaction_count",
-    "aa_count", "launch_count", "uri_count", "submitform_count",
-    "acroform_count", "xfa_count", "richmedia_count",
-    "jbig2decode_count", "colors_count",
-    "objstm_count", "filter_count",
-    "obfuscation_count",
-    "avg_stream_size", "indirect_obj_count",
-    "pdf_size", "title_chars", "is_encrypted",
-    "metadata_size", "page_count", "has_text",
-    "image_count", "obj_count_total",
-    "font_obj_count", "embedded_file_count",
-    "avg_embedded_media_size", "header_valid"
-]
+from src.features.schema_v2 import BASE_FEATURE_COLUMNS  # noqa: E402
+
+FEATURE_COLUMNS = list(BASE_FEATURE_COLUMNS)
 
 MODEL_CONFIGS = {
     "random_forest": {

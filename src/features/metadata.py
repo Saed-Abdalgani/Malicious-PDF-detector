@@ -1,339 +1,245 @@
-"""
-metadata.py
------------
-Extracts 12 general / metadata features from PDF files using PyPDF2
-for high-level document properties and ``os.path`` for file-system
-attributes.
+"""Bounded metadata extraction without rendering or embedded-stream decoding."""
 
-These features complement the low-level structural features extracted by
-``structural.py``, capturing document-level characteristics like page count,
-encryption status, font usage, and embedded file counts that help
-differentiate benign documents from malicious ones.
+from __future__ import annotations
 
-Features extracted:
-    File-level (1):       pdf_size
-    Metadata (3):         title_chars, is_encrypted, metadata_size
-    Document stats (4):   page_count, has_text, image_count, obj_count_total
-    Object analysis (3):  font_obj_count, embedded_file_count,
-                          avg_embedded_media_size
-    Header validation (1): header_valid
-
-Usage:
-    from src.features.metadata import extract_metadata_features
-    features = extract_metadata_features("path/to/file.pdf")
-"""
-
-import os
+import io
 import re
+import threading
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Union
 
+from src.features.status import ExtractionStatus
+from src.features.structural import MAX_PDF_BYTES
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+MAX_PAGES_INSPECTED = 100
+MAX_RESOURCE_ENTRIES = 10_000
 
-# ---------------------------------------------------------------------------
-# Default feature dictionary — returned on unrecoverable errors
-# ---------------------------------------------------------------------------
+_META_FEATURE_KEYS = (
+    "pdf_size", "title_chars", "is_encrypted", "metadata_size", "page_count",
+    "has_text", "image_count", "obj_count_total", "font_obj_count",
+    "embedded_file_count", "avg_embedded_media_size", "header_valid",
+)
+_OBJECT = re.compile(rb"\b\d+\s+\d+\s+obj\b")
+_FONT = re.compile(rb"/Font\b")
+_IMAGE = re.compile(rb"/Image\b")
+_EMBEDDED = re.compile(rb"/EmbeddedFile\b")
+_HEADER = re.compile(rb"%PDF-\d+\.\d+")
 
-_META_FEATURE_KEYS = [
-    "pdf_size",
-    "title_chars",
-    "is_encrypted",
-    "metadata_size",
-    "page_count",
-    "has_text",
-    "image_count",
-    "obj_count_total",
-    "font_obj_count",
-    "embedded_file_count",
-    "avg_embedded_media_size",
-    "header_valid",
-]
+
+@dataclass(frozen=True)
+class MetadataExtraction:
+    features: dict[str, float]
+    status: ExtractionStatus
+
+
+class _MetadataTimeout(Exception):
+    pass
 
 
 def _zeroed_features() -> Dict[str, float]:
-    """Return a feature dict with all 12 metadata features set to 0.0."""
-    return {k: 0.0 for k in _META_FEATURE_KEYS}
+    return {name: 0.0 for name in _META_FEATURE_KEYS}
 
 
-# ---------------------------------------------------------------------------
-# Internal helpers
-# ---------------------------------------------------------------------------
-
-def _check_header(raw_bytes: bytes) -> int:
-    """Validate the PDF header.
-
-    Checks for the standard ``%PDF-1.X`` or ``%PDF-2.X`` signature
-    in the first 1024 bytes.
-
-    Returns:
-        1 if a valid PDF header is found, 0 otherwise.
-    """
-    header_region = raw_bytes[:1024]
-    return 1 if re.search(rb"%PDF-\d+\.\d+", header_region) else 0
+def _raw_fallback(raw: bytes, size: int) -> dict[str, float]:
+    features = _zeroed_features()
+    features.update(
+        pdf_size=float(size),
+        obj_count_total=float(len(_OBJECT.findall(raw))),
+        font_obj_count=float(len(_FONT.findall(raw))),
+        image_count=float(len(_IMAGE.findall(raw))),
+        embedded_file_count=float(len(_EMBEDDED.findall(raw))),
+        has_text=float(bool(_FONT.search(raw))),
+        header_valid=float(bool(_HEADER.search(raw[:1024]))),
+    )
+    return features
 
 
-def _count_pattern_in_bytes(raw_bytes: bytes, pattern: bytes) -> int:
-    """Count occurrences of a byte pattern in raw bytes."""
-    return len(re.findall(pattern, raw_bytes))
+def _resolve(value):
+    return value.get_object() if hasattr(value, "get_object") else value
 
 
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
-
-def extract_metadata_features(
-    pdf_path: Union[str, Path],
-) -> Dict[str, float]:
-    """Extract 12 general / metadata features from a PDF file.
-
-    Uses ``PyPDF2.PdfReader`` for parsed metadata and page-level
-    inspection, with a raw-byte fallback for header validation and
-    object counting.  Handles corrupted, encrypted, and malformed PDFs
-    gracefully by returning a zeroed feature dict on failure.
-
-    Args:
-        pdf_path: Absolute or relative path to a PDF file.
-
-    Returns:
-        dict: A dictionary mapping 12 feature names to their numeric
-        (float) values.
-
-    Example:
-        >>> feats = extract_metadata_features("data/sample_pdfs/benign.pdf")
-        >>> len(feats)
-        12
-        >>> feats["page_count"]
-        3.0
-    """
-    pdf_path = Path(pdf_path)
-
-    if not pdf_path.exists():
-        logger.error(f"PDF file not found: {pdf_path}")
-        return _zeroed_features()
-
-    features: Dict[str, float] = {}
-
+def _declared_stream_length(value) -> int | None:
     try:
-        # --- File-system level ---
-        features["pdf_size"] = float(os.path.getsize(pdf_path))
+        resolved = _resolve(value)
+        length = resolved.get("/Length") if hasattr(resolved, "get") else None
+        length = _resolve(length)
+        if isinstance(length, (int, float)) and 0 <= int(length) <= MAX_PDF_BYTES:
+            return int(length)
+    except Exception:
+        return None
+    return None
 
-        # Read raw bytes for header validation and fallback counting
-        raw_bytes = pdf_path.read_bytes()
 
-        # Header validity
-        features["header_valid"] = float(_check_header(raw_bytes))
+def _parse(raw: bytes, size: int) -> dict[str, float]:
+    from PyPDF2 import PdfReader
 
-        # --- PyPDF2 parsing ---
+    features = _raw_fallback(raw, size)
+    reader = PdfReader(io.BytesIO(raw), strict=False)
+    features["is_encrypted"] = float(reader.is_encrypted)
+    if reader.is_encrypted:
         try:
-            from PyPDF2 import PdfReader
-            from PyPDF2.errors import PdfReadError
-        except ImportError:
-            logger.error(
-                "PyPDF2 is not installed. "
-                "Run: pip install PyPDF2>=3.0.0"
-            )
-            features.update({k: 0.0 for k in _META_FEATURE_KEYS
-                             if k not in features})
+            reader.decrypt("")
+        except Exception:
             return features
-
-        try:
-            reader = PdfReader(str(pdf_path))
-        except (PdfReadError, Exception) as exc:
-            logger.warning(
-                f"PyPDF2 could not parse {pdf_path.name}: {exc}. "
-                f"Falling back to raw-byte heuristics."
-            )
-            # Fallback: fill remaining features with byte-level heuristics
-            features["title_chars"] = 0.0
-            features["is_encrypted"] = 0.0
-            features["metadata_size"] = 0.0
-            features["page_count"] = 0.0
-            features["has_text"] = 0.0
-            features["image_count"] = 0.0
-            features["obj_count_total"] = float(
-                _count_pattern_in_bytes(raw_bytes, rb"\b\d+\s+\d+\s+obj\b")
-            )
-            features["font_obj_count"] = float(
-                _count_pattern_in_bytes(raw_bytes, rb"/Font\b")
-            )
-            features["embedded_file_count"] = float(
-                _count_pattern_in_bytes(raw_bytes, rb"/EmbeddedFile\b")
-            )
-            features["avg_embedded_media_size"] = 0.0
-            return features
-
-        # --- Encryption status ---
-        features["is_encrypted"] = 1.0 if reader.is_encrypted else 0.0
-
-        # If encrypted, try decrypting with empty password for metadata access
-        if reader.is_encrypted:
-            try:
-                reader.decrypt("")
-            except Exception:
-                pass  # continue with whatever is accessible
-
-        # --- Title characters ---
-        try:
-            metadata = reader.metadata
-            if metadata and metadata.title:
-                features["title_chars"] = float(len(str(metadata.title)))
-            else:
-                features["title_chars"] = 0.0
-        except Exception:
-            features["title_chars"] = 0.0
-
-        # --- Metadata size ---
-        try:
-            if metadata:
-                meta_str = str(metadata)
-                features["metadata_size"] = float(len(meta_str))
-            else:
-                features["metadata_size"] = 0.0
-        except Exception:
-            features["metadata_size"] = 0.0
-
-        # --- Page count ---
-        try:
-            features["page_count"] = float(len(reader.pages))
-        except Exception:
-            features["page_count"] = 0.0
-
-        # --- Has extractable text ---
-        try:
-            has_text = False
-            # Check first 5 pages (or fewer) for text content
-            max_pages = min(len(reader.pages), 5)
-            for i in range(max_pages):
-                page = reader.pages[i]
-                text = page.extract_text()
-                if text and text.strip():
-                    has_text = True
-                    break
-            features["has_text"] = 1.0 if has_text else 0.0
-        except Exception:
-            features["has_text"] = 0.0
-
-        # --- Image count ---
-        try:
-            image_count = 0
-            for page in reader.pages:
-                if "/XObject" in (page.get("/Resources") or {}):
-                    x_objects = page["/Resources"]["/XObject"].get_object()
-                    for obj_name in x_objects:
-                        x_obj = x_objects[obj_name].get_object()
-                        if x_obj.get("/Subtype") == "/Image":
-                            image_count += 1
-            features["image_count"] = float(image_count)
-        except Exception:
-            # Fallback: count /Image patterns in raw bytes
-            features["image_count"] = float(
-                _count_pattern_in_bytes(raw_bytes, rb"/Image\b")
-            )
-
-        # --- Total object count ---
-        try:
-            # Use the raw byte pattern for reliability
-            features["obj_count_total"] = float(
-                _count_pattern_in_bytes(raw_bytes, rb"\b\d+\s+\d+\s+obj\b")
-            )
-        except Exception:
-            features["obj_count_total"] = 0.0
-
-        # --- Font object count ---
-        try:
-            font_count = 0
-            for page in reader.pages:
-                resources = page.get("/Resources")
-                if resources and "/Font" in resources:
-                    fonts = resources["/Font"].get_object()
-                    font_count += len(fonts)
-            features["font_obj_count"] = float(font_count)
-        except Exception:
-            features["font_obj_count"] = float(
-                _count_pattern_in_bytes(raw_bytes, rb"/Font\b")
-            )
-
-        # --- Embedded file count ---
-        try:
-            embedded_count = 0
-            embedded_sizes = []
-
-            # Check the document's names tree for embedded files
-            if reader.trailer and "/Root" in reader.trailer:
-                root = reader.trailer["/Root"].get_object()
-                if "/Names" in root:
-                    names = root["/Names"].get_object()
-                    if "/EmbeddedFiles" in names:
-                        ef = names["/EmbeddedFiles"].get_object()
-                        if "/Names" in ef:
-                            name_list = ef["/Names"]
-                            # Name list is [name, ref, name, ref, ...]
-                            for i in range(1, len(name_list), 2):
-                                embedded_count += 1
-                                try:
-                                    file_spec = name_list[i].get_object()
-                                    if "/EF" in file_spec:
-                                        ef_dict = file_spec["/EF"].get_object()
-                                        if "/F" in ef_dict:
-                                            stream = ef_dict["/F"].get_object()
-                                            if hasattr(stream, "get_data"):
-                                                embedded_sizes.append(
-                                                    len(stream.get_data())
-                                                )
-                                except Exception:
-                                    pass
-
-            # Fallback to byte counting if we got zero
-            if embedded_count == 0:
-                embedded_count = _count_pattern_in_bytes(
-                    raw_bytes, rb"/EmbeddedFile\b"
-                )
-
-            features["embedded_file_count"] = float(embedded_count)
-
-            if embedded_sizes:
-                features["avg_embedded_media_size"] = float(
-                    sum(embedded_sizes) / len(embedded_sizes)
-                )
-            else:
-                features["avg_embedded_media_size"] = 0.0
-
-        except Exception:
-            features["embedded_file_count"] = float(
-                _count_pattern_in_bytes(raw_bytes, rb"/EmbeddedFile\b")
-            )
-            features["avg_embedded_media_size"] = 0.0
-
-        logger.info(
-            f"Metadata extraction complete for {pdf_path.name} — "
-            f"{sum(1 for v in features.values() if v > 0)} / 12 "
-            f"features non-zero"
+    try:
+        metadata = reader.metadata
+        features["title_chars"] = float(len(str(metadata.title))) if metadata and metadata.title else 0.0
+        features["metadata_size"] = float(len(str(metadata))) if metadata else 0.0
+    except Exception:
+        pass
+    try:
+        page_count = len(reader.pages)
+        features["page_count"] = float(page_count)
+    except Exception:
+        page_count = 0
+    try:
+        xref_objects = sum(
+            len(objects) for objects in getattr(reader, "xref", {}).values()
         )
-        return features
+        object_stream_members = len(getattr(reader, "xref_objStm", {}))
+        parsed_object_count = xref_objects + object_stream_members
+        if parsed_object_count > 0:
+            features["obj_count_total"] = float(parsed_object_count)
+    except Exception:
+        # The raw scanner fallback remains visible for parser disagreement.
+        pass
 
+    fonts = images = 0
+    for page_index in range(min(page_count, MAX_PAGES_INSPECTED)):
+        try:
+            page = reader.pages[page_index]
+            resources = _resolve(page.get("/Resources") or {})
+            font_map = _resolve(resources.get("/Font") or {}) if hasattr(resources, "get") else {}
+            xobjects = _resolve(resources.get("/XObject") or {}) if hasattr(resources, "get") else {}
+            fonts += min(len(font_map), MAX_RESOURCE_ENTRIES) if hasattr(font_map, "__len__") else 0
+            if hasattr(xobjects, "items"):
+                for _, value in list(xobjects.items())[:MAX_RESOURCE_ENTRIES]:
+                    obj = _resolve(value)
+                    if hasattr(obj, "get") and str(obj.get("/Subtype")) == "/Image":
+                        images += 1
+        except Exception:
+            continue
+    if page_count <= MAX_PAGES_INSPECTED:
+        features["font_obj_count"] = float(fonts)
+        features["image_count"] = float(images)
+    # Static text-likelihood only; no content stream is decompressed.
+    features["has_text"] = float(fonts > 0 or bool(_FONT.search(raw)))
+
+    embedded_count = 0
+    declared_sizes: list[int] = []
+    try:
+        root = _resolve(reader.trailer.get("/Root"))
+        names = _resolve(root.get("/Names")) if hasattr(root, "get") else None
+        embedded = _resolve(names.get("/EmbeddedFiles")) if hasattr(names, "get") else None
+        name_list = _resolve(embedded.get("/Names")) if hasattr(embedded, "get") else None
+        if isinstance(name_list, (list, tuple)):
+            for index in range(1, min(len(name_list), MAX_RESOURCE_ENTRIES * 2), 2):
+                embedded_count += 1
+                file_spec = _resolve(name_list[index])
+                ef = _resolve(file_spec.get("/EF")) if hasattr(file_spec, "get") else None
+                stream = ef.get("/F") if hasattr(ef, "get") else None
+                length = _declared_stream_length(stream)
+                if length is not None:
+                    declared_sizes.append(length)
+    except Exception:
+        pass
+    if embedded_count:
+        features["embedded_file_count"] = float(embedded_count)
+    features["avg_embedded_media_size"] = (
+        float(sum(declared_sizes) / len(declared_sizes)) if declared_sizes else 0.0
+    )
+    return features
+
+
+def _parse_with_timeout(raw: bytes, size: int, timeout_sec: int) -> dict[str, float]:
+    result: list[dict[str, float] | None] = [None]
+    error: list[BaseException | None] = [None]
+
+    def target() -> None:
+        try:
+            result[0] = _parse(raw, size)
+        except BaseException as exc:
+            error[0] = exc
+
+    worker = threading.Thread(target=target, daemon=True)
+    worker.start()
+    worker.join(timeout_sec)
+    if worker.is_alive():
+        raise _MetadataTimeout
+    if error[0] is not None:
+        raise error[0]
+    assert result[0] is not None
+    return result[0]
+
+
+def extract_metadata_features_with_status(
+    pdf_path: Union[str, Path],
+    *,
+    timeout_sec: int = 15,
+) -> MetadataExtraction:
+    path = Path(pdf_path)
+    if not path.is_file():
+        return MetadataExtraction(
+            _zeroed_features(),
+            ExtractionStatus(ok=False, parse_failure=True, error_code="file_not_found"),
+        )
+    size = path.stat().st_size
+    if size > MAX_PDF_BYTES:
+        features = _zeroed_features()
+        features["pdf_size"] = float(size)
+        return MetadataExtraction(
+            features,
+            ExtractionStatus(
+                ok=False, file_too_large=True, limit_reached=True,
+                error_code="file_size_limit",
+            ),
+        )
+    try:
+        raw = path.read_bytes()
+        features = _parse_with_timeout(raw, size, timeout_sec)
+        invalid_header = features["header_valid"] == 0
+        invalid_eof = b"%%EOF" not in raw[-4096:]
+        status = ExtractionStatus(
+            ok=not (invalid_header or invalid_eof),
+            invalid_header=invalid_header,
+            invalid_eof=invalid_eof,
+            recovery_mode=False,
+            limit_reached=features["page_count"] > MAX_PAGES_INSPECTED,
+            error_code="none" if not invalid_header else "invalid_header",
+        )
+        return MetadataExtraction(features, status)
+    except _MetadataTimeout:
+        raw = path.read_bytes()
+        return MetadataExtraction(
+            _raw_fallback(raw, size),
+            ExtractionStatus(ok=False, timeout=True, error_code="timeout"),
+        )
     except Exception as exc:
-        logger.error(
-            f"Metadata extraction failed for {pdf_path.name}: {exc}",
-            exc_info=True,
+        raw = path.read_bytes()
+        logger.info("Metadata parser fallback for %s: %s", path.name, exc)
+        return MetadataExtraction(
+            _raw_fallback(raw, size),
+            ExtractionStatus(
+                ok=False, parse_failure=True, recovery_mode=True,
+                error_code=type(exc).__name__,
+            ),
         )
-        return _zeroed_features()
 
 
-# ---------------------------------------------------------------------------
-# Module entrypoint for quick testing
-# ---------------------------------------------------------------------------
+def extract_metadata_features(pdf_path: Union[str, Path]) -> dict[str, float]:
+    """Compatibility API returning the stable 12 metadata features."""
+    return extract_metadata_features_with_status(pdf_path).features
+
 
 if __name__ == "__main__":
     import json
     import sys
 
     if len(sys.argv) < 2:
-        print("Usage: python -m src.features.metadata <pdf_path>")
-        sys.exit(1)
-
-    path = sys.argv[1]
-    result = extract_metadata_features(path)
-    print(json.dumps(result, indent=2))
+        raise SystemExit("Usage: python -m src.features.metadata <pdf_path>")
+    result = extract_metadata_features_with_status(sys.argv[1])
+    print(json.dumps({"features": result.features, "status": result.status.to_dict()}, indent=2))

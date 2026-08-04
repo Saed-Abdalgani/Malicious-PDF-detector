@@ -1,6 +1,7 @@
 import streamlit as st
-import magic
 import os
+
+from src.security.file_validation import validate_pdf_envelope
 
 MAX_FILE_SIZE_MB = 50
 
@@ -31,13 +32,13 @@ def render_upload_zone():
             
         # Server-side MIME type validation
         try:
-            # Read first 2048 bytes for magic number detection
-            header_bytes = uploaded_file.read(2048)
-            uploaded_file.seek(0) # Reset pointer
-            
-            mime_type = magic.from_buffer(header_bytes, mime=True)
-            if mime_type != 'application/pdf':
-                st.error(f"❌ Invalid file type detected. Expected application/pdf, got {mime_type}. Please upload a genuine PDF file.")
+            validation = validate_pdf_envelope(uploaded_file.getvalue())
+            uploaded_file.seek(0)
+            if not validation.valid:
+                st.error(
+                    f"❌ Invalid PDF envelope ({validation.reason}). "
+                    "Please upload a genuine, complete PDF file."
+                )
                 st.markdown('</div>', unsafe_allow_html=True)
                 return None
                 

@@ -1,7 +1,11 @@
 """
 evaluator.py
 ------------
-Comprehensive model evaluation, comparison, and report generation.
+Legacy candidate/debug evaluation utilities.
+
+This module is not authorized to publish final evidence or access the sealed
+test. Production Phase 5 evaluation is implemented in ``src.models.phase5`` and
+is guarded by its exclusive one-shot ledger.
 
 Provides three main capabilities:
     1. **evaluate_model** — Compute all metrics (Accuracy, F1, Precision,
@@ -178,14 +182,15 @@ def compare_models(
 
     Args:
         results: List of evaluation result dicts from ``evaluate_model``.
-        save_path: Optional CSV save path. Defaults to
-                   ``reports/results/model_comparison.csv``.
+        save_path: Optional CSV save path. Defaults to a clearly non-final
+                   candidate report. Final evidence is produced only by the
+                   locked Phase 5 evaluation workflow.
 
     Returns:
         pd.DataFrame: Comparison table sorted by F1-score descending.
     """
     if save_path is None:
-        save_path = RESULTS_DIR / "model_comparison.csv"
+        save_path = RESULTS_DIR / "candidate_model_comparison.csv"
 
     rows = []
     for r in results:
@@ -431,7 +436,6 @@ def generate_report(
             )
 
         # Baseline
-        baseline_prec = sum(1 for r in results for y in [r.get("y_pred")] if y is not None) / max(len(results), 1)
         ax.axhline(
             y=0.5, color=COLORS["text_muted"],
             linewidth=1, linestyle="--", alpha=0.5,

@@ -32,13 +32,18 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
+from src.artifacts import verify_artifact_compatibility, write_artifact_metadata
 from src.config import (
+    DATA_REPORTS_DIR,
     FEATURE_COLUMNS,
     MODELS_DIR,
+    SPLITS_DIR,
+    SPLIT_SCHEMA_VERSION,
 )
 from src.features.metadata import extract_metadata_features
 from src.features.structural import extract_structural_features
 from src.utils.logger import get_logger
+from src.experiment import create_experiment_identity
 
 logger = get_logger(__name__)
 
@@ -47,6 +52,9 @@ SCALER_PATH = MODELS_DIR / "scaler.pkl"
 
 # Path for the benign baseline statistics (used by LLM analyzer later)
 BASELINE_PATH = MODELS_DIR / "benign_baseline.pkl"
+
+# Schema-v2 serialized train/inference feature pipeline.
+FEATURE_PIPELINE_PATH = MODELS_DIR / "feature_pipeline_v2.pkl"
 
 
 # ---------------------------------------------------------------------------
@@ -107,6 +115,8 @@ def fit_scaler(
     X_train: np.ndarray,
     save: bool = True,
     save_path: Optional[Union[str, Path]] = None,
+    *,
+    partition_name: str,
 ) -> StandardScaler:
     """Fit a ``StandardScaler`` on training data and optionally save it.
 
@@ -118,8 +128,12 @@ def fit_scaler(
     Returns:
         StandardScaler: The fitted scaler instance.
     """
+    if partition_name != "train":
+        raise RuntimeError("Legacy scaler fitting is permitted only on the train partition.")
     scaler = StandardScaler()
     scaler.fit(X_train)
+    scaler.fit_partition_ = "train"
+    scaler.feature_schema_version_ = "2.0.0"
 
     logger.info(
         f"StandardScaler fitted on {X_train.shape[0]} samples, "
@@ -127,10 +141,11 @@ def fit_scaler(
     )
 
     if save:
-        path = Path(save_path) if save_path else SCALER_PATH
-        path.parent.mkdir(parents=True, exist_ok=True)
-        joblib.dump(scaler, path, compress=3)
-        logger.info(f"Scaler saved to {path}")
+        save_scaler(
+            scaler,
+            Path(save_path) if save_path else SCALER_PATH,
+            partition_name=partition_name,
+        )
 
     return scaler
 
@@ -182,7 +197,10 @@ def load_scaler(
             f"Run vectorizer.fit_scaler() on training data first."
         )
 
+    verify_artifact_compatibility(path, create_experiment_identity())
     scaler = joblib.load(path)
+    if getattr(scaler, "fit_partition_", None) != "train":
+        raise RuntimeError("Scaler artifact does not prove train-only fitting.")
     logger.info(f"Scaler loaded from {path}")
     return scaler
 
@@ -190,6 +208,8 @@ def load_scaler(
 def save_scaler(
     scaler: StandardScaler,
     path: Optional[Union[str, Path]] = None,
+    *,
+    partition_name: str,
 ) -> Path:
     """Save a fitted ``StandardScaler`` to disk.
 
@@ -200,9 +220,21 @@ def save_scaler(
     Returns:
         Path: The path where the scaler was saved.
     """
+    if partition_name != "train" or getattr(scaler, "fit_partition_", None) != "train":
+        raise RuntimeError("Scaler artifacts require verified train-only fitting.")
     path = Path(path) if path else SCALER_PATH
     path.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(scaler, path, compress=3)
+    write_artifact_metadata(
+        path,
+        "legacy_base_scaler",
+        create_experiment_identity(),
+        extra={
+            "fit_partition": "train",
+            "deprecated": True,
+            "replacement": "FeaturePipelineV2",
+        },
+    )
     logger.info(f"Scaler saved to {path}")
     return path
 
@@ -215,6 +247,8 @@ def compute_benign_baseline(
     X_train: np.ndarray,
     y_train: np.ndarray,
     save: bool = True,
+    *,
+    partition_name: str,
 ) -> Dict[str, Dict[str, float]]:
     """Compute per-feature mean and std for benign samples in the
     training set.
@@ -231,6 +265,8 @@ def compute_benign_baseline(
     Returns:
         dict: ``{feature_name: {"mean": float, "std": float}}``.
     """
+    if partition_name != "train":
+        raise RuntimeError("Benign baseline may only be estimated from train.")
     # Select benign samples (label == 0)
     benign_mask = (y_train == 0)
     X_benign = X_train[benign_mask]
@@ -246,6 +282,12 @@ def compute_benign_baseline(
     if save:
         BASELINE_PATH.parent.mkdir(parents=True, exist_ok=True)
         joblib.dump(baseline, BASELINE_PATH, compress=3)
+        write_artifact_metadata(
+            BASELINE_PATH,
+            "benign_train_baseline",
+            create_experiment_identity(),
+            extra={"fit_partition": "train"},
+        )
         logger.info(
             f"Benign baseline saved to {BASELINE_PATH} "
             f"(computed from {X_benign.shape[0]} benign samples)"
@@ -274,6 +316,7 @@ def load_benign_baseline(
             f"Benign baseline not found at {path}. "
             f"Run vectorizer.compute_benign_baseline() first."
         )
+    verify_artifact_compatibility(path, create_experiment_identity())
     baseline = joblib.load(path)
     logger.info(f"Benign baseline loaded from {path}")
     return baseline
@@ -355,6 +398,87 @@ def extract_features_dict(
 
     # Ensure all FEATURE_COLUMNS are present
     return {col: float(merged.get(col, 0.0)) for col in FEATURE_COLUMNS}
+
+
+def extract_features_record(
+    pdf_path: Union[str, Path],
+) -> Tuple[Dict[str, float], Dict[str, object]]:
+    """Extract base schema values and explicit health diagnostics.
+
+    Unlike the legacy dictionary-only API, parser failures and bounded-resource
+    exits are observable. They can drive abstention and can only enter a model if
+    the serialized training pipeline declares the same status columns.
+    """
+    from src.features.metadata import extract_metadata_features_with_status
+    from src.features.structural import extract_structural_features_with_status
+
+    structural = extract_structural_features_with_status(pdf_path)
+    metadata = extract_metadata_features_with_status(pdf_path)
+    merged = {**structural.features, **metadata.features}
+    base = {name: float(merged.get(name, 0.0)) for name in FEATURE_COLUMNS}
+    disagreement = abs(base["obj_count"] - base["obj_count_total"]) / (
+        base["obj_count"] + base["obj_count_total"] + 1.0
+    )
+    structural_status = structural.status.to_dict()
+    metadata_status = metadata.status.to_dict()
+    numeric_status = {
+        name: float(
+            structural.status.numeric_features().get(name, 0.0)
+            or metadata.status.numeric_features().get(name, 0.0)
+        )
+        for name in structural.status.numeric_features()
+    }
+    numeric_status["parser_disagreement"] = float(disagreement > 0.25)
+    critical = any(
+        numeric_status[name] > 0
+        for name in (
+            "parse_failure", "extraction_timeout", "file_too_large",
+            "extraction_limit_reached", "invalid_header", "invalid_eof",
+            "truncated_structure",
+        )
+    )
+    diagnostics: Dict[str, object] = {
+        **numeric_status,
+        "abstain_recommended": critical,
+        "structural_status": structural_status,
+        "metadata_status": metadata_status,
+        "canonicalization": (
+            structural.canonicalization.to_dict()
+            if structural.canonicalization is not None else None
+        ),
+        "object_stream_inspection": (
+            structural.object_stream_inspection.to_dict()
+            if structural.object_stream_inspection is not None else None
+        ),
+    }
+    return {**base, **numeric_status}, diagnostics
+
+
+def load_feature_pipeline(
+    path: Optional[Union[str, Path]] = None,
+):
+    """Load the checksummed schema-v2 pipeline for scoring."""
+    from src.features.pipeline import FeaturePipelineV2
+
+    return FeaturePipelineV2.load(
+        Path(path) if path else FEATURE_PIPELINE_PATH,
+        split_manifest_path=SPLITS_DIR / SPLIT_SCHEMA_VERSION / "split_manifest.json",
+        dataset_quality_path=DATA_REPORTS_DIR / "dataset_quality.json",
+        transformation_manifest_path=DATA_REPORTS_DIR / "transformation_manifest.json",
+    )
+
+
+def pdf_to_pipeline_vector(
+    pdf_path: Union[str, Path],
+    *,
+    pipeline=None,
+) -> Tuple[np.ndarray, Dict[str, float], Dict[str, object]]:
+    """Run the exact serialized training feature pipeline for one PDF."""
+    active_pipeline = pipeline or load_feature_pipeline()
+    record, diagnostics = extract_features_record(pdf_path)
+    vector = active_pipeline.transform_record(record).to_numpy(dtype=np.float32)[0]
+    raw = {name: float(record[name]) for name in FEATURE_COLUMNS}
+    return vector, raw, diagnostics
 
 
 # ---------------------------------------------------------------------------

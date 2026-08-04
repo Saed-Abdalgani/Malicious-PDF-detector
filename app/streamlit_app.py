@@ -11,11 +11,11 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-from app.components.uploader import render_upload_zone
-from app.components.analyzer import PDFAnalyzer
-from app.components.dashboard import render_verdict, render_confidence_gauge, render_feature_radar, render_scan_history
-from app.components.llm_chat import render_llm_panel
-from src.config import PROJECT_ROOT
+from app.components.uploader import render_upload_zone  # noqa: E402
+from app.components.analyzer import PDFAnalyzer  # noqa: E402
+from app.components.dashboard import render_verdict, render_confidence_gauge, render_feature_radar, render_scan_history  # noqa: E402
+from app.components.llm_chat import render_llm_panel  # noqa: E402
+from src.config import PROJECT_ROOT  # noqa: E402
 
 # Load Custom CSS
 def load_css():
@@ -104,15 +104,30 @@ elif page == "🤖 AI Threat Analyst":
 # Page 3: Model Dashboard
 elif page == "📊 Model Dashboard":
     st.markdown("<h1>Model Performance Dashboard</h1>", unsafe_allow_html=True)
-    st.info("This dashboard displays the performance metrics of the models trained during Phase 4.")
+    st.info("Only metrics from the active checksummed experiment summary are shown.")
     
     try:
-        report_path = PROJECT_ROOT / "reports" / "results" / "model_comparison.csv"
+        report_path = PROJECT_ROOT / "reports" / "results" / "experiment_summary.json"
         if report_path.exists():
-            df = pd.read_csv(report_path)
+            import json
+
+            summary = json.loads(report_path.read_text(encoding="utf-8"))
             st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-            st.markdown("### 🏆 Model Comparison")
-            st.dataframe(df, use_container_width=True)
+            st.markdown("### Active experiment status")
+            st.json(
+                {
+                    "experiment_id": summary.get("experiment", {}).get("experiment_id"),
+                    "status": summary.get("status"),
+                    "data_gate_passed": summary.get("data_gate_passed"),
+                }
+            )
+            if summary.get("final_metrics") is None:
+                st.warning(
+                    "No final metrics exist yet. Archived pre-remediation CSVs are "
+                    "intentionally excluded from this dashboard."
+                )
+            else:
+                st.dataframe(pd.DataFrame(summary["final_metrics"]), use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
         else:
             st.warning(f"Comparison report not found at {report_path}")
@@ -123,20 +138,21 @@ elif page == "📊 Model Dashboard":
 # Page 4: Feature Explorer
 elif page == "📈 Feature Explorer":
     st.markdown("<h1>Feature Explorer</h1>", unsafe_allow_html=True)
-    st.info("Feature importance charts based on the Random Forest baseline model.")
+    st.info("Versioned schema-v2 feature definitions and lineage.")
     
     try:
-        importance_path = PROJECT_ROOT / "reports" / "results" / "feature_importance.csv"
+        importance_path = PROJECT_ROOT / "reports" / "data" / "feature_dictionary_v2.json"
         if importance_path.exists():
-            df = pd.read_csv(importance_path)
+            import json
+
+            catalog = json.loads(importance_path.read_text(encoding="utf-8"))
+            base = pd.DataFrame(catalog.get("base_schema", {}).get("features", []))
+            engineered = pd.DataFrame(catalog.get("engineered_features", []))
             st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-            import plotly.express as px
-            fig = px.bar(df, x='Importance', y='Feature', orientation='h', title='Top Discriminative Features')
-            fig.update_layout(
-                paper_bgcolor="rgba(0,0,0,0)",
-                font={'color': "#f8fafc", 'family': "Inter"}
-            )
-            st.plotly_chart(fig, use_container_width=True)
+            st.markdown("### Base features")
+            st.dataframe(base, use_container_width=True)
+            st.markdown("### Engineered features")
+            st.dataframe(engineered, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
         else:
             st.warning("Feature importance data not found. Run model training phase to generate it.")
@@ -171,4 +187,3 @@ elif page == "ℹ️ About":
     </ul>
     </div>
     """, unsafe_allow_html=True)
-

@@ -1,0 +1,59 @@
+registry_version: 1
+
+policy:
+  allowed_formats:
+    - .parquet
+    - .csv
+    - .jsonl
+  disallowed_archive_members:
+    - .pdf
+    - .exe
+    - .dll
+    - .apk
+    - .js
+    - .vbs
+    - .ps1
+    - .bat
+    - .cmd
+    - .scr
+  require_https: true
+  require_sha256: true
+  feature_only: true
+
+sources:
+  approved-primary-pdf-telemetry:
+    title: Approved institutional PDF feature telemetry
+    provider: TO_BE_APPROVED
+    version: v1
+    approval_status: requires_approval
+    enabled: false
+    feature_only: true
+    file_format: .parquet
+    url: null
+    local_path: null
+    sha256: null
+    expected_size_bytes: null
+    expected_rows: 2650000
+    license: Written academic-use approval required
+    role: primary
+    column_mapping: {}
+    metadata_mapping: {}
+
+  cic-evasive-pdfmal2022:
+    title: CIC-Evasive-PDFMal2022
+    provider: University of New Brunswick Canadian Institute for Cybersecurity
+    version: "2022"
+    approval_status: benchmark_only
+    enabled: false
+    feature_only: true
+    file_format: .csv
+    url: null
+    local_path: data/raw/pdfmal2022.csv
+    sha256: null
+    expected_size_bytes: null
+    expected_rows: 10025
+    license: Citation required by UNB CIC
+    authoritative_page: https://www.unb.ca/cic/datasets/pdfmal-2022.html
+    role: supplementary_benchmark
+    column_mapping: {}
+    metadata_mapping: {}

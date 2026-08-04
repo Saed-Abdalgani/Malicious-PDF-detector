@@ -1,0 +1,20 @@
+{
+  "data_gate_passed": false,
+  "experiment": {
+    "code_commit": "cb03a3666220820ff97ee481ae351adcb88704c9",
+    "config_sha256": "d965e5b3f410f5379ada80c16448094d5a850b2c6bf3ad0c3b9736f8e74a814a",
+    "created_at_utc": "2026-08-04T14:21:04.361174Z",
+    "dataset_version": "approved-primary-pdf-telemetry-v1",
+    "experiment_id": "30f67550e20ebbf34570",
+    "feature_schema_version": "2.0.0",
+    "project_name": "malicious-pdf-detector",
+    "random_seed": 42,
+    "split_version": "2.0.0"
+  },
+  "final_metrics": null,
+  "notes": [
+    "Legacy metrics are archived as unverified.",
+    "Final metrics remain null until every acceptance gate passes."
+  ],
+  "status": "phase_0_initialized_no_final_metrics"
+}

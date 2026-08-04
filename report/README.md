@@ -1,73 +1,22 @@
-# Technical Report (LaTeX / Overleaf)
+# Technical report status
 
-**Author:** Saed Abdalgani
+`main.tex` is now the truthful Phase 0–5 remediation report. The former legacy
+metric tables, balanced-data workflow, SMOTE discussion, and unsupported
+conclusions have been removed.
 
-This folder contains the academic-style technical report for the **Malicious PDF
-Detector** project. It expands on the top-level `README.md` with a full
-abstract, related work, methodology, experimental setup, results, discussion,
-limitations, and conclusion.
+The document reports verified implementation controls and explicitly states that
+the production data gate has not passed. It contains no model-performance claim.
+Phase 4–5 methodology is documented without invented results. A later final
+report may add empirical metrics, explainability, and adversarial conclusions
+only after the approved 2.5M-row clean-data gate, sealed 2M-row train split, and
+Phase 4–7 evidence exist. Phases 6–7 remain in the roadmap.
 
-## Files
+Current authoritative sources:
 
-| File | Purpose |
-|------|---------|
-| `main.tex` | The complete report. **Compiler: pdfLaTeX.** Includes a **Theoretical foundations** section (scaling, SMOTE, MLP/loss/optimization, tree ensembles, INT8 quantization, SHAP, metrics). Uses an embedded bibliography, so it builds in a single pass (no BibTeX step required). |
-| `references.bib` | Optional BibTeX sources, in case you prefer a BibTeX workflow (see the header comment inside the file). |
+- `../professor_feedback_remediation_plan.md`
+- `../docs/professor_feedback_traceability.md`
+- `../docs/metrics_and_thresholds.md`
+- `../docs/phase4_5_implementation.md`
+- `../reports/results/experiment_summary.json`
 
-## Build on Overleaf
-
-1. Go to [Overleaf](https://www.overleaf.com/) → **New Project** → **Upload Project**.
-2. Upload `main.tex` (and `references.bib` if you want it). Tip: zip this
-   `report/` folder and upload the zip.
-3. In **Menu → Settings**, set:
-   - **Compiler:** `pdfLaTeX`
-   - **Main document:** `main.tex`
-4. Click **Recompile**. The report builds as-is — no figures or external assets
-   are required (diagrams are drawn with TikZ; results are typeset as tables).
-
-## Build locally
-
-Requires a TeX distribution (TeX Live / MiKTeX) with `latexmk`:
-
-```bash
-cd report
-latexmk -pdf main.tex
-# or, without latexmk:
-pdflatex main.tex
-pdflatex main.tex   # second pass resolves \cref and the table of contents
-```
-
-The output is `main.pdf`.
-
-## Switching to a BibTeX workflow (optional)
-
-`main.tex` ships with an embedded `thebibliography` block for maximum
-portability. To use `references.bib` instead, replace that block with:
-
-```latex
-\bibliographystyle{plain}
-\bibliography{references}
-```
-
-then compile with: `pdflatex → bibtex → pdflatex → pdflatex`.
-
-## Adding figures (optional)
-
-To embed generated figures (e.g. ROC curves, confusion matrices, SHAP
-importance), first regenerate them from the pipeline:
-
-```bash
-python -m src.run_all                 # writes reports/figures/*.png
-python -m src.features.explain        # writes reports/figures/shap_global_importance.png
-```
-
-Then copy the desired PNGs into `report/figures/` and include them in `main.tex`
-with, e.g.:
-
-```latex
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.8\linewidth]{figures/roc_curves.png}
-  \caption{ROC curves for the model zoo.}
-\end{figure}
-```
+The last file intentionally contains no final metrics.

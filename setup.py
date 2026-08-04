@@ -21,11 +21,11 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.9",
+    python_requires=">=3.11",
     install_requires=requirements,
     entry_points={
         "console_scripts": [
-            "malpdf-train=src.models.trainer:main",
+            "malpdf-remediate=src.run_all:main",
             "malpdf-app=app.streamlit_app:main",
         ],
     },

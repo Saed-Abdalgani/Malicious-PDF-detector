@@ -1,0 +1,40 @@
+{
+  "artifacts": [
+    {
+      "archived_copy": "reports/archive/unverified_pre_remediation/model_comparison.csv",
+      "reason": "Not traceable to an approved 2M-row, >99% benign experiment.",
+      "sha256": "237f5dbf972c071e9318eb2a0d9942d26d3c734a56ecf0fe13eb69b2a876c3b1",
+      "source": "reports/results/model_comparison.csv",
+      "status": "unverified_pre_remediation"
+    },
+    {
+      "archived_copy": "reports/archive/unverified_pre_remediation/quantization_comparison.csv",
+      "reason": "Not traceable to an approved 2M-row, >99% benign experiment.",
+      "sha256": "ef7f46cf7f093c133515458b5e3435721e52d3647d83cba55ed1142570d2b43b",
+      "source": "reports/results/quantization_comparison.csv",
+      "status": "unverified_pre_remediation"
+    },
+    {
+      "archived_copy": "reports/archive/unverified_pre_remediation/feature_consistency.csv",
+      "reason": "Not traceable to an approved 2M-row, >99% benign experiment.",
+      "sha256": "70ee159ac791a6b8c70c650a3039373ca583be46b47f99b7f1751e3329581164",
+      "source": "reports/results/feature_consistency.csv",
+      "status": "unverified_pre_remediation"
+    },
+    {
+      "archived_copy": "reports/archive/unverified_pre_remediation/adversarial_robustness.csv",
+      "reason": "Not traceable to an approved 2M-row, >99% benign experiment.",
+      "sha256": "75d42aedf85dc10ae0dda5b4ddec9e053304385993e3e3b5ba01836fe9e5b1d2",
+      "source": "reports/results/adversarial_robustness.csv",
+      "status": "unverified_pre_remediation"
+    },
+    {
+      "archived_copy": "reports/archive/unverified_pre_remediation/adversarial_threat_model.md",
+      "reason": "Not traceable to an approved 2M-row, >99% benign experiment.",
+      "sha256": "73b5566e62088ae29364286f9b5f4d92bd7c56e31a061ac96d1ccdfb70eda090",
+      "source": "reports/results/adversarial_threat_model.md",
+      "status": "unverified_pre_remediation"
+    }
+  ],
+  "status": "historical_only_not_final_evidence"
+}

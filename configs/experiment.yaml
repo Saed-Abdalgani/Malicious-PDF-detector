@@ -1,0 +1,82 @@
+project_name: malicious-pdf-detector
+random_seed: 42
+dataset_version: approved-primary-pdf-telemetry-v1
+feature_schema_version: 2.0.0
+split_version: 2.0.0
+
+columns:
+  label: Class
+  sample_id: sample_id
+  source_id: source_id
+  group_id: group_id
+  first_seen: first_seen_at
+  label_confidence: label_confidence
+
+acceptance_gates:
+  minimum_input_rows: 2650000
+  minimum_clean_rows: 2500000
+  minimum_train_rows: 2000000
+  minimum_validation_rows: 250000
+  minimum_test_rows: 250000
+  minimum_benign_prevalence: 0.995
+  maximum_malicious_prevalence: 0.005
+  require_feature_only: true
+  require_approved_source: true
+  require_exact_overlap_zero: true
+  require_group_overlap_zero: true
+
+splitting:
+  strategy: group_temporal
+  validation_fraction: 0.10
+  test_fraction: 0.10
+  allow_hash_fallback_when_time_missing: false
+  external_test_sources: []
+
+preprocessing:
+  imputation: train_median
+  add_missing_indicators: true
+  neural_clip_lower_quantile: 0.0001
+  neural_clip_upper_quantile: 0.9999
+  neural_scaler: standard
+  tree_scaler: none
+
+phase4:
+  required_models:
+    - always_benign
+    - logistic_regression
+    - extra_trees
+    - lightgbm
+    - xgboost_hist
+    - fully_connected_mlp
+    - ft_transformer
+  seeds: [42, 1337, 2026]
+  development_max_rows: 500000
+  temporal_folds: 3
+  maximum_fpr: 0.001
+  bootstrap_replicates: 1000
+
+phase5:
+  bootstrap_replicates: 1000
+  probability_bootstrap_replicates: 200
+  minimum_subgroup_rows: 100
+  drift_maximum_rows: 250000
+  sealed_test_maximum_evaluations: 1
+
+phase6:
+  background_rows: 512
+  global_explanation_rows: 2048
+  permutation_repeats: 5
+  bootstrap_replicates: 100
+  ale_bins: 10
+  top_features: 20
+  local_cases_per_type: 5
+  test_handoff_maximum_rows: 5000
+  development_sanity_rows: 100000
+  minimum_independent_support_methods: 2
+
+paths:
+  source_registry: configs/data_sources.yaml
+  manifests: data/manifests
+  processed: data/processed
+  splits: data/splits
+  experiment_summary: reports/results/experiment_summary.json

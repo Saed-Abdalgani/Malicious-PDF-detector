@@ -7,10 +7,10 @@ legacy-metric plan has been removed.
 ## Objective and present state
 
 Implement a defensible foundation for a malicious-PDF detector using only safe,
-approved feature tables. Phase 0–6 code, tests, and documentation are complete.
-The production Phase 1–6 run is pending an approved primary table; no substitute
+approved feature tables. Phase 0–7 code, tests, and documentation are complete.
+The production Phase 1–7 run is pending an approved primary table; no substitute
 dataset is selected automatically and no empirical gate is claimed prematurely.
-Phases 6 and 7 remain planned and have not been removed.
+Production Phases 6 and 7 remain gated on real upstream evidence.
 
 The pipeline is designed and validated for multi-million-row streaming
 workloads. This is an implementation-capability statement, not evidence that the
@@ -26,7 +26,7 @@ production 2M-row training gate has already passed.
 | 4.5 — deployment optimization | Planned | Awaits a verified champion |
 | 5 — locked evaluation | Complete | Awaits Phase 4 and explicit one-shot test confirmation |
 | 6 — deep explainability | Implemented | Production run awaits verified Phase 4–5 artifacts |
-| 7 — attacks and defenses | Planned | Awaits verified champion and inert fixtures |
+| 7 — attacks and defenses | Implemented | Production run awaits verified Phase 4–6 artifacts |
 
 ## Non-negotiable gates
 
@@ -153,15 +153,18 @@ production 2M-row training gate has already passed.
 - [x] Publish immutable checksummed outputs and a Phase 6 manifest.
 - [ ] Execute Phase 6 after the approved source completes production Phases 1–5.
 
-## Phase 7 — adversarial attacks and defenses (retained plan)
+## Phase 7 — adversarial attacks and defenses
 
-- [ ] Define attacker knowledge and capabilities and generate only bounded,
+- [x] Define attacker knowledge and capabilities and generate only bounded,
   inert local PDF fixtures.
-- [ ] Measure at least eight valid mutation families and their combinations.
-- [ ] Evaluate adversarial training, canonicalization, consistency checks,
-  ensembles, uncertainty/abstention, and resource limits.
-- [ ] Report attack success, robust Recall/F2, clean-performance delta,
+- [x] Measure at least eight valid mutation families and their combinations.
+- [x] Evaluate canonicalization, consistency/multi-view signals,
+  uncertainty/abstention, and resource limits; identify defenses requiring an
+  approved labeled corpus as future rather than claiming them.
+- [x] Report attack success, robust Recall/F2, clean-performance delta,
   abstention, latency, and memory, then derive defense recommendations.
+- [x] Refuse execution before a checksummed Phase 6 manifest and champion.
+- [ ] Execute after production Phases 1–6 succeed.
 
 ## Verification
 

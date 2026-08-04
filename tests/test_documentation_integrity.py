@@ -67,7 +67,7 @@ def test_documented_status_matches_fail_closed_experiment_and_source_registry():
     assert primary["approval_status"] == "requires_approval"
 
 
-def test_phase4_5_are_documented_as_implemented_without_results_and_6_7_retained():
+def test_phases4_7_are_documented_as_implemented_without_production_results():
     readme = (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")
     implementation = (PROJECT_ROOT / "implementation_plan.md").read_text(
         encoding="utf-8"
@@ -83,7 +83,9 @@ def test_phase4_5_are_documented_as_implemented_without_results_and_6_7_retained
         assert f"Phase {phase}" in implementation
     assert "| 4 — fair model comparison | Complete" in readme
     assert "| 5 — locked metrics/error analysis | Complete" in readme
-    assert "not removed" in readme.lower()
+    assert "| 6 — deep explainability | Complete" in readme
+    assert "| 7 — adversarial attacks/defenses | Complete" in readme
+    assert "no empirical explainability or production" in readme.lower()
     assert "no production value is claimed" in metrics.lower()
     assert "exclusive file creation" in details.lower()
     assert "cannot reopen the test" in details.lower()

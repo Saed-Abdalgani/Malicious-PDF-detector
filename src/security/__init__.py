@@ -1,1 +1,1 @@
-"""Security analyses: adversarial robustness / evasion harness."""
+"""Safe bounded adversarial robustness and PDF-envelope security controls."""

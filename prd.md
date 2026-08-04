@@ -2,7 +2,7 @@
 
 Version: 2.0
 
-Scope: implemented Phase 0 through Phase 6; retained roadmap through Phase 7
+Scope: implemented Phase 0 through Phase 7
 
 Status: implementation verified; production data execution pending
 
@@ -15,8 +15,8 @@ artifacts, compare tree and neural candidates fairly, and perform a single
 locked natural-prevalence evaluation.
 
 This PRD does not authorize a performance claim without production evidence.
-Phase 4 model selection, Phase 5 final metrics, and Phase 6 explainability are
-implemented but unrun. Adversarial defense evaluation remains Phase 7.
+Phase 4 model selection, Phase 5 final metrics, Phase 6 explainability, and
+Phase 7 safe adversarial evaluation are implemented but unrun on production data.
 
 ## 2. Stakeholders
 
@@ -161,12 +161,18 @@ ablations, 100-bootstrap stability, negative controls, deletion/insertion tests,
 and a sanitized Phase 5 handoff; it never reopens sealed test. Production
 evidence remains pending.
 
-### 5.8 Phase 7 — retained adversarial requirements
+### 5.8 Phase 7 — adversarial requirements
 
 Phase 7 must use only
 bounded locally generated inert PDFs, exercise the declared mutation families
 and defense matrix, and report clean-versus-robust security and resource
 trade-offs.
+
+The implementation generates inert PDFs locally, validates at least eight
+mutation families and combinations without rendering or persistence, measures
+clean/robust marker performance and resources, and separates demonstrated
+defenses from controls implemented elsewhere and future proposals. Inert fixture
+labels are never described as malware ground truth.
 
 ## 6. Non-functional requirements
 
@@ -222,13 +228,22 @@ reports/explainability/local_cases.json
 reports/explainability/counterfactuals.csv
 reports/explainability/sanity_checks.json
 reports/explainability/actionable_conclusions.md
+reports/adversarial/manifest.json
+reports/adversarial/mutation_validity.csv
+reports/adversarial/robustness_metrics.csv
+reports/adversarial/robustness_by_mutation.csv
+reports/adversarial/defense_matrix.csv
+reports/adversarial/defense_comparison.csv
+reports/adversarial/resource_overhead.csv
+reports/adversarial/threat_model.md
+reports/adversarial/defense_conclusions.md
 reports/figures/roc_full.png
 reports/figures/roc_low_fpr.png
 reports/figures/precision_recall.png
 reports/figures/calibration.png
 ```
 
-The Phase 1–6 production artifacts are generated only when the approved source
+The Phase 1–7 production artifacts are generated only when the approved source
 passes its upstream gate.
 
 ## 8. Acceptance verification
@@ -252,5 +267,5 @@ until a real approved source passes the production gates.
 - Claiming adversarial robustness.
 - Deploying a classifier without a validated threshold and model bundle.
 
-Phase 7 is specified in `professor_feedback_remediation_plan.md`. Production
-Phase 6 begins only after the Phase 4–5 artifacts exist.
+Phase 6 begins only after Phase 4–5 artifacts exist, and production Phase 7
+begins only after the checksummed Phase 6 evidence exists.

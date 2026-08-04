@@ -1,11 +1,11 @@
 {
   "data_gate_passed": false,
   "experiment": {
-    "code_commit": "cb03a3666220820ff97ee481ae351adcb88704c9",
-    "config_sha256": "d965e5b3f410f5379ada80c16448094d5a850b2c6bf3ad0c3b9736f8e74a814a",
-    "created_at_utc": "2026-08-04T14:21:04.361174Z",
+    "code_commit": "893a99d0fdaffdbe6d8671d7481ad32e295370ea",
+    "config_sha256": "d4a9970ae7b9d05c5d7a900d77d7dc1c138c4992abf13233f6bd573be57ea80d",
+    "created_at_utc": "2026-08-04T14:51:02.538156Z",
     "dataset_version": "approved-primary-pdf-telemetry-v1",
-    "experiment_id": "30f67550e20ebbf34570",
+    "experiment_id": "406bae0964a21fd2b50a",
     "feature_schema_version": "2.0.0",
     "project_name": "malicious-pdf-detector",
     "random_seed": 42,

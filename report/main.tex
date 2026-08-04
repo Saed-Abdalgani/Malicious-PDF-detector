@@ -1,4 +1,4 @@
-% Phase 0--6 remediation report. Compiler: pdfLaTeX.
+% Phase 0--7 remediation report. Compiler: pdfLaTeX.
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -9,7 +9,7 @@
 \usepackage{xcolor}
 \usepackage[hidelinks]{hyperref}
 
-\title{Malicious PDF Detector\\\large Phase 0--6 Scientific Remediation Report}
+\title{Malicious PDF Detector\\\large Phase 0--7 Scientific Remediation Report}
 \author{Saed Abdalgani}
 \date{August 2026}
 
@@ -17,12 +17,13 @@
 \maketitle
 
 \begin{abstract}
-This report documents the implemented Phase 0--6 workflow for a defensible
+This report documents the implemented Phase 0--7 workflow for a defensible
 malicious-PDF detection experiment. The remediation enforces a minimum two
 million-row training partition, at least 99.5\% benign prevalence, feature-only
 safe data, group-temporal evaluation, versioned intelligent features, and exact
 batch/inference parity, fair tree/neural comparison, validation-only calibration
-and thresholds, one-shot sealed-test analysis, and gated deep explainability. No approved 2.65-million-row
+and thresholds, one-shot sealed-test analysis, gated deep explainability, and a
+safe inert-PDF adversarial defense benchmark. No approved 2.65-million-row
 primary feature table is currently configured; consequently, no final model
 metric or performance claim is reported. This distinction between verified
 controls and pending empirical evidence is intentional.
@@ -39,7 +40,7 @@ processed two million real training rows.
 \small
 \begin{tabular}{@{}p{0.31\textwidth}p{0.61\textwidth}@{}}
 \toprule
-Feedback & Implemented response through Phase 6 \\
+Feedback & Implemented response through Phase 7 \\
 \midrule
 At least 2,000,000 training rows & Hard gates require 2.65M received, 2.5M clean,
 and 2M train rows. \\
@@ -55,8 +56,8 @@ experiment contains no final metric. \\
 Metric analysis & The complete low-FPR, PR/ROC, calibration, uncertainty,
 subgroup, drift, and sanitized-error contract is implemented for one-shot test
 evaluation. \\
-Explainability and defenses & Phase 6 implements real-background, multi-method,
-stability, sanity, faithfulness, local, and counterfactual evidence. Phase 7 is retained. \\
+Explainability and defenses & Phase 6 implements real-background multi-method
+evidence. Phase 7 implements a safe inert-PDF mutation and defense benchmark. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -230,6 +231,28 @@ context. Counterfactuals use complete observed benign train rows and are marked
 diagnostic rather than causal. SHAP alone cannot produce a conclusion; failed
 sanity or faithfulness checks produce an explicit no-conclusion report.
 
+\section{Phase 7: safe adversarial evaluation}
+
+The Phase 7 harness generates inert PDFs locally and never downloads malware,
+renders a document, or persists fixture PDFs in reports. Network links, embedded
+files, launch actions, executables, and harmful scripts are prohibited. Every
+mutation is envelope-checked and parsed by a strict non-rendering validator;
+when qpdf is installed, \texttt{qpdf --check} is also required and recorded.
+
+The suite exceeds eight valid families: PDF name escaping, whitespace/comments,
+object renumbering, incremental revisions, bounded compressed object streams,
+logical action relocation, benign stuffing, xref representation changes, inert
+string encoding, page/metadata/image inflation, bounded nesting, duplicate-key
+parser-policy disagreement, combined mutations, and query-selected worst cases.
+
+Pre/post evidence compares literal tokens, canonicalized multi-view signals, the
+calibrated champion, and champion-plus-abstention. Reports include attack success,
+robust marker Recall/F2, probability drop, mutated-benign false-positive rate,
+clean deltas, parser failure/abstention, latency, and peak memory. The positive
+fixtures contain inert security markers and are not malware ground truth.
+Adversarial training, monotonic constraints, and sandbox escalation remain
+explicitly future unless approved labeled data or external infrastructure exists.
+
 \section{Verification evidence}
 
 The complete repository test suite includes artifact
@@ -239,6 +262,7 @@ train-only preprocessing, bounded filters/object streams, shortcut auditing,
 catalog completeness, both parity suites, metric formulas, low-FPR threshold
 edge cases, calibration-role isolation, group bootstrap, model-bundle tampering,
 immutable matrices, and one-shot ledger enforcement. Python compilation, Ruff,
+deep explainability gates, adversarial mutation validity, defense regression,
 and Git whitespace validation are required before release.
 
 \section{Current limitations and next action}
@@ -258,11 +282,11 @@ synthetic or unsafe replacement data is not acceptable.
 
 \section{Conclusion}
 
-Phase 0--6 now supplies a fail-closed, auditable workflow suitable for the
+Phase 0--7 now supplies a fail-closed, auditable workflow suitable for the
 professor's requested experiment. The implementation is deliberately honest
 about the remaining data dependency. Credible future metrics must come from the
 sealed natural-prevalence evaluation, not from legacy results or an easier
-surrogate dataset. Phase 6 production execution and Phase 7 adversarial defense
-evaluation remain explicit follow-on work rather than being removed.
+surrogate dataset. Phase 6--7 production execution remains gated on the approved
+data and checksummed upstream artifacts.
 
 \end{document}

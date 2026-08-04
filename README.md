@@ -1,10 +1,10 @@
 # Malicious PDF Detector
 
 This repository is being rebuilt around realistic base rates, leakage-resistant
-evaluation, safe feature-only data, and reproducible artifacts. Phases 0–6 of the
+evaluation, safe feature-only data, and reproducible artifacts. Phases 0–7 of the
 professor-feedback remediation are implemented in code. The empirical gates are
 **not yet claimed as passed**, because no approved 2.65M-row source has been
-supplied. Phase 7 remains in the roadmap; it was not removed.
+supplied. Production execution remains blocked by that external dependency.
 
 Old results from the 10K-row workflow are historical only. They are copied to
 `reports/archive/unverified_pre_remediation/`; `reports/results/experiment_summary.json`
@@ -22,7 +22,7 @@ is the only permitted source for future final numbers.
 | 4.5 — deployment optimization | Planned | Waits for a verified champion |
 | 5 — locked metrics/error analysis | Complete | Not executed; sealed test remains unopened |
 | 6 — deep explainability | Complete | Production execution waits for verified Phase 4–5 evidence |
-| 7 — adversarial attacks/defenses | Planned and retained | Waits for the verified champion and safe inert fixtures |
+| 7 — adversarial attacks/defenses | Complete | Production run waits for verified Phase 4–6 artifacts |
 
 No model metric in the current README is presented as final evidence.
 
@@ -70,7 +70,7 @@ silently promoted to training data.
 
 See `docs/data_source_approval.md` for the approval checklist.
 
-## Phase 0–6 architecture
+## Phase 0–7 architecture
 
 ```mermaid
 flowchart LR
@@ -87,6 +87,8 @@ flowchart LR
     K --> L["Grouped temporal tuning and full-train refit"]
     L --> M["Disjoint validation calibration and threshold locking"]
     M --> N["One-shot sealed-test metrics and error analysis"]
+    N --> O["Deep multi-method explainability"]
+    O --> P["Safe inert-PDF adversarial defense evaluation"]
 ```
 
 ### Phase 0 — identity and artifact compatibility
@@ -215,10 +217,20 @@ observed-row counterfactuals. SHAP always uses a real stratified train backgroun
 and can never support a conclusion alone. Phase 6 consumes only the sanitized,
 bounded handoff created during Phase 5 and never reopens sealed test.
 
-See `docs/explainability.md` and `phase6_implementation.md`. Phase 7 remains the
-bounded inert-PDF adversarial threat/defense study.
+See `docs/explainability.md` and `phase6_implementation.md`.
 
-## Running Phase 0–6
+### Phase 7 — safe adversarial attacks and defenses
+
+`src/security/adversarial.py` generates only local inert PDFs and implements
+twelve independently validated mutation families plus combined and query-selected
+worst cases. Fixtures are strictly parsed, never rendered, and never retained.
+`src/models/phase7.py` measures attack success, robust marker Recall/F2,
+probability drop, mutated-benign FPR, clean deltas, abstention, latency, and peak
+RSS. Reports distinguish demonstrated defenses, controls implemented elsewhere,
+and future recommendations. These inert markers are not malware ground truth.
+See `docs/adversarial_robustness.md` and `phase7_implementation.md`.
+
+## Running Phase 0–7
 
 Create a Python 3.11 environment and install dependencies:
 
@@ -246,6 +258,7 @@ evaluation. Then run Phase 5 exactly once:
 ```powershell
 python -m src.models.phase5 --confirm-sealed-test-evaluation
 python -m src.models.phase6
+python -m src.models.phase7
 ```
 
 If Phase 5 fails after claiming the test, create a new experiment and split
@@ -276,13 +289,13 @@ fixtures.
 ## Important limitations
 
 - The repository does not contain the required approved primary dataset.
-- Phase 1–6 production artifacts therefore do not yet exist.
+- Phase 1–7 production artifacts therefore do not yet exist.
 - Existing model and metric files are incompatible historical artifacts.
 - No claim is made yet that an MLP beats tree methods.
 - Phase 5 metric code exists, but no F1, F-beta, precision, recall, PR/ROC, or
   model-performance value is claimed until the single production run succeeds.
-- Phase 6 code is complete, but no empirical explainability conclusion exists;
-  adversarial-defense conclusions remain Phase 7 work. Both require real gated evidence.
+- Phase 6–7 code is complete, but no empirical explainability or production
+  robustness conclusion exists. Both require real gated evidence.
 
 The full roadmap and acceptance criteria are in
 `professor_feedback_remediation_plan.md`.

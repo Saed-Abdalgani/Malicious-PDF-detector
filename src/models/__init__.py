@@ -2,7 +2,7 @@
 models — Malicious PDF Detection Models Package
 =================================================
 
-Provides legacy compatibility APIs plus the versioned Phase 4–6 workflow.
+Provides legacy compatibility APIs plus the versioned Phase 4–7 workflow.
 
 Modules:
     baseline:  Tree-based models (RF, XGBoost, LightGBM) with GridSearchCV
@@ -12,6 +12,7 @@ Modules:
     phase4:    Required fair training, calibration, thresholds, and selection
     phase5:    One-shot sealed-test evaluation and error analysis
     phase6:    Deep multi-method explainability without reopening sealed test
+    phase7:    Safe inert-PDF adversarial and defense evaluation
 """
 
 from src.models.baseline import BaselineModel

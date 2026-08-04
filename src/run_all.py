@@ -1,4 +1,4 @@
-"""Fail-closed Phase 0-6 remediation workflow.
+"""Fail-closed Phase 0-7 remediation workflow.
 
 Phase 4 cannot begin until an approved feature-only source passes the 2.5M-row
 quality gate and the sealed train split contains at least 2M rows at natural
@@ -144,7 +144,7 @@ def main(argv: list[str] | None = None) -> int:
         "--source-id",
         help="Enabled, approved, feature-only source ID from configs/data_sources.yaml.",
     )
-    parser.add_argument("--through-phase", type=int, choices=range(0, 7), default=3)
+    parser.add_argument("--through-phase", type=int, choices=range(0, 8), default=3)
     parser.add_argument("--batch-size", type=int, default=100_000)
     parser.add_argument("--model-family", choices=("neural", "tree"), default="neural")
     parser.add_argument(
@@ -229,6 +229,13 @@ def main(argv: list[str] | None = None) -> int:
 
     phase6_manifest = Phase6Runner(split_root=split_root).run()
     logger.info("Phase 6 complete: explainability manifest at %s.", phase6_manifest)
+    if args.through_phase == 6:
+        return 0
+
+    from src.models.phase7 import Phase7Runner
+
+    phase7_manifest = Phase7Runner(split_root=split_root).run()
+    logger.info("Phase 7 complete: adversarial manifest at %s.", phase7_manifest)
     return 0
 
 

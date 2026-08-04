@@ -74,16 +74,20 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
 - [x] Add sanitized Phase 5 handoff and immutable Phase 6 output manifest.
 - [ ] Execute on real gated artifacts and derive empirical actions.
 
-## Phase 7 — adversarial defenses (retained)
+## Phase 7 — adversarial defenses
 
-- [ ] Execute the safe inert-PDF threat model and mutation suite.
-- [ ] Compare defenses and report clean/robust performance and resource trade-offs.
+- [x] Implement the safe inert-PDF threat model and 12+ mutation families,
+  combinations, and query-selected worst cases.
+- [x] Implement strict non-rendering validation and prohibit PDF persistence.
+- [x] Compare demonstrated defenses and report clean/robust benchmark and resource trade-offs.
+- [x] Separate implemented controls from future training/monotonic/sandbox proposals.
+- [ ] Execute on the verified production champion after Phases 1–6 succeed.
 
 ## Verification completed
 
 - [x] `python -m compileall -q src app`
 - [x] `ruff check src app tests`
-- [x] `pytest -q` — 77 passed after Phase 6 implementation.
+- [x] `pytest -q` — 83 passed after Phase 7 implementation.
 - [x] `git diff --check`
 - [x] `python -m src.run_all --through-phase 0`
 - [x] Confirm `data_gate_passed` is false and `final_metrics` is null.
@@ -96,6 +100,6 @@ PDF telemetry table. CIC-Evasive-PDFMal2022 remains a disabled supplementary
 benchmark because 10,025 rows cannot satisfy the primary experiment and its
 class balance is unsuitable for production prevalence.
 
-Phase 4–6 implementation is complete but cannot produce empirical evidence until the data
-dependency is resolved. Phase 7 is retained future work. Their full
+Phase 4–7 implementation is complete but cannot produce empirical evidence until the data
+dependency is resolved. The full
 specification is in `professor_feedback_remediation_plan.md`.

@@ -74,6 +74,14 @@ phase6:
   development_sanity_rows: 100000
   minimum_independent_support_methods: 2
 
+phase7:
+  fixtures_per_benchmark_class: 4
+  minimum_valid_mutation_families: 8
+  maximum_fixture_bytes: 2097152
+  maximum_validation_seconds: 10
+  require_qpdf_when_available: true
+  persist_fixture_pdfs: false
+
 paths:
   source_registry: configs/data_sources.yaml
   manifests: data/manifests

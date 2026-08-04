@@ -101,6 +101,19 @@ def load_experiment_config(path: Optional[Path] = None) -> dict[str, Any]:
         raise ExperimentConfigurationError(
             "Phase 6 conclusions require at least two independent support methods."
         )
+    phase7 = config.get("phase7", {})
+    if int(phase7.get("minimum_valid_mutation_families", 0)) < 8:
+        raise ExperimentConfigurationError(
+            "Phase 7 requires at least eight valid PDF mutation families."
+        )
+    if int(phase7.get("fixtures_per_benchmark_class", 0)) < 2:
+        raise ExperimentConfigurationError(
+            "Phase 7 requires at least two inert fixtures per benchmark class."
+        )
+    if bool(phase7.get("persist_fixture_pdfs", True)):
+        raise ExperimentConfigurationError(
+            "Phase 7 may not persist generated PDF fixtures in report artifacts."
+        )
     return config
 
 

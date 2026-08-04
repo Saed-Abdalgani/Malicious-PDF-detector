@@ -1,4 +1,4 @@
-# Professor-feedback traceability through Phase 6
+# Professor-feedback traceability through Phase 7
 
 | Feedback | Implemented response | Current evidence |
 |---|---|---|
@@ -10,7 +10,7 @@
 | Full metric analysis | Full metric/threshold contract, group CIs, subgroups, drift, calibration, errors, and exclusive one-shot sealed test | Phase 5 code/tests complete; no metric claimed yet |
 | Deep explainability | Real-train SHAP background plus permutation, native importance, ALE/interactions, retrained family ablation, 100-bootstrap stability, sanity/faithfulness, local cases, subgroups, and feasible diagnostic counterfactuals | Phase 6 code/tests complete; production evidence pending |
 | In-depth conclusions | Independent-method and sanity gates map supported findings to concrete actions; SHAP alone is rejected | Mechanism complete; empirical conclusions pending |
-| Adversarial defenses | Retained safe inert-fixture threat/defense evaluation | Phase 7 pending, not removed |
+| Adversarial defenses | Local inert-PDF corpus, 12+ valid rewrites plus combined/adaptive selection, strict non-rendering validation, demonstrated pre/post defenses, clean/robust marker and resource metrics, and explicit future-defense separation | Phase 7 code/tests complete; production champion evidence pending |
 
 This table distinguishes implemented controls from empirical evidence. A green
 unit test is not substituted for a real 2M-row training run.

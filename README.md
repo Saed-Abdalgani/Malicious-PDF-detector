@@ -71,6 +71,12 @@ The CIC-Evasive-PDFMal2022 table remains a supplementary benchmark: its 10,025
 rows cannot satisfy the primary dataset requirement. It is disabled and is never
 silently promoted to training data.
 
+For local GUI smoke testing only, the repository can build an explicitly labelled
+historical demo bundle from a pinned feature-table mirror. The verified mirror
+contains 10,023 usable rows (4,468 benign and 5,555 malicious) and no PDF files.
+The two-row difference from the 10,025 records described by UNB is recorded, not
+hidden. This demo path is isolated from the professor-gated Phase 1–8 run.
+
 See `docs/data_source_approval.md` for the approval checklist.
 
 ## Phase 0–10 architecture
@@ -312,6 +318,28 @@ version; do not delete the ledger and retry.
 Running without an approved source stops with a clear error. It does not fetch a
 fallback dataset, open a browser, lower a gate, or use raw PDFs.
 
+### Local GUI demo (historical data; not production evidence)
+
+To make the scanner operational before the approved primary dataset is supplied,
+build the clearly labelled local demo bundle and start Streamlit:
+
+```powershell
+python scripts/build_demo_bundle.py
+python -m streamlit run app/streamlit_app.py
+```
+
+The builder downloads only the pinned `PDFMalware2022.parquet` feature table,
+rejects any archive containing other entries, verifies both archive and table
+SHA-256 values, and trains Extra Trees through the current schema-v2 pipeline.
+Train, calibration-fit, calibration-selection, and threshold-selection roles are
+disjoint. The application displays a persistent **DEMO MODE** warning.
+
+The resulting `models/deployment/deployment_bundle_v1.joblib` and its metadata
+sidecar are local generated artifacts and are intentionally ignored by Git. They
+are bound to the current commit, so rerun the builder after switching commits.
+No value produced by this path is written to the final experiment summary or may
+be cited as satisfying the 2M-row, >99% benign-prevalence, or sealed-test gates.
+
 Phase 0 alone is always reproducible:
 
 ```powershell
@@ -335,6 +363,8 @@ fixtures.
 
 - The repository does not contain the required approved primary dataset.
 - Phase 1–8 production artifacts therefore do not yet exist.
+- A historical demo bundle may exist locally solely to exercise the GUI; the UI
+  labels it and its provenance records both failed professor data gates.
 - Existing model and metric files are incompatible historical artifacts.
 - No claim is made yet that an MLP beats tree methods.
 - Phase 5 metric code exists, but no F1, F-beta, precision, recall, PR/ROC, or

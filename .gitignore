@@ -33,6 +33,8 @@ models/*.pt
 models/*.pth
 models/*.onnx
 models/*.joblib
+models/deployment/*.joblib
+models/deployment/*.joblib.metadata.json
 *.h5
 *.hdf5
 *.parquet

@@ -53,6 +53,16 @@ class PDFAnalyzer:
         bundle.validate()
         self.bundle = bundle
 
+    @property
+    def deployment_tier(self) -> str:
+        """Expose the artifact's declared tier without inferring production status."""
+        return str(self.bundle.provenance.get("deployment_tier", "verified_phase8"))
+
+    @property
+    def provenance(self) -> dict[str, Any]:
+        """Return a defensive copy for transparent UI labelling."""
+        return dict(self.bundle.provenance)
+
     def analyze(self, uploaded_file: Any) -> AnalysisResult:
         result = analyze_pdf_bytes(
             uploaded_file.getvalue(), self.bundle, include_explanation=True

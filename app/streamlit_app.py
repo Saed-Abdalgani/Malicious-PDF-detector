@@ -43,6 +43,16 @@ def _scanner() -> None:
         )
         return
 
+    analyzer = st.session_state.analyzer
+    if analyzer.deployment_tier == "historical_demo_only":
+        provenance = analyzer.provenance
+        st.warning(
+            "DEMO MODE — the scanner is functional using the historical "
+            f"{int(provenance.get('dataset_rows', 0)):,}-row feature table. "
+            "This bundle does not pass the professor's 2M-row/realistic-prevalence "
+            "gates, and its development metrics are not final project results."
+        )
+
     uploaded_file = render_upload_zone()
     if uploaded_file is not None:
         with st.spinner("Analyzing PDF structure locally..."):

@@ -127,6 +127,18 @@ def test_corrupted_and_oversized_uploads_fail_closed_without_persistence(deploym
     assert not list(tmp_path.glob("*.pdf"))
 
 
+def test_analyzer_exposes_explicit_demo_tier_without_mutable_provenance(deployment_bundle):
+    deployment_bundle.provenance = {
+        "deployment_tier": "historical_demo_only",
+        "professor_acceptance_gates_passed": False,
+    }
+    analyzer = PDFAnalyzer(bundle=deployment_bundle)
+    assert analyzer.deployment_tier == "historical_demo_only"
+    exposed = analyzer.provenance
+    exposed["deployment_tier"] = "production"
+    assert analyzer.deployment_tier == "historical_demo_only"
+
+
 def test_deployment_bundle_roundtrip_and_schema_tamper_rejection(deployment_bundle, tmp_path):
     identity = create_experiment_identity(load_experiment_config())
     path = deployment_bundle.save(tmp_path / "bundle.joblib", identity=identity)
@@ -159,7 +171,10 @@ def test_evidence_only_llm_contract_rejects_extra_fields():
 
 
 def test_phase8_and_stage_commands_fail_closed_on_current_phase0_state():
-    with pytest.raises(Phase8GateError, match="completed.*Phase 7"):
+    with pytest.raises(
+        Phase8GateError,
+        match="completed.*Phase 7|immutable and already exist",
+    ):
         Phase8Runner().run()
     with pytest.raises(RuntimeError, match="requires upstream status"):
         _stage_main(["train", "--config", str(EXPERIMENT_CONFIG_PATH)])

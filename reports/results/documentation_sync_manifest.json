@@ -1,0 +1,50 @@
+{
+  "experiment_summary_sha256": "981d82e5566b8c0d6765cedcf3ec05c706477092a319510f7fc3210e13625fe0",
+  "final_metrics_present": false,
+  "historical_archive_manifest_sha256": "17607121ef3df7155fd7cb47ca8d27cc9b915b02bc86f3c70f142db461e6b4cb",
+  "historical_metrics_sha256": "237f5dbf972c071e9318eb2a0d9942d26d3c734a56ecf0fe13eb69b2a876c3b1",
+  "manual_metrics_labeled_unverified": true,
+  "outputs": {
+    "latex_results": {
+      "path": "report/generated_results.tex",
+      "sha256": "2bf785f928c9c0c255a9585961d891b9dcf8ffc62df70d5553d7d0bc12e05bfe"
+    },
+    "markdown_results": {
+      "path": "docs/generated/results_summary.md",
+      "sha256": "89159d8b973e78e5fd359ea3072f870f967ae57f1eb46ad2e8e8932a8ac601cd"
+    },
+    "notebook_01_data_preprocessing_ipynb": {
+      "path": "notebooks/01_data_preprocessing.ipynb",
+      "sha256": "45c5ed9a1e73ebc269506bd7e72141e635d050946d0f9912e7d2c0fc4992b66d"
+    },
+    "notebook_02_eda_ipynb": {
+      "path": "notebooks/02_eda.ipynb",
+      "sha256": "baa26f4e32cb6a999c10522a73251c9eb6581b55a12d03fea282f368383363cf"
+    },
+    "notebook_03_feature_engineering_ipynb": {
+      "path": "notebooks/03_feature_engineering.ipynb",
+      "sha256": "1aae3446e1313d29360784a64c6b581354c6e41bedb7d4b529ef3cdc5ddbf985"
+    },
+    "notebook_04_model_training_ipynb": {
+      "path": "notebooks/04_model_training.ipynb",
+      "sha256": "044d6311439615d9ac7b9bb4b8eb9c4f965219f31225919da438ed0a75ae0ad6"
+    },
+    "notebook_05_quantization_ipynb": {
+      "path": "notebooks/05_quantization.ipynb",
+      "sha256": "fe16df818d3d3f7123031afe513df606a77dc437cf5a6febc8343dc30c7bce0f"
+    },
+    "notebook_06_llm_integration_ipynb": {
+      "path": "notebooks/06_llm_integration.ipynb",
+      "sha256": "68980ff591792b0bf45699773ccc2307c7a055fda3e588db245f12ac06ea2291"
+    },
+    "notebook_07_final_report_html": {
+      "path": "notebooks/07_final_report.html",
+      "sha256": "60d6fedf728d74a46f1656440b9261db34e8698b7af9edd8eee96dbb2ccbdb58"
+    },
+    "notebook_07_final_report_ipynb": {
+      "path": "notebooks/07_final_report.ipynb",
+      "sha256": "a623aa82aaba779ae0d478ca4a88f26d8fe7f228b02e44c4312b668dd8fb45b1"
+    }
+  },
+  "version": "1.0.0"
+}

@@ -1,4 +1,4 @@
-# Phase 0–7 remediation implementation plan
+# Phase 0–10 remediation implementation plan
 
 This is the authoritative implementation plan for the professor-feedback
 remediation. The obsolete 10K-row, balanced-data, SMOTE, browser-download, and
@@ -7,8 +7,8 @@ legacy-metric plan has been removed.
 ## Objective and present state
 
 Implement a defensible foundation for a malicious-PDF detector using only safe,
-approved feature tables. Phase 0–7 code, tests, and documentation are complete.
-The production Phase 1–7 run is pending an approved primary table; no substitute
+approved feature tables. Phase 0–10 code, tests, and documentation are complete.
+The production Phase 1–8 run is pending an approved primary table; no substitute
 dataset is selected automatically and no empirical gate is claimed prematurely.
 Production Phases 6 and 7 remain gated on real upstream evidence.
 
@@ -23,10 +23,12 @@ production 2M-row training gate has already passed.
 | 2 — frozen split | Complete | Awaits Phase 1 clean layer |
 | 3 — intelligent features | Complete | Awaits sealed Phase 2 train split |
 | 4 — fair model comparison | Complete | Awaits production Phase 3 artifacts |
-| 4.5 — deployment optimization | Planned | Awaits a verified champion |
 | 5 — locked evaluation | Complete | Awaits Phase 4 and explicit one-shot test confirmation |
 | 6 — deep explainability | Implemented | Production run awaits verified Phase 4–5 artifacts |
 | 7 — attacks and defenses | Implemented | Production run awaits verified Phase 4–6 artifacts |
+| 8 — bundle/application integration | Implemented | Production package awaits Phase 7 |
+| 9 — staged verification | Implemented | Release verification awaits Phase 8 and final metrics |
+| 10 — synchronized documentation | Implemented | Current generated results reflect Phase 0 |
 
 ## Non-negotiable gates
 
@@ -166,14 +168,46 @@ production 2M-row training gate has already passed.
 - [x] Refuse execution before a checksummed Phase 6 manifest and champion.
 - [ ] Execute after production Phases 1–6 succeed.
 
+## Phase 8 — application and artifact integration
+
+- [x] Package model ensemble, calibration, pipeline, schema, threshold, provenance,
+  train-only explanation reference, and OOD reference as one bundle.
+- [x] Reject checksum, experiment, sidecar, threshold, and schema mismatch.
+- [x] Implement benign/malicious/uncertain-abstain decisions.
+- [x] Separate raw actionable observations from model attributions.
+- [x] Keep uploaded bytes local and delete temporary files after extraction.
+- [x] Constrain the optional LLM to supplied structured evidence.
+- [x] Require exact 100-fixture app/bundle parity and bounded corrupt/oversized
+  fail-closed behavior.
+- [ ] Package the production bundle after Phase 7 succeeds.
+
+## Phase 9 — tests and stage-aware verification
+
+- [x] Add independent `validate-data`, `split`, `build-features`, `train`,
+  `evaluate`, `explain`, `adversarial`, `package-app`, `sync-docs`, and `verify`
+  commands with exact upstream-status checks.
+- [x] Verify the Phase 5–8 manifest chain, bundle compatibility, final metric
+  presence, documentation synchronization, and upload non-retention.
+- [x] Add deployment, inference, prompt-grounding, CLI, and documentation tests.
+- [ ] Run the final release verifier after production Phase 8 and doc sync.
+
+## Phase 10 — synchronized documentation
+
+- [x] Add dataset/model cards, reproducibility guide, and Phase 8–10 reports.
+- [x] Generate Markdown and LaTeX results from checksummed artifacts only.
+- [x] Keep final results separate from exact historical values and the author's
+  later unverified “all above 90%” manual re-check.
+- [x] Refresh notebooks as thin readers of the active summary and generated docs.
+- [x] Update README, report, PRD, tracker, implementation plan, and citations.
+
 ## Verification
 
 ```powershell
-python -m compileall -q src app
-ruff check src app tests
+python -m compileall -q src app scripts
+ruff check src app scripts tests
 pytest -q
-python -m src.run_all --through-phase 0
-python -m src.data.downloader list
+python -m src.run_all sync-docs --config configs/experiment.yaml
+python -m src.run_all verify --config configs/experiment.yaml
 ```
 
 Phase 0 must report `data_gate_passed: false` and `final_metrics: null` while the
@@ -191,14 +225,22 @@ contracts without fabricating production scores.
 4. Run:
 
 ```powershell
-python -m src.data.downloader verify approved-primary-pdf-telemetry
-python -m src.run_all --source-id approved-primary-pdf-telemetry --through-phase 4
+python -m src.run_all init --config configs/experiment.yaml
+python -m src.run_all validate-data --config configs/experiment.yaml --source-id approved-primary-pdf-telemetry
+python -m src.run_all split --config configs/experiment.yaml
+python -m src.run_all build-features --config configs/experiment.yaml
+python -m src.run_all train --config configs/experiment.yaml
 ```
 
 Review Phase 4, then make the one authorized test evaluation:
 
 ```powershell
-python -m src.models.phase5 --confirm-sealed-test-evaluation
+python -m src.run_all evaluate --config configs/experiment.yaml --confirm-sealed-test-evaluation
+python -m src.run_all explain --config configs/experiment.yaml
+python -m src.run_all adversarial --config configs/experiment.yaml
+python -m src.run_all package-app --config configs/experiment.yaml
+python -m src.run_all sync-docs --config configs/experiment.yaml
+python -m src.run_all verify --config configs/experiment.yaml
 ```
 
 The pipeline must fail rather than lower a threshold or fabricate missing rows.

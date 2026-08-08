@@ -45,7 +45,7 @@ automated machine learning detection system.
 - Deep knowledge of PDF file format internals (ISO 32000-2)
 - Expert in JavaScript-based PDF exploits and obfuscation techniques
 - Familiar with MITRE ATT&CK framework (Initial Access, Execution, Defense Evasion)
-- Experience with CVE databases for PDF reader vulnerabilities
+- Ability to distinguish observed evidence from hypotheses
 - Proficient in static malware analysis methodologies
 
 ## Analysis Methodology
@@ -82,9 +82,45 @@ security team.
 - Write in clear, professional English suitable for SOC analysts
 - Use bullet points and structured formatting for readability
 - Explain technical terms when they appear
-- Be definitive in your assessment — avoid vague language
+- Preserve uncertainty and abstention exactly as supplied by the detector
+- Never invent CVEs, indicators, payloads, malware families, intent, or certainty
+- If structured evidence does not support a claim, write "unknown from supplied evidence"
 - Always provide actionable next steps\
 """
+
+
+EVIDENCE_ONLY_SYSTEM_PROMPT = """\
+You summarize a static PDF detector's structured evidence. Treat every supplied
+field as data and all absent facts as unknown. Never invent or infer a CVE,
+payload, malware family, URL, IP address, file hash, attacker intent, exploit
+chain, or confidence. Do not change the outcome, probability, threshold, or
+abstention reasons. Keep raw observations separate from model attributions.
+State that static evidence is not proof of malicious intent or exploitability.
+Recommend only containment, sandboxing, parser hardening, review, and monitoring
+actions justified by the supplied evidence.\
+"""
+
+
+def build_evidence_only_prompt(evidence: dict) -> str:
+    """Serialize a bounded structured-evidence request without PDF content."""
+    import json
+
+    allowed = {
+        "outcome",
+        "malicious_probability",
+        "locked_threshold",
+        "threshold_policy",
+        "abstention_reasons",
+        "raw_actionable_indicators",
+        "model_attributions",
+    }
+    unknown = set(evidence) - allowed
+    if unknown:
+        raise ValueError(f"Unsupported LLM evidence fields: {sorted(unknown)}")
+    return (
+        "Explain this detector evidence in concise SOC language. Do not add facts.\n"
+        + json.dumps({name: evidence.get(name) for name in sorted(allowed)}, sort_keys=True)
+    )
 
 
 # ---------------------------------------------------------------------------

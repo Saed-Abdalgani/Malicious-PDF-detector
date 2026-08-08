@@ -23,7 +23,8 @@ def render_upload_zone():
     )
     
     if uploaded_file is not None:
-        # File size check
+        # File size check. The inference layer repeats this check and returns an
+        # explicit uncertain/abstain outcome if the envelope changes.
         file_size_mb = uploaded_file.size / (1024 * 1024)
         if file_size_mb > MAX_FILE_SIZE_MB:
             st.error(f"❌ File size ({file_size_mb:.1f}MB) exceeds the maximum limit of {MAX_FILE_SIZE_MB}MB.")
@@ -35,12 +36,10 @@ def render_upload_zone():
             validation = validate_pdf_envelope(uploaded_file.getvalue())
             uploaded_file.seek(0)
             if not validation.valid:
-                st.error(
-                    f"❌ Invalid PDF envelope ({validation.reason}). "
-                    "Please upload a genuine, complete PDF file."
+                st.warning(
+                    f"⚠️ PDF envelope issue ({validation.reason}); analysis will "
+                    "fail closed with an uncertain/abstain outcome."
                 )
-                st.markdown('</div>', unsafe_allow_html=True)
-                return None
                 
             # Sanitize filename for display/logging
             safe_filename = os.path.basename(uploaded_file.name)

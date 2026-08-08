@@ -82,6 +82,16 @@ phase7:
   require_qpdf_when_available: true
   persist_fixture_pdfs: false
 
+phase8:
+  explanation_background_rows: 512
+  golden_fixture_count: 100
+  maximum_pdf_bytes: 52428800
+  maximum_fail_closed_seconds: 10
+  uncertainty_probability_margin: 0.02
+  ood_robust_z_threshold: 8.0
+  ood_feature_fraction_threshold: 0.10
+  persist_uploaded_pdfs: false
+
 paths:
   source_registry: configs/data_sources.yaml
   manifests: data/manifests

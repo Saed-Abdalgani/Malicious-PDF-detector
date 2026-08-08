@@ -11,7 +11,7 @@ setup(
     version="1.0.0",
     author="Saed Abdalgani",
     author_email="example@example.com",
-    description="A lightweight Malicious PDF Detector using Structural Features, Quantization, and LLM Analysis",
+    description="A fail-closed malicious PDF detector with calibrated static analysis and abstention",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Saed-Abdalgani/Malicious-PDF-detector",

@@ -1,7 +1,7 @@
 # Malicious PDF Detector
 
 This repository is being rebuilt around realistic base rates, leakage-resistant
-evaluation, safe feature-only data, and reproducible artifacts. Phases 0–7 of the
+evaluation, safe feature-only data, and reproducible artifacts. Phases 0–10 of the
 professor-feedback remediation are implemented in code. The empirical gates are
 **not yet claimed as passed**, because no approved 2.65M-row source has been
 supplied. Production execution remains blocked by that external dependency.
@@ -23,6 +23,9 @@ is the only permitted source for future final numbers.
 | 5 — locked metrics/error analysis | Complete | Not executed; sealed test remains unopened |
 | 6 — deep explainability | Complete | Production execution waits for verified Phase 4–5 evidence |
 | 7 — adversarial attacks/defenses | Complete | Production run waits for verified Phase 4–6 artifacts |
+| 8 — deployment bundle/application | Complete | Packaging waits for verified Phase 7 artifacts |
+| 9 — stage-aware tests/verification | Complete | Release gate waits for Phase 8 and final metrics |
+| 10 — synchronized documentation | Complete | Generated documents report the current fail-closed experiment state |
 
 No model metric in the current README is presented as final evidence.
 
@@ -70,7 +73,7 @@ silently promoted to training data.
 
 See `docs/data_source_approval.md` for the approval checklist.
 
-## Phase 0–7 architecture
+## Phase 0–10 architecture
 
 ```mermaid
 flowchart LR
@@ -89,6 +92,9 @@ flowchart LR
     M --> N["One-shot sealed-test metrics and error analysis"]
     N --> O["Deep multi-method explainability"]
     O --> P["Safe inert-PDF adversarial defense evaluation"]
+    P --> Q["Single deployment bundle and three-way decision"]
+    Q --> R["Stage-aware verification"]
+    R --> S["Artifact-synchronized documentation"]
 ```
 
 ### Phase 0 — identity and artifact compatibility
@@ -230,7 +236,40 @@ RSS. Reports distinguish demonstrated defenses, controls implemented elsewhere,
 and future recommendations. These inert markers are not malware ground truth.
 See `docs/adversarial_robustness.md` and `phase7_implementation.md`.
 
-## Running Phase 0–7
+### Phase 8 — deployment bundle and application
+
+`src/models/deployment.py` packages the exact feature pipeline, calibrated
+champion ensemble, validation-selected threshold/policy, schema digest,
+provenance, real train-only explanation background, and OOD reference in one
+artifact. The application cannot fall back to a separate model or scaler.
+
+The inference contract returns `benign`, `malicious`, or
+`uncertain/abstain`. Parser/resource failures, OOD profiles, and probabilities
+near the locked threshold trigger abstention. Raw actionable observations and
+local model attributions are displayed separately. Uploaded PDF bytes remain
+local and are deleted after bounded extraction. The optional LLM sees structured
+evidence only and cannot invent CVEs, indicators, payloads, intent, or certainty.
+See `phase8_implementation.md` and `docs/model_card.md`.
+
+### Phase 9 — tests and reproducibility
+
+`src/run_all.py` exposes independent stage commands. Each requires the exact
+upstream status, and each runner repeats artifact/hash checks. The final verifier
+checks sealed metrics, the Phase 5–8 manifest chain, deployment compatibility,
+documentation synchronization, and PDF non-retention. See
+`phase9_implementation.md` and `docs/reproducibility.md`.
+
+### Phase 10 — generated documentation
+
+`scripts/sync_results_docs.py` generates the Markdown and LaTeX result sections
+from checksummed artifacts. Verified final results and manual/historical
+measurements are separate. The author's later manually measured “above 90%”
+range is preserved as author-reported and unverified because its exact
+evaluation artifact is unavailable. The exact archived values—including which
+individual metrics really exceed 90%—are shown in
+`docs/generated/results_summary.md` without changing them.
+
+## Running Phase 0–10
 
 Create a Python 3.11 environment and install dependencies:
 
@@ -245,20 +284,26 @@ python -m src.data.downloader list
 ```
 
 After an institutionally approved feature table has been added to the source
-registry with its real checksum and mappings:
+registry with its real checksum and mappings, run each checked stage:
 
 ```powershell
-python -m src.data.downloader verify approved-primary-pdf-telemetry
-python -m src.run_all --source-id approved-primary-pdf-telemetry --through-phase 4
+python -m src.run_all init --config configs/experiment.yaml
+python -m src.run_all validate-data --config configs/experiment.yaml --source-id approved-primary-pdf-telemetry
+python -m src.run_all split --config configs/experiment.yaml
+python -m src.run_all build-features --config configs/experiment.yaml
+python -m src.run_all train --config configs/experiment.yaml
 ```
 
 Review the generated Phase 4 validation evidence before the irreversible test
 evaluation. Then run Phase 5 exactly once:
 
 ```powershell
-python -m src.models.phase5 --confirm-sealed-test-evaluation
-python -m src.models.phase6
-python -m src.models.phase7
+python -m src.run_all evaluate --config configs/experiment.yaml --confirm-sealed-test-evaluation
+python -m src.run_all explain --config configs/experiment.yaml
+python -m src.run_all adversarial --config configs/experiment.yaml
+python -m src.run_all package-app --config configs/experiment.yaml
+python -m src.run_all sync-docs --config configs/experiment.yaml
+python -m src.run_all verify --config configs/experiment.yaml
 ```
 
 If Phase 5 fails after claiming the test, create a new experiment and split
@@ -289,13 +334,15 @@ fixtures.
 ## Important limitations
 
 - The repository does not contain the required approved primary dataset.
-- Phase 1–7 production artifacts therefore do not yet exist.
+- Phase 1–8 production artifacts therefore do not yet exist.
 - Existing model and metric files are incompatible historical artifacts.
 - No claim is made yet that an MLP beats tree methods.
 - Phase 5 metric code exists, but no F1, F-beta, precision, recall, PR/ROC, or
   model-performance value is claimed until the single production run succeeds.
-- Phase 6–7 code is complete, but no empirical explainability or production
+- Phase 6–8 code is complete, but no empirical explainability or production
   robustness conclusion exists. Both require real gated evidence.
 
-The full roadmap and acceptance criteria are in
+Current metric documentation is generated at
+`docs/generated/results_summary.md`; in-depth actionable conclusions are in
+`docs/conclusions.md`. The full roadmap and acceptance criteria are in
 `professor_feedback_remediation_plan.md`.

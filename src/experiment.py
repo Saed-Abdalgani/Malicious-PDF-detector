@@ -114,6 +114,22 @@ def load_experiment_config(path: Optional[Path] = None) -> dict[str, Any]:
         raise ExperimentConfigurationError(
             "Phase 7 may not persist generated PDF fixtures in report artifacts."
         )
+    phase8 = config.get("phase8", {})
+    if int(phase8.get("explanation_background_rows", 0)) < 100:
+        raise ExperimentConfigurationError(
+            "Phase 8 requires at least 100 real train-only explanation rows."
+        )
+    if int(phase8.get("golden_fixture_count", 0)) < 100:
+        raise ExperimentConfigurationError(
+            "Phase 8 requires at least 100 golden inference fixtures."
+        )
+    maximum_pdf_bytes = int(phase8.get("maximum_pdf_bytes", 0))
+    if not 0 < maximum_pdf_bytes <= 100 * 1024 * 1024:
+        raise ExperimentConfigurationError("Phase 8 maximum_pdf_bytes is invalid.")
+    if bool(phase8.get("persist_uploaded_pdfs", True)):
+        raise ExperimentConfigurationError(
+            "Phase 8 may not retain uploaded PDF bytes."
+        )
     return config
 
 

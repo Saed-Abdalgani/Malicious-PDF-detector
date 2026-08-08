@@ -1,4 +1,4 @@
-% Phase 0--7 remediation report. Compiler: pdfLaTeX.
+% Phase 0--10 remediation report. Compiler: pdfLaTeX + BibTeX.
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -9,7 +9,7 @@
 \usepackage{xcolor}
 \usepackage[hidelinks]{hyperref}
 
-\title{Malicious PDF Detector\\\large Phase 0--7 Scientific Remediation Report}
+\title{Malicious PDF Detector\\\large Phase 0--10 Scientific Remediation Report}
 \author{Saed Abdalgani}
 \date{August 2026}
 
@@ -17,13 +17,14 @@
 \maketitle
 
 \begin{abstract}
-This report documents the implemented Phase 0--7 workflow for a defensible
+This report documents the implemented Phase 0--10 workflow for a defensible
 malicious-PDF detection experiment. The remediation enforces a minimum two
 million-row training partition, at least 99.5\% benign prevalence, feature-only
 safe data, group-temporal evaluation, versioned intelligent features, and exact
 batch/inference parity, fair tree/neural comparison, validation-only calibration
 and thresholds, one-shot sealed-test analysis, gated deep explainability, and a
-safe inert-PDF adversarial defense benchmark. No approved 2.65-million-row
+safe inert-PDF adversarial defense benchmark, a single deployment bundle,
+stage-aware verification, and synchronized documentation. No approved 2.65-million-row
 primary feature table is currently configured; consequently, no final model
 metric or performance claim is reported. This distinction between verified
 controls and pending empirical evidence is intentional.
@@ -33,6 +34,8 @@ disk-backed architecture; it does not claim that a production run has already
 processed two million real training rows.
 \end{abstract}
 
+\input{generated_results.tex}
+
 \section{Professor feedback and response}
 
 \begin{table}[h]
@@ -40,7 +43,7 @@ processed two million real training rows.
 \small
 \begin{tabular}{@{}p{0.31\textwidth}p{0.61\textwidth}@{}}
 \toprule
-Feedback & Implemented response through Phase 7 \\
+Feedback & Implemented response through Phase 10 \\
 \midrule
 At least 2,000,000 training rows & Hard gates require 2.65M received, 2.5M clean,
 and 2M train rows. \\
@@ -50,7 +53,7 @@ More intelligent features & Versioned base definitions plus scale, density,
 consistency, interaction, complexity, entropy, and parser-health families. \\
 Neural network skepticism & Tree baselines, an MLP control, and an
 FT-Transformer are compared with paired uncertainty and a conservative tree
-fallback. \\
+fallback \cite{gorishniy_tabular}. \\
 Suspicious results & Legacy results are archived as unverified and the active
 experiment contains no final metric. \\
 Metric analysis & The complete low-FPR, PR/ROC, calibration, uncertainty,
@@ -71,7 +74,7 @@ confidence. Raw PDF bytes, extracted JavaScript, payloads, embedded files,
 executables, archives, and sample URLs are rejected. Invalid evidence is
 quarantined using reason codes and hashed identifiers, never copied raw.
 
-The 10,025-row CIC-Evasive-PDFMal2022 table is registered only as a disabled
+The 10,025-row CIC-Evasive-PDFMal2022 table \cite{cic_dataset,ccl_pdf} is registered only as a disabled
 supplementary benchmark. It cannot satisfy scale or production prevalence and is
 not silently promoted. The missing primary source is an external dependency, not
 a reason to fabricate observations or relax the gates.
@@ -178,6 +181,8 @@ source/label/time-stratified subset of train and expanding temporal train folds.
 Finalists are refitted on the full 2M-or-more train partition for three fixed
 seeds. Disjoint group-temporal validation roles fit calibration, select among
 identity/Platt/isotonic calibration, and lock five operating thresholds. The
+calibration protocol evaluates probability quality separately from
+classification accuracy \cite{guo_calibration}. The
 primary rule is validation F2 subject to FPR at most 0.1\%. A neural model is
 selected over the best tree only if its paired group-bootstrap interval excludes
 zero and its calibration and inference-cost rules pass. Test content remains
@@ -218,7 +223,7 @@ all retraining; validation supplies permutation, ALE, interaction, sanity, and
 faithfulness evidence.
 
 Global evidence combines held-out average-precision permutation loss,
-model-native importance, TreeSHAP or neural gradient explanations, ALE,
+model-native importance, TreeSHAP or neural gradient explanations, ALE \cite{ale},
 domain-driven interactions, and feature-family retraining ablations. Stability
 uses model seeds, validation-time slices, and 100 attribution bootstraps. Label randomization, a fitted random-noise
 feature, deletion/insertion against random order, source/time shortcuts, and
@@ -228,14 +233,16 @@ Representative TP, TN, FP, FN, high/low-confidence, and parser-abstained cases
 include probability, locked threshold, supporting and opposing drivers, raw
 values when available, transformed values, train percentiles and subgroup
 context. Counterfactuals use complete observed benign train rows and are marked
-diagnostic rather than causal. SHAP alone cannot produce a conclusion; failed
+diagnostic rather than causal. SHAP alone cannot produce a conclusion \cite{shap}; failed
 sanity or faithfulness checks produce an explicit no-conclusion report.
 
 \section{Phase 7: safe adversarial evaluation}
 
 The Phase 7 harness generates inert PDFs locally and never downloads malware,
 renders a document, or persists fixture PDFs in reports. Network links, embedded
-files, launch actions, executables, and harmful scripts are prohibited. Every
+files, launch actions, executables, and harmful scripts are prohibited. The
+threat/defense scope follows adversarial-ML evaluation principles
+\cite{biggio_adversarial}. Every
 mutation is envelope-checked and parsed by a strict non-rendering validator;
 when qpdf is installed, \texttt{qpdf --check} is also required and recorded.
 
@@ -265,6 +272,47 @@ immutable matrices, and one-shot ledger enforcement. Python compilation, Ruff,
 deep explainability gates, adversarial mutation validity, defense regression,
 and Git whitespace validation are required before release.
 
+\section{Phase 8: deployment and application integration}
+
+One versioned artifact binds the fitted feature pipeline, calibrated champion
+ensemble, validation-selected threshold and policy, complete schema digest,
+dataset/split/transformation provenance, and a real train-only reference for
+local explanation and OOD checks. The application rejects any checksum,
+identity, schema, or sidecar mismatch and never falls back to a legacy model or
+scaler.
+
+Deployment has three outcomes: benign, malicious, and uncertain/abstain.
+Malformed envelopes, critical parser conditions, bounded-resource exits,
+out-of-distribution feature profiles, and probabilities within the declared
+threshold margin cause abstention. Direct parser indicators and model
+attributions are separate evidence layers. Uploaded bytes stay local and are
+deleted after extraction. The optional local LLM receives structured evidence
+only and is explicitly prohibited from inventing CVEs, indicators, payloads,
+intent, or certainty.
+
+The packaging gate requires 100 inert golden fixtures to produce exactly equal
+direct-bundle and application decisions. Corrupt and oversized inputs must fail
+closed within the resource limit, and no fixture/upload PDF may be retained.
+
+\section{Phase 9: staged verification}
+
+Independent commands cover initialization, data validation, splitting, feature
+construction, training, sealed evaluation, explanation, adversarial evaluation,
+application packaging, documentation synchronization, and release verification.
+Every command requires the exact upstream status; each scientific runner also
+re-hashes its own inputs. The final verifier checks sealed metrics, the Phase
+5--8 manifest chain, deployment compatibility, synchronized documentation, and
+uploaded-PDF non-retention.
+
+\section{Phase 10: documentation integrity}
+
+Dataset/model cards, reproducibility instructions, implementation reports, and
+the seven notebooks now use the active experiment summary. Metric values in the
+active Markdown and this report are generated by
+\texttt{scripts/sync\_results\_docs.py}; the script binds both outputs to the
+experiment-summary and historical-archive hashes. Manual historical measurements
+remain clearly labeled unverified and cannot substitute for the sealed run.
+
 \section{Current limitations and next action}
 
 The implemented controls do not prove that the production empirical gates have
@@ -282,11 +330,14 @@ synthetic or unsafe replacement data is not acceptable.
 
 \section{Conclusion}
 
-Phase 0--7 now supplies a fail-closed, auditable workflow suitable for the
+Phase 0--10 now supplies a fail-closed, auditable workflow suitable for the
 professor's requested experiment. The implementation is deliberately honest
 about the remaining data dependency. Credible future metrics must come from the
 sealed natural-prevalence evaluation, not from legacy results or an easier
-surrogate dataset. Phase 6--7 production execution remains gated on the approved
+surrogate dataset. Phase 6--8 production execution remains gated on the approved
 data and checksummed upstream artifacts.
+
+\bibliographystyle{plain}
+\bibliography{references}
 
 \end{document}

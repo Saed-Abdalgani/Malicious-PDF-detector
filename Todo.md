@@ -83,11 +83,37 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
 - [x] Separate implemented controls from future training/monotonic/sandbox proposals.
 - [ ] Execute on the verified production champion after Phases 1–6 succeed.
 
+## Phase 8 — deployment bundle and application
+
+- [x] Implement one versioned bundle for pipeline, calibrated model, locked
+  threshold, schema, provenance, real train reference, and OOD policy.
+- [x] Replace separate quantized-MLP/scaler application loading.
+- [x] Implement benign, malicious, and uncertain/abstain outcomes.
+- [x] Separate raw indicators from local model attributions.
+- [x] Add upload non-retention and structured-evidence-only LLM constraints.
+- [x] Add golden parity and corrupt/oversized fail-closed gates.
+- [ ] Execute packaging after production Phase 7 succeeds.
+
+## Phase 9 — verification
+
+- [x] Implement independent stage commands and upstream-status checks.
+- [x] Implement Phase 5–8 manifest, bundle, docs, and non-retention verifier.
+- [x] Add Phase 8–10 automated regression coverage.
+- [ ] Run release verification after production Phase 8.
+
+## Phase 10 — documentation
+
+- [x] Add dataset/model cards and reproducibility instructions.
+- [x] Generate Markdown and LaTeX metric sections from checksummed artifacts.
+- [x] Label exact archived metrics and the later manual >90% report as unverified.
+- [x] Update README, technical report, PRD, implementation plan, tracker, phase
+  reports, and notebooks.
+
 ## Verification completed
 
 - [x] `python -m compileall -q src app`
 - [x] `ruff check src app tests`
-- [x] `pytest -q` — 83 passed after Phase 7 implementation.
+- [x] `pytest -q` — 91 passed after Phase 8–10 implementation.
 - [x] `git diff --check`
 - [x] `python -m src.run_all --through-phase 0`
 - [x] Confirm `data_gate_passed` is false and `final_metrics` is null.
@@ -100,6 +126,6 @@ PDF telemetry table. CIC-Evasive-PDFMal2022 remains a disabled supplementary
 benchmark because 10,025 rows cannot satisfy the primary experiment and its
 class balance is unsuitable for production prevalence.
 
-Phase 4–7 implementation is complete but cannot produce empirical evidence until the data
+Phase 4–10 implementation is complete but cannot produce empirical evidence until the data
 dependency is resolved. The full
 specification is in `professor_feedback_remediation_plan.md`.

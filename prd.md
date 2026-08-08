@@ -2,7 +2,7 @@
 
 Version: 2.0
 
-Scope: implemented Phase 0 through Phase 7
+Scope: implemented Phase 0 through Phase 10
 
 Status: implementation verified; production data execution pending
 
@@ -174,6 +174,36 @@ clean/robust marker performance and resources, and separates demonstrated
 defenses from controls implemented elsewhere and future proposals. Inert fixture
 labels are never described as malware ground truth.
 
+### 5.9 Phase 8 — deployment and application
+
+| ID | Requirement |
+|---|---|
+| FR-801 | Package preprocessing, calibrated ensemble, locked threshold/policy, schema, provenance, train reference, and OOD policy in one versioned bundle. |
+| FR-802 | Reject bundle checksum, identity, sidecar, threshold, and feature-schema mismatch; no legacy fallback is allowed. |
+| FR-803 | Return benign, malicious, or uncertain/abstain and fail closed on parser/resource/OOD/threshold-margin conditions. |
+| FR-804 | Display raw actionable indicators separately from local model attributions. |
+| FR-805 | Keep upload bytes local, delete temporary files, and retain no PDF in deployment artifacts. |
+| FR-806 | Restrict any optional LLM to structured evidence and prohibit invented CVEs, indicators, payloads, intent, or certainty. |
+| FR-807 | Prove exact app/bundle parity on 100 golden inert fixtures and bounded abstention for corrupt/oversized inputs. |
+
+### 5.10 Phase 9 — staged verification
+
+| ID | Requirement |
+|---|---|
+| FR-901 | Expose independent stage commands with exact upstream-status and hash checks. |
+| FR-902 | Verify sealed final metrics and the Phase 5–8 manifest chain before release. |
+| FR-903 | Verify bundle/schema compatibility, documentation synchronization, and uploaded-PDF non-retention. |
+| FR-904 | Cover data, leakage, parity, metrics, calibration, explainability, adversarial, deployment, LLM-grounding, and documentation contracts in automated tests. |
+
+### 5.11 Phase 10 — documentation integrity
+
+| ID | Requirement |
+|---|---|
+| FR-1001 | Generate active Markdown and LaTeX metrics from checksummed artifacts; do not hand-type final scores. |
+| FR-1002 | Keep verified final results, exact archived historical values, and author-reported manual ranges visibly separate. |
+| FR-1003 | Maintain dataset/model cards, reproducibility guide, seven stage notebooks, implementation reports, README, report, PRD, plan, and tracker. |
+| FR-1004 | Bind generated outputs to the active experiment-summary and historical-archive hashes. |
+
 ## 6. Non-functional requirements
 
 | ID | Requirement |
@@ -237,13 +267,20 @@ reports/adversarial/defense_comparison.csv
 reports/adversarial/resource_overhead.csv
 reports/adversarial/threat_model.md
 reports/adversarial/defense_conclusions.md
+models/deployment/deployment_bundle_v1.joblib
+models/deployment/manifest.json
+reports/results/phase8_manifest.json
+reports/results/phase9_verification.json
+reports/results/documentation_sync_manifest.json
+docs/generated/results_summary.md
+report/generated_results.tex
 reports/figures/roc_full.png
 reports/figures/roc_low_fpr.png
 reports/figures/precision_recall.png
 reports/figures/calibration.png
 ```
 
-The Phase 1–7 production artifacts are generated only when the approved source
+The Phase 1–8 production artifacts are generated only when the approved source
 passes its upstream gate.
 
 ## 8. Acceptance verification
@@ -265,7 +302,8 @@ until a real approved source passes the production gates.
   single production Phase 5 run closes successfully.
 - Producing final SHAP/explainability conclusions before Phase 6 gates pass.
 - Claiming adversarial robustness.
-- Deploying a classifier without a validated threshold and model bundle.
+- Deploying a classifier without a validated threshold and Phase 8 bundle.
+- Presenting author-reported or archived manual metrics as sealed final evidence.
 
 Phase 6 begins only after Phase 4–5 artifacts exist, and production Phase 7
 begins only after the checksummed Phase 6 evidence exists.

@@ -1,4 +1,4 @@
-"""Fail-closed Phase 0-7 remediation workflow.
+"""Fail-closed Phase 0-10 remediation workflow.
 
 Phase 4 cannot begin until an approved feature-only source passes the 2.5M-row
 quality gate and the sealed train split contains at least 2M rows at natural
@@ -11,7 +11,7 @@ import argparse
 from pathlib import Path
 
 from src.artifacts import archive_legacy_results, initialize_experiment_summary
-from src.config import DATA_REPORTS_DIR, MODELS_DIR, PROCESSED_DATA_DIR, RESULTS_DIR, SPLITS_DIR
+from src.config import DATA_REPORTS_DIR, EXPERIMENT_CONFIG_PATH, MODELS_DIR, PROCESSED_DATA_DIR, RESULTS_DIR, SPLITS_DIR
 from src.data.manifest import load_source_registry
 from src.data.splitter import build_frozen_splits_from_dataset, verify_frozen_splits
 from src.data.validate import validate_registered_source, verify_validated_dataset
@@ -138,7 +138,7 @@ def _update_summary(
     atomic_write_json(RESULTS_DIR / "experiment_summary.json", summary)
 
 
-def main(argv: list[str] | None = None) -> int:
+def _legacy_main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--source-id",
@@ -237,6 +237,174 @@ def main(argv: list[str] | None = None) -> int:
     phase7_manifest = Phase7Runner(split_root=split_root).run()
     logger.info("Phase 7 complete: adversarial manifest at %s.", phase7_manifest)
     return 0
+
+
+STAGES = (
+    "init",
+    "validate-data",
+    "split",
+    "build-features",
+    "train",
+    "evaluate",
+    "explain",
+    "adversarial",
+    "package-app",
+    "sync-docs",
+    "verify",
+)
+
+
+def _active_summary() -> dict:
+    path = RESULTS_DIR / "experiment_summary.json"
+    if not path.is_file():
+        raise RuntimeError("Experiment summary is missing; run the init stage first.")
+    import json
+
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise RuntimeError("Experiment summary is malformed.")
+    return value
+
+
+def _require_stage_status(expected: str, stage: str) -> dict:
+    summary = _active_summary()
+    if summary.get("status") != expected:
+        raise RuntimeError(
+            f"{stage} requires upstream status {expected!r}; found "
+            f"{summary.get('status')!r}."
+        )
+    return summary
+
+
+def _stage_main(argv: list[str]) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("stage", choices=STAGES)
+    parser.add_argument("--config", type=Path, default=EXPERIMENT_CONFIG_PATH)
+    parser.add_argument("--source-id")
+    parser.add_argument("--batch-size", type=int, default=100_000)
+    parser.add_argument("--model-family", choices=("neural", "tree"), default="neural")
+    parser.add_argument("--confirm-sealed-test-evaluation", action="store_true")
+    args = parser.parse_args(argv)
+    if args.config.resolve() != EXPERIMENT_CONFIG_PATH.resolve():
+        parser.error(
+            "This repository has one active experiment identity; --config must point "
+            f"to {EXPERIMENT_CONFIG_PATH}."
+        )
+    config = load_experiment_config(args.config)
+    split_root = SPLITS_DIR / str(config["split_version"])
+
+    if args.stage == "init":
+        _phase_zero()
+        return 0
+    if args.stage == "validate-data":
+        _require_stage_status("phase_0_initialized_no_final_metrics", args.stage)
+        if not args.source_id:
+            parser.error("validate-data requires --source-id.\n" + _available_sources())
+        quality = validate_registered_source(args.source_id, enforce_gates=True)
+        verify_validated_dataset()
+        summary = _active_summary()
+        summary.update(
+            {
+                "status": "phase_1_complete_data_quality_verified",
+                "data_gate_passed": True,
+                "phase_1_dataset_quality": quality.to_dict(),
+            }
+        )
+        atomic_write_json(RESULTS_DIR / "experiment_summary.json", summary)
+        return 0
+    if args.stage == "split":
+        summary = _require_stage_status("phase_1_complete_data_quality_verified", args.stage)
+        quality = verify_validated_dataset()
+        clean_output = Path(quality["clean_output"])
+        split_manifest = build_frozen_splits_from_dataset(
+            clean_output, output_root=split_root, batch_size=args.batch_size
+        )
+        split_manifest = verify_frozen_splits(split_root, batch_size=args.batch_size)
+        summary.update(
+            {
+                "status": "phase_2_complete_frozen_splits_verified",
+                "phase_2_split": split_manifest.to_dict(),
+            }
+        )
+        atomic_write_json(RESULTS_DIR / "experiment_summary.json", summary)
+        return 0
+    if args.stage == "build-features":
+        summary = _require_stage_status("phase_2_complete_frozen_splits_verified", args.stage)
+        verify_frozen_splits(split_root, batch_size=args.batch_size)
+        pipeline_paths = _phase_three(
+            split_root,
+            split_version=str(config["split_version"]),
+            compatibility_model_family=args.model_family,
+            batch_size=args.batch_size,
+        )
+        summary.update(
+            {
+                "status": "phase_3_complete_ready_for_phase_4",
+                "phase_3_feature_pipelines": {
+                    name: str(path.resolve()) for name, path in pipeline_paths.items()
+                },
+            }
+        )
+        atomic_write_json(RESULTS_DIR / "experiment_summary.json", summary)
+        return 0
+    if args.stage == "train":
+        _require_stage_status("phase_3_complete_ready_for_phase_4", args.stage)
+        from src.models.phase4 import Phase4Runner
+
+        print(Phase4Runner(split_root=split_root, batch_size=args.batch_size).run())
+        return 0
+    if args.stage == "evaluate":
+        _require_stage_status("phase_4_complete_test_still_sealed", args.stage)
+        if not args.confirm_sealed_test_evaluation:
+            parser.error("evaluate irreversibly opens the sealed test; explicit confirmation is required.")
+        from src.models.phase5 import Phase5Runner
+
+        print(
+            Phase5Runner(
+                split_root=split_root,
+                phase4_manifest_path=RESULTS_DIR / "phase4_champion.json",
+                batch_size=args.batch_size,
+            ).run()
+        )
+        return 0
+    if args.stage == "explain":
+        _require_stage_status("phase_5_complete_sealed_test_closed", args.stage)
+        from src.models.phase6 import Phase6Runner
+
+        print(Phase6Runner(split_root=split_root).run())
+        return 0
+    if args.stage == "adversarial":
+        _require_stage_status("phase_6_complete_deep_explainability", args.stage)
+        from src.models.phase7 import Phase7Runner
+
+        print(Phase7Runner(split_root=split_root).run())
+        return 0
+    if args.stage == "package-app":
+        _require_stage_status("phase_7_complete_safe_adversarial_evaluation", args.stage)
+        from src.models.phase8 import Phase8Runner
+
+        print(Phase8Runner(split_root=split_root).run())
+        return 0
+    if args.stage == "sync-docs":
+        from scripts.sync_results_docs import sync_results_docs
+
+        print(sync_results_docs())
+        return 0
+    if args.stage == "verify":
+        from src.verification import verify_release
+
+        verify_release()
+        return 0
+    raise AssertionError(f"Unhandled stage: {args.stage}")
+
+
+def main(argv: list[str] | None = None) -> int:
+    import sys
+
+    arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments and arguments[0] in STAGES:
+        return _stage_main(arguments)
+    return _legacy_main(arguments)
 
 
 if __name__ == "__main__":

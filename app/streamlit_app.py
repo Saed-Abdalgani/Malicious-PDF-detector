@@ -43,13 +43,6 @@ def _scanner() -> None:
         )
         return
 
-    analyzer = st.session_state.analyzer
-    if analyzer.deployment_tier == "manually_validated_local":
-        st.success(
-            "MANUALLY VALIDATED MODEL — the project author verified the results "
-            "and confirmed that the project dataset contains more than 1,000,000 rows."
-        )
-
     uploaded_file = render_upload_zone()
     if uploaded_file is not None:
         with st.spinner("Analyzing PDF structure locally..."):

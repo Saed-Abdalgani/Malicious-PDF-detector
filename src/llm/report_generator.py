@@ -387,7 +387,7 @@ def save_report(report: ThreatReport, path: str, fmt: str = "markdown") -> str:
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("  ThreatReport — Demo")
+    print("  ThreatReport — Local Validation")
     print("=" * 60)
 
     # Create a sample report

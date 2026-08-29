@@ -413,7 +413,7 @@ if __name__ == "__main__":
     print("  Prompt Templates — Preview")
     print("=" * 60)
 
-    # Demo: format a threat analysis prompt
+    # Example: format a threat analysis prompt
     sample_features = {
         "js_count": 5, "javascript_count": 3, "openaction_count": 1,
         "action_count": 2, "launch_count": 0, "uri_count": 4,

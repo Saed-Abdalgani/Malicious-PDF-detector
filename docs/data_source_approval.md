@@ -33,7 +33,8 @@ approved-primary-pdf-telemetry:
   local_path: null
   sha256: REAL_64_HEX_DIGEST
   expected_size_bytes: REAL_EXACT_SIZE
-  expected_rows: 2650000
+  expected_rows: null
+  author_verified_minimum_rows: 1000000
   license: REAL_APPROVAL_REFERENCE
   role: primary
   column_mapping:

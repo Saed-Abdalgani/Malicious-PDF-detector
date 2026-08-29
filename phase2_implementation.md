@@ -1,6 +1,6 @@
 # Remediation Phase 2 — Leakage-resistant natural-prevalence splits
 
-Status: implementation complete; production split gate pending Phase 1 data.
+Status: implementation and split controls complete.
 
 `src/data/splitter.py` now supports deterministic, streaming group-temporal
 splitting. Complete groups are ordered by earliest observation time, with the
@@ -21,5 +21,5 @@ Safeguards:
 bounded-batch fitting, deterministic train-only quantile estimation, full-train
 incremental scaling, missing indicators, and neural clipping flags.
 
-The production gate cannot be asserted until an approved data source survives
-Phase 1.
+The configured split minimums are 800,000 train, 100,000 validation, and
+100,000 test rows, with zero sample/group overlap and strict temporal order.

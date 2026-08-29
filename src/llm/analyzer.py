@@ -619,10 +619,10 @@ class ThreatAnalyzer:
 
 if __name__ == "__main__":
     print("=" * 60)
-    print("  ThreatAnalyzer — Feature Analysis Demo")
+    print("  ThreatAnalyzer — Feature Analysis")
     print("=" * 60)
 
-    # Demo: identify suspicious features without LLM
+    # Example: identify suspicious features without LLM
     from src.llm.client import GemmaClient
 
     client = GemmaClient()

@@ -24,7 +24,7 @@ the structural detector while the payload still executes.
 
 See `adversarial_robustness.csv` for the per-file, per-mutation numbers.
 
-## Honest limitations
+## Evaluation scope
 - The current deployment pipeline has a **normalization mismatch** (see
   `src/features/consistency.py`), so the reported `model_prob_malicious` is not
   yet meaningful end-to-end; the *feature-level* signal drop is the robust,

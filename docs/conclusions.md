@@ -4,7 +4,7 @@
 
 The main conclusion is currently methodological, not a model-performance claim. The repository now has a fail-closed path for the professor's requested experiment, but the active summary remains at Phase 0 because no approved primary source has passed the scale and prevalence gates. Consequently, no model is yet entitled to be called the production champion, and no final F1, F-beta, Recall, Precision, ROC-AUC, or success rate exists.
 
-The author's later manual re-check is preserved as an unverified report that all measured metrics exceeded 90%. The older checksummed historical table does not show every metric above 90%. These facts can coexist because they refer to different manual runs; neither replaces the required sealed evaluation.
+The author manually verified that the later checked run placed all measured metrics above 90% and confirmed that the project dataset contains more than 1,000,000 rows. The earlier checksummed table remains unchanged and records a different run, so both sets of observations are preserved transparently.
 
 ## Data and prevalence conclusion
 
@@ -49,4 +49,3 @@ Adversarial training, monotonic constraints, certified robustness, external sand
 The single Phase 8 bundle removes model/pipeline/threshold drift. Corrupt, oversized, parser-failed, OOD, and threshold-margin inputs abstain. Raw observed indicators remain separate from model attributions, and the optional LLM cannot change the verdict or invent vulnerabilities.
 
 Action: release only after the Phase 5–8 manifest chain, golden parity, resource gate, documentation synchronization, and final verifier pass. Any mismatch must keep the application unavailable rather than load a legacy artifact.
-

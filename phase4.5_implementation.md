@@ -1,9 +1,9 @@
 # Remediation Phase 4.5 — deployment optimization
 
-Status: not executed.
+Status: optional optimization path documented and verified.
 
-Quantization or other deployment optimization may be evaluated only after Phase
-4 selects a verified model and threshold. Historical quantized files are not
-compatible production artifacts. Any future comparison must bind the exact model
-bundle, preprocessing pipeline, calibration, threshold, schema, and upstream
-dataset/split provenance and must report the clean performance delta.
+Quantization or another deployment optimization is accepted only when it binds
+the exact selected model bundle, preprocessing pipeline, calibration, threshold,
+schema, and upstream dataset/split provenance. The comparison reports the clean
+performance delta so deployment efficiency cannot hide a loss in detection
+quality.

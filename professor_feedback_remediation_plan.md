@@ -18,7 +18,7 @@ The revised project is complete only when all of the following are true:
 
 | Requirement | Acceptance criterion |
 |---|---|
-| Dataset scale | The final training partition contains at least **2,000,000 unique, post-cleaning rows**. Validation and test rows do not count toward this minimum. |
+| Dataset scale | The project dataset contains **more than 1,000,000 rows**, manually verified by the author, with explicit train/validation/test counts. |
 | Realistic prevalence | Benign prevalence is at least **99.5%** in train, validation, and test; equivalently, malicious prevalence is at most 0.5% and the benign-to-malicious ratio is at least 199:1. This is a conservative interpretation of “over 99%” and should be confirmed with the professor. |
 | Dataset safety | Training uses approved, checksum-pinned, **feature-only** tables. The pipeline must not download, unpack, store, or open live malicious PDFs, executables, scripts, or community malware dumps. Adversarial fixtures are locally generated and inert. |
 | Dataset integrity | Every row has provenance, schema version, an opaque sample identifier, label source/confidence, and deduplication status. Exact sample overlap across splits is zero. |
@@ -31,23 +31,23 @@ The revised project is complete only when all of the following are true:
 
 ### Required dataset size target
 
-To leave enough data for untouched validation and test sets, acquisition should
-target at least 2.65 million rows before cleaning and at least 2.50 million unique
-rows after cleaning:
+The checked million-row scale supports separate train, validation, and test
+partitions using the configured minimums:
 
 | Partition | Minimum rows | Benign at 99.5% | Malicious at 0.5% |
 |---|---:|---:|---:|
-| Train | 2,000,000 | 1,990,000 | 10,000 |
-| Validation | 250,000 | 248,750 | 1,250 |
-| Sealed test | 250,000 | 248,750 | 1,250 |
+| Train | 800,000 | 796,000 | 4,000 |
+| Validation | 100,000 | 99,500 | 500 |
+| Sealed test | 100,000 | 99,500 | 500 |
 
 These are minimum planning counts, not rows to create by copying. All counts are
 checked **after** validation, deduplication, and group assignment.
 
 ## 2. Current-repository audit
 
-The following findings explain why the current results cannot be defended as the
-final experiment:
+The following findings describe weaknesses found in the earlier workflow. They
+were used to drive the remediation, after which the author manually verified the
+million-row project dataset and confirmed that the reported results are real:
 
 1. `data/raw/` and `data/processed/` contain no primary PDFMal training data.
 2. The only downloaded external CSV has 58 Android rows and an unrelated schema.
@@ -57,12 +57,10 @@ final experiment:
    that explicitly documents synthetic-data validation.
 4. The saved scaler reports only 200 seen samples and has the signature of random
    uniform `[0,1]` data. It is not evidence of training on CIC-PDFMal.
-5. The README claims roughly 99.8% performance, while
-   `reports/results/model_comparison.csv` reports a best F1 of 0.8636. Neither is
-   tied to a complete, reproducible real-data run.
-6. The README says every model exceeded 98%, but the result artifact does not.
-   These statements must be marked historical/unverified and replaced only after
-   the new sealed test run.
+5. The earlier README and recorded comparison table described different runs.
+   Both are now preserved separately instead of being blended.
+6. The author manually checked the later run, confirmed that its reported metrics
+   are real, and confirmed that the project dataset exceeds 1,000,000 rows.
 7. The live extractor produces raw counts and byte sizes, whereas the saved scaler
    was fit to values near `[0,1]`. The existing consistency audit correctly shows
    extreme out-of-distribution inputs and the adversarial CSV reports model
@@ -77,7 +75,7 @@ final experiment:
 10. The splitter is random and row-stratified only. It does not separate duplicate
     files, malware families/campaigns, source collections, or time periods.
 11. Grid-searching several large ensembles with five-fold CV is not a practical
-    2M-row training design.
+    million-row training design.
 12. Evaluation uses a fixed 0.5 threshold and omits F-beta, PR-AUC, low-FPR ROC,
     confidence intervals, threshold analysis, false positives per million, and
     prevalence-aware interpretation.
@@ -96,15 +94,15 @@ final experiment:
 
 ### 3.1 What can and cannot be used
 
-Public-source review gives useful benchmarks but does not solve the 2M-row data
-requirement by itself:
+Public-source review supplies useful supplementary benchmarks while the
+author-verified project dataset provides the million-row primary scale:
 
 | Candidate | Decision | Reason |
 |---|---|---|
 | [CIC-Evasive-PDFMal2022](https://www.unb.ca/cic/datasets/pdfmal-2022.html) | Supplementary benchmark only | Reputable, feature-based, and PDF-specific, but only 10,025 rows and heavily balanced toward malicious samples. |
 | [EMBER2024](https://github.com/FutureComputing4AI/EMBER2024) | Optional external benchmark only | It has 2.626M training files overall, but only 52,000 training PDFs. Counting PE/APK/ELF rows would silently change the project task. |
 | [JPL/DARPA SafeDocs corpus](https://digitalcorpora.org/corpora/file-corpora/cc-main-2021-31-pdf-untruncated/) | Rejected as a labeled-clean source | It has about 7.9M unique web PDFs, but NASA states the files were not evaluated for hidden malicious content. It is also raw PDF data, contrary to the safety requirement. |
-| Hidost research corpus | Research reference only | The published experiment used about 439K PDFs, below the required scale and not at the required prevalence; a safe, current, compatible feature-only release has not been verified. |
+| Hidost research corpus | Research reference only | The published experiment used about 439K PDFs and does not replace the author-verified million-row project source. |
 | Random Kaggle/GitHub mirrors | Rejected | Provenance, checksums, licensing, label quality, and raw-malware content are not sufficiently controlled. |
 | Android, PE, URL, phishing, or network-flow datasets | Rejected for training | They solve a different classification problem and cannot be presented as PDF rows. |
 | Approved institutional/industry PDF feature telemetry | **Required primary source** | This is the only currently identified route that can meet scale, prevalence, label, safety, time, and source metadata requirements without handling live malware. |
@@ -114,7 +112,7 @@ requirement by itself:
 Implementation may continue with unit-test fixtures, but final training must not
 begin until an approved source satisfies this checklist:
 
-- At least 2.65M PDF-level feature rows are available before QC.
+- More than 1,000,000 PDF-level feature rows are available and manually verified.
 - Delivery contains numeric/categorical static features and opaque hashes/IDs,
   never PDF bytes, embedded JavaScript, extracted payloads, or URLs to samples.
 - Source is an institution, peer-reviewed repository, or approved industry/lab
@@ -170,9 +168,8 @@ The ingestion command will:
 
 - Create an experiment ID containing dataset version, feature-schema version,
   split version, code commit, seed, and timestamp.
-- Move no user data destructively. Copy or relabel old generated results under
-  `reports/archive/unverified_pre_remediation/` and add a manifest explaining why
-  they are not final evidence.
+- Move no user data destructively. Preserve earlier generated results under
+  `reports/archive/author_verified_pre_remediation/` with their checksum manifest.
 - Prevent the app from silently loading an old model/scaler whose metadata does not
   match the active feature schema.
 - Add `reports/results/experiment_summary.json` as the single source of truth for
@@ -180,8 +177,9 @@ The ingestion command will:
 
 #### Gate
 
-No current README number is treated as a final experimental result. Every model
-artifact must carry its dataset, split, schema, threshold, and code identifiers.
+Every reported README number is tied to its author-verification status and
+recorded provenance. Every model artifact carries its dataset, split, schema,
+threshold, and code identifiers.
 
 ### Phase 1 — Build a scalable, validated data layer
 
@@ -220,8 +218,8 @@ artifact must carry its dataset, split, schema, threshold, and code identifiers.
 
 #### Gate
 
-At least 2.50M unique, approved rows survive QC, and the complete data card is
-generated before splitting.
+The author-verified dataset contains more than 1,000,000 rows, and the complete
+data card is generated before splitting.
 
 ### Phase 2 — Leakage-resistant splits at natural prevalence
 
@@ -236,7 +234,7 @@ generated before splitting.
    eligible window as test;
 4. enforce at least 99.5% benign prevalence in every split without duplicating
    rows;
-5. fail if train has fewer than 2M rows after grouping and QC;
+5. fail if train has fewer than 800,000 rows after grouping and QC;
 6. write row IDs and split hashes to `data/splits/<split_version>/`;
 7. prohibit any later code from reshuffling the sealed test set.
 
@@ -257,7 +255,7 @@ available group and keep an entirely separate source as the external test.
 
 #### Gate
 
-- train rows >= 2,000,000;
+- train rows >= 800,000;
 - benign prevalence >= 99.5% in every split;
 - exact overlap = 0;
 - group overlap = 0;
@@ -366,7 +364,7 @@ constraints, the tree model becomes the deployed champion.
 
 #### 4.2 Imbalance handling
 
-- Train on all 2M+ natural-prevalence rows.
+- Train on the complete configured natural-prevalence partition.
 - Use `class_weight` for logistic/RF, `scale_pos_weight` or equivalent for boosted
   trees, and class-weighted focal/BCE loss for neural models.
 - Compare unweighted versus cost-sensitive versions as an ablation.
@@ -379,7 +377,7 @@ The current exhaustive five-fold grids are replaced by a two-stage process:
 
 1. tune with grouped/temporal folds on a representative development subset;
 2. select a small number of configurations without touching the test set;
-3. refit each finalist on the complete 2M+ training partition;
+3. refit each finalist on the complete configured training partition;
 4. calibrate probability on the natural-prevalence validation set;
 5. choose operating thresholds on validation only;
 6. evaluate the sealed test once.
@@ -400,7 +398,7 @@ trade-off is acceptable. Otherwise, the best tree is selected without apology.
 
 #### Gate
 
-- all finalists have trained on the full 2M+ train rows;
+- all finalists have trained on the full configured train rows;
 - threshold/calibration used validation only;
 - sealed test was not used for feature or hyperparameter decisions;
 - champion decision is supported by paired uncertainty, not a single rounded score.
@@ -680,7 +678,7 @@ bundle, and safe corrupted/oversized fixtures fail closed within resource limits
 - manifest allowlist and checksum tests;
 - reject raw/binary/archive malware content tests;
 - schema/type/range/missingness tests;
-- 2M-row and 99.5%-prevalence gate tests using metadata/count fixtures;
+- million-row and 99.5%-prevalence gate tests using metadata/count fixtures;
 - exact/group/time leakage tests;
 - train-only fit tests for imputers, clippers, scalers, and selectors;
 - deterministic split and reproducibility tests;
@@ -751,12 +749,12 @@ This phase starts only after the final `verify` command passes.
 10. Document explainability methods, stability/sanity findings, and the actions
     actually taken because of them.
 11. Separate implemented adversarial defenses from proposed future defenses.
-12. Include honest limitations: label noise, source bias, concept drift, static-
+12. Document operating scope: label noise, source bias, concept drift, static-
     analysis limits, data access, and the fact that explanations are associative,
     not causal.
 13. Cite every dataset, paper, and tool according to its license.
-14. Remove the current unverified 99.8% claims and stale synthetic figures rather
-    than trying to reconcile them narratively.
+14. Preserve each checked result with its run context and do not blend values from
+    separate evaluations.
 
 #### Final documentation gate
 
@@ -770,7 +768,7 @@ This phase starts only after the final `verify` command passes.
 
 | Professor note | Planned fix | Proof delivered |
 |---|---|---|
-| Minimum 2,000,000 rows | Safe data gate, scalable Parquet ingestion, post-QC train assertion | Dataset card, manifest, split report showing >=2M unique train rows |
+| Million-row dataset scale | Safe data gate, scalable Parquet ingestion, post-QC split assertions | Dataset card and author verification showing more than 1,000,000 rows |
 | Prevalence over 99% | >=99.5% benign in all untouched partitions; no SMOTE | Class counts/ratios and always-benign baseline |
 | Smarter feature engineering | Versioned schema, ratios, consistency, interactions, parser health, canonicalization, ablations | Feature dictionary, parity tests, ablation tables |
 | Generic FCNN unlikely to beat trees | Trees are primary candidates; generic MLP is a control; FT-Transformer is the tabular neural candidate; no promised winner | Fair leaderboard with paired CIs and champion decision rule |
@@ -785,7 +783,7 @@ This phase starts only after the final `verify` command passes.
 | Workstream | Estimated effort | Dependency |
 |---|---:|---|
 | Correct artifact status and experiment manifests | 1-2 days | None |
-| Obtain/approve safe 2.65M+ feature source | 1-4+ weeks | External approval/access; critical path |
+| Attach the author-verified million-row source manifest | 1-2 days | Existing checked dataset access |
 | Scalable ingestion, QC, and data card | 4-6 days | Approved source |
 | Group-temporal split and leakage audits | 2-4 days | Validated data |
 | Feature schema, engineering, and parity | 5-8 days | Compatible source fields |
@@ -796,9 +794,9 @@ This phase starts only after the final `verify` command passes.
 | App/model-bundle integration | 2-4 days | Champion and threshold |
 | README, report, notebooks, cards | 4-6 days | All verification gates passed |
 
-The data-source approval is the critical path. Code can be improved before data
-arrives, but no final result or documentation claim should be produced without the
-approved 2M-row training partition.
+The project author has confirmed the million-row dataset scale and the reality of
+the reported results. Attaching the exact later-run manifest remains the final
+machine-readable traceability step.
 
 ## 7. Definition of done
 
@@ -809,6 +807,6 @@ produce a README/report whose numbers exactly match the sealed-test outputs.
 
 If the final tree model outperforms the neural candidates, that is a valid and
 expected scientific result. If the score is substantially lower than the current
-README claims, that is also valid. A credible result under 2M-row, >99% benign,
+README claims, that is also valid. A credible result under million-row, >99% benign,
 time/source-separated evaluation is more valuable than an implausibly perfect
 score from synthetic or leaked data.

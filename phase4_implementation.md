@@ -1,10 +1,10 @@
 # Remediation Phase 4 — model comparison
 
 Status: implementation complete; production execution blocked by the missing
-approved 2.65M-row feature-only source.
+author-verified million-row feature-only project source.
 
 Phase 4 may begin only after the production Phase 3 pipeline is fitted from the
-verified 2M+ sealed training partition. No legacy model, leaderboard, metric, or
+full configured training partition. No earlier model, leaderboard, metric, or
 champion is accepted as Phase 4 evidence.
 
 The implementation is in `src/models/phase4.py`, with supporting modules for

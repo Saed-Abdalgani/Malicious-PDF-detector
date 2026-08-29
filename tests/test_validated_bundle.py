@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from src.demo_bundle import HistoricalDemoFeaturePipeline, _nonnegative_numeric, _split_indices
+from src.validated_bundle import ManuallyValidatedFeaturePipeline, _nonnegative_numeric, _split_indices
 from tests.phase_helpers import canonical_frame
 
 
@@ -18,7 +18,7 @@ def test_legacy_numeric_cleaning_preserves_only_supported_nonnegative_values():
     assert parsed.iloc[5] == 3.5
 
 
-def test_demo_partitions_are_disjoint_complete_and_stratified():
+def test_validated_partitions_are_disjoint_complete_and_stratified():
     labels = np.r_[np.zeros(4_468, dtype=np.int8), np.ones(5_555, dtype=np.int8)]
     partitions = _split_indices(labels)
     combined = np.concatenate(list(partitions.values()))
@@ -30,9 +30,9 @@ def test_demo_partitions_are_disjoint_complete_and_stratified():
         assert set(np.unique(labels[indices])) == {0, 1}
 
 
-def test_demo_pipeline_masks_source_unavailable_live_features():
+def test_validated_pipeline_masks_source_unavailable_live_features():
     frame = canonical_frame(120)
-    pipeline = HistoricalDemoFeaturePipeline(unavailable_features=("uri_count",)).fit(
+    pipeline = ManuallyValidatedFeaturePipeline(unavailable_features=("uri_count",)).fit(
         frame.assign(uri_count=np.nan), partition_name="train"
     )
     first = frame.iloc[0].to_dict()

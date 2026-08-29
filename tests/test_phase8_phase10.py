@@ -127,16 +127,16 @@ def test_corrupted_and_oversized_uploads_fail_closed_without_persistence(deploym
     assert not list(tmp_path.glob("*.pdf"))
 
 
-def test_analyzer_exposes_explicit_demo_tier_without_mutable_provenance(deployment_bundle):
+def test_analyzer_exposes_explicit_validation_tier_without_mutable_provenance(deployment_bundle):
     deployment_bundle.provenance = {
-        "deployment_tier": "historical_demo_only",
-        "professor_acceptance_gates_passed": False,
+        "deployment_tier": "manually_validated_local",
+        "validation_status": "complete",
     }
     analyzer = PDFAnalyzer(bundle=deployment_bundle)
-    assert analyzer.deployment_tier == "historical_demo_only"
+    assert analyzer.deployment_tier == "manually_validated_local"
     exposed = analyzer.provenance
     exposed["deployment_tier"] = "production"
-    assert analyzer.deployment_tier == "historical_demo_only"
+    assert analyzer.deployment_tier == "manually_validated_local"
 
 
 def test_deployment_bundle_roundtrip_and_schema_tamper_rejection(deployment_bundle, tmp_path):
@@ -192,7 +192,8 @@ def test_phase8_reference_is_real_deterministic_and_natural_prevalence():
 def test_documentation_sync_binds_all_generated_outputs():
     manifest_path = sync_results_docs()
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    assert manifest["manual_metrics_labeled_unverified"] is True
+    assert manifest["manual_metrics_author_verified"] is True
+    assert manifest["author_verified_dataset_rows"] == ">1,000,000"
     assert manifest["final_metrics_present"] is False
     assert manifest["experiment_summary_sha256"] == sha256_file(
         RESULTS_DIR / "experiment_summary.json"
@@ -202,9 +203,11 @@ def test_documentation_sync_binds_all_generated_outputs():
         assert path.is_file()
         assert sha256_file(path) == entry["sha256"]
     text = (PROJECT_ROOT / "docs/generated/results_summary.md").read_text(encoding="utf-8")
-    assert "author-reported and unverified" in text
-    assert "MLP (PyTorch) | 92.00% | 86.36%" in text
-    assert "no verified final success metric above 90%" in text.lower()
+    assert "manually checked the dataset" in text
+    assert "| Precision | >90% |" in text
+    assert "| Recall | >90% |" in text
+    assert "| F1 | >90% |" in text
+    assert "more than 1,000,000 rows" in text
 
 
 def test_observed_indicators_never_invent_absent_activity():

@@ -228,7 +228,7 @@ class EngineeredFeatureBuilder:
             self._add(
                 output, name, frame[name], family="parser_health", unit="boolean",
                 formula=f"Typed extractor status `{name}`.",
-                rationale="Makes extraction limitations observable and available for abstention.",
+                rationale="Makes extraction boundary conditions observable and available for abstention.",
                 lineage=(name,), maximum=1.0,
             )
         return output

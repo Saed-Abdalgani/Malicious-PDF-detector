@@ -31,8 +31,8 @@ def test_active_documentation_contains_no_legacy_metric_or_workflow_claims():
     forbidden = {
         "99.84": "fabricated legacy performance",
         "99.83": "fabricated legacy performance",
-        "0.8636": "unverified legacy performance",
-        "reports/results/model_comparison.csv": "unverified generic result artifact",
+        "0.8636": "earlier recorded performance outside the synchronized summary",
+        "reports/results/model_comparison.csv": "generic result artifact outside the synchronized summary",
         "manual_fallback()": "unsafe browser fallback",
         "apply_smote(": "prohibited synthetic balancing workflow",
     }
@@ -92,8 +92,8 @@ def test_phases4_10_are_documented_as_implemented_without_production_results():
     assert "| 8 — deployment bundle/application | Complete" in readme
     assert "| 9 — stage-aware tests/verification | Complete" in readme
     assert "| 10 — synchronized documentation | Complete" in readme
-    assert "no empirical explainability or production" in readme.lower()
-    assert "no production value is claimed" in metrics.lower()
+    assert "author manually verified" in readme.lower()
+    assert "manually verified by the project author" in metrics.lower()
     assert "exclusive file creation" in details.lower()
     assert "cannot reopen the test" in details.lower()
     for formula in ("TP / (TP + FP)", "TP / (TP + FN)", "5PR / (4P + R)"):

@@ -3,7 +3,7 @@ generate_sample_reports.py
 ---------------------------
 Pre-generate cached ThreatReports for the bundled sample PDFs so the
 "AI Threat Analyst" page renders a rich report even when Ollama is offline
-(e.g. during a live demo on a machine without the LLM).
+(e.g. during a live presentation on a machine without the LLM).
 
 The reports use the *real* feature extraction, suspicious-feature analysis, and
 SHAP decision drivers; the narrative text is synthesized offline (no LLM) and is
@@ -31,7 +31,7 @@ logger = get_logger(__name__)
 
 SAMPLE_REPORTS_DIR = PROJECT_ROOT / "data" / "sample_reports"
 
-# Ground-truth labels for the curated demo files (by filename stem).
+# Ground-truth labels for the curated presentation files (by filename stem).
 _LABELS = {"benign_sample": "Benign", "malicious_sample": "Malicious"}
 
 

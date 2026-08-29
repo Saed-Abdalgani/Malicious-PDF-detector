@@ -55,7 +55,7 @@ class PDFAnalyzer:
 
     @property
     def deployment_tier(self) -> str:
-        """Expose the artifact's declared tier without inferring production status."""
+        """Expose the artifact's declared validation tier without altering provenance."""
         return str(self.bundle.provenance.get("deployment_tier", "verified_phase8"))
 
     @property

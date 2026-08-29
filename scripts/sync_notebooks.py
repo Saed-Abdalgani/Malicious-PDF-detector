@@ -74,7 +74,7 @@ def sync_notebooks() -> list[Path]:
                 _cell(
                     "markdown",
                     f"# {title}\n\n{description}\n\n"
-                    "The active experiment summary is authoritative. Historical/manual values are not final evidence. "
+                    "The active experiment summary records the author-verified dataset and result status. "
                     "See `../docs/generated/results_summary.md` for the generated result statement.\n",
                 ),
                 _cell(
@@ -95,7 +95,7 @@ def sync_notebooks() -> list[Path]:
                     "    artifact = json.loads(artifact_path.read_text(encoding='utf-8'))\n"
                     "    artifact\n"
                     "else:\n"
-                    "    print(f'Pending gated artifact: {artifact_path}')\n",
+                    "    print(f'Artifact path is not present in this checkout: {artifact_path}')\n",
                 ),
             ],
             "metadata": {

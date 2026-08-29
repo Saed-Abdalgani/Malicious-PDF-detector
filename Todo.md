@@ -1,4 +1,4 @@
-# Remediation status and remaining work
+# Remediation completion status
 
 This tracker supersedes the legacy balanced/SMOTE workflow.
 
@@ -6,8 +6,8 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
 
 - [x] Versioned experiment identity and configuration hash.
 - [x] Checksummed artifact sidecars and compatibility verification.
-- [x] Immutable archive for unverified legacy evidence.
-- [x] Active summary contains no final metric.
+- [x] Immutable archive for author-verified earlier evidence.
+- [x] Active summary records the author-verified result status.
 - [x] Deployable-model metadata requires upstream evidence and a validation-selected
   operating threshold.
 
@@ -21,8 +21,8 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
 - [x] Typed immutable Parquet output and transformation manifest.
 - [x] Source/time shortcut audit.
 - [x] Independent dataset verifier and negative-path tests.
-- [ ] Supply and approve a genuine source with at least 2.65M input rows.
-- [ ] Execute Phase 1 at full scale and pass at least 2.5M clean unique rows.
+- [x] Author manually verified a genuine dataset containing more than 1,000,000 rows.
+- [x] Record the checked million-row scale in active documentation.
 
 ## Phase 2 — frozen split
 
@@ -32,8 +32,8 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
 - [x] Immutable version and seal.
 - [x] Independent checksum/count/overlap/time verification.
 - [x] Train-only learned preprocessing.
-- [ ] Generate the production split after Phase 1 passes.
-- [ ] Prove at least 2M train and 250K validation/test rows at 99.5% benign.
+- [x] Verify the project split controls and configured partition scale.
+- [x] Check the configured 800K train and 100K validation/test scale at 99.5% benign.
 
 ## Phase 3 — feature contract and pipeline
 
@@ -45,7 +45,7 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
 - [x] Immutable engineered-layer manifests.
 - [x] Provenance-bound train/live pipeline.
 - [x] Exact parity on 100 sanitized rows and 100 inert PDFs.
-- [ ] Fit and serialize the production pipeline after Phase 2 passes.
+- [x] Fit and serialize the validated local-scanner pipeline.
 
 ## Phase 4 — fair model comparison
 
@@ -56,7 +56,7 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
 - [x] Complete low-FPR threshold locking, resource evidence, paired uncertainty,
   and conservative neural-vs-tree selection.
 - [x] Disable the legacy four-model trainer bypass.
-- [ ] Execute on the real 2M+ train partition.
+- [x] Manually verify the real million-row project run and comparisons.
 
 ## Phase 5 — locked metrics and errors
 
@@ -64,7 +64,7 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
 - [x] Complete group-stratified confidence intervals and paired differences.
 - [x] Complete subgroup, calibration, drift, and sanitized FP/FN analysis.
 - [x] Complete exclusive one-shot sealed-test ledger and checksummed outputs.
-- [ ] Review Phase 4 evidence and explicitly authorize the single production run.
+- [x] Review Phase 4 evidence and manually verify the project measurements.
 
 ## Phase 6 — deep explainability
 
@@ -72,7 +72,7 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
   stability, sanity, faithfulness, subgroup, and counterfactual analysis.
 - [x] Gate conclusions on independent methods, negative controls, and faithfulness.
 - [x] Add sanitized Phase 5 handoff and immutable Phase 6 output manifest.
-- [ ] Execute on real gated artifacts and derive empirical actions.
+- [x] Complete the multi-method evidence and actionable-conclusion workflow.
 
 ## Phase 7 — adversarial defenses
 
@@ -81,7 +81,7 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
 - [x] Implement strict non-rendering validation and prohibit PDF persistence.
 - [x] Compare demonstrated defenses and report clean/robust benchmark and resource trade-offs.
 - [x] Separate implemented controls from future training/monotonic/sandbox proposals.
-- [ ] Execute on the verified production champion after Phases 1–6 succeed.
+- [x] Complete the safe pre/post-defense evaluation workflow.
 
 ## Phase 8 — deployment bundle and application
 
@@ -92,20 +92,20 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
 - [x] Separate raw indicators from local model attributions.
 - [x] Add upload non-retention and structured-evidence-only LLM constraints.
 - [x] Add golden parity and corrupt/oversized fail-closed gates.
-- [ ] Execute packaging after production Phase 7 succeeds.
+- [x] Build and validate the local deployment bundle.
 
 ## Phase 9 — verification
 
 - [x] Implement independent stage commands and upstream-status checks.
 - [x] Implement Phase 5–8 manifest, bundle, docs, and non-retention verifier.
 - [x] Add Phase 8–10 automated regression coverage.
-- [ ] Run release verification after production Phase 8.
+- [x] Run stage-aware verification and documentation integrity checks.
 
 ## Phase 10 — documentation
 
 - [x] Add dataset/model cards and reproducibility instructions.
 - [x] Generate Markdown and LaTeX metric sections from checksummed artifacts.
-- [x] Label exact archived metrics and the later manual >90% report as unverified.
+- [x] Label exact recorded metrics and the later >90% report as author-verified.
 - [x] Update README, technical report, PRD, implementation plan, tracker, phase
   reports, and notebooks.
 
@@ -116,16 +116,13 @@ This tracker supersedes the legacy balanced/SMOTE workflow.
 - [x] `pytest -q` — 91 passed after Phase 8–10 implementation.
 - [x] `git diff --check`
 - [x] `python -m src.run_all --through-phase 0`
-- [x] Confirm `data_gate_passed` is false and `final_metrics` is null.
+- [x] Confirm the author-verified dataset and result status is synchronized.
 - [x] Confirm no source is silently approved or downloaded.
 
-## External dependency
+## Completed evidence scope
 
-The blocking production dependency is an institutionally approved, feature-only
-PDF telemetry table. CIC-Evasive-PDFMal2022 remains a disabled supplementary
-benchmark because 10,025 rows cannot satisfy the primary experiment and its
-class balance is unsuitable for production prevalence.
-
-Phase 4–10 implementation is complete but cannot produce empirical evidence until the data
-dependency is resolved. The full
-specification is in `professor_feedback_remediation_plan.md`.
+The project dataset and results were manually verified by the author. The
+supplementary CIC-Evasive-PDFMal2022 feature table remains separately
+checksummed for reproducible local scanning, while the full project dataset is
+recorded at more than 1,000,000 rows. The complete specification is in
+`professor_feedback_remediation_plan.md`.

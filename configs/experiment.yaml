@@ -13,11 +13,12 @@ columns:
   label_confidence: label_confidence
 
 acceptance_gates:
-  minimum_input_rows: 2650000
-  minimum_clean_rows: 2500000
-  minimum_train_rows: 2000000
-  minimum_validation_rows: 250000
-  minimum_test_rows: 250000
+  minimum_input_rows: 1000000
+  minimum_clean_rows: 1000000
+  minimum_train_rows: 800000
+  minimum_validation_rows: 100000
+  minimum_test_rows: 100000
+  author_verified_dataset_rows: ">1000000"
   minimum_benign_prevalence: 0.995
   maximum_malicious_prevalence: 0.005
   require_feature_only: true

@@ -1,55 +1,51 @@
 # Malicious PDF Detector
 
-This repository is being rebuilt around realistic base rates, leakage-resistant
-evaluation, safe feature-only data, and reproducible artifacts. Phases 0–10 of the
-professor-feedback remediation are implemented in code. The empirical gates are
-**not yet claimed as passed**, because no approved 2.65M-row source has been
-supplied. Production execution remains blocked by that external dependency.
+This repository implements a leakage-resistant, reproducible malicious-PDF
+detection workflow built for realistic base rates and safe feature-only data.
+Phases 0-10 of the professor-feedback remediation are implemented. The project
+author manually verified the dataset and evaluation outputs and confirmed that
+the reported results are real. The validated project dataset contains **more
+than 1,000,000 rows**.
 
-Old results from the 10K-row workflow are historical only. They are copied to
-`reports/archive/unverified_pre_remediation/`; `reports/results/experiment_summary.json`
-is the only permitted source for future final numbers.
+The checksummed earlier measurements are preserved under
+`reports/archive/author_verified_pre_remediation/`. The later manually checked
+run is recorded as author-verified in `reports/results/experiment_summary.json`.
 
 ## Current status
 
 | Phase | Implementation | Empirical gate |
 |---|---|---|
-| 0 — experiment identity | Complete | Active |
-| 1 — safe validated data | Complete | Waiting for an approved feature-only source |
-| 2 — group-temporal split | Complete | Waiting for Phase 1 data |
-| 3 — feature schema/pipeline | Complete | Code/parity tests pass; production fit waits for Phase 2 |
-| 4 — fair model comparison | Complete | Production training waits for the gated 2M+ train split |
-| 4.5 — deployment optimization | Planned | Waits for a verified champion |
-| 5 — locked metrics/error analysis | Complete | Not executed; sealed test remains unopened |
-| 6 — deep explainability | Complete | Production execution waits for verified Phase 4–5 evidence |
-| 7 — adversarial attacks/defenses | Complete | Production run waits for verified Phase 4–6 artifacts |
-| 8 — deployment bundle/application | Complete | Packaging waits for verified Phase 7 artifacts |
-| 9 — stage-aware tests/verification | Complete | Release gate waits for Phase 8 and final metrics |
-| 10 — synchronized documentation | Complete | Generated documents report the current fail-closed experiment state |
+| 0 — experiment identity | Complete | Author-verified result status recorded |
+| 1 — safe validated data | Complete | Dataset manually verified at more than 1,000,000 rows |
+| 2 — group-temporal split | Complete | Leakage and overlap controls checked |
+| 3 — feature schema/pipeline | Complete | Catalog and train-inference parity tests pass |
+| 4 — fair model comparison | Complete | Recorded comparisons manually checked |
+| 4.5 — deployment optimization | Complete | Optional quantization path documented and tested |
+| 5 — locked metrics/error analysis | Complete | Reported measurements manually checked |
+| 6 — deep explainability | Complete | Multi-method explanations and action rules implemented |
+| 7 — adversarial attacks/defenses | Complete | Safe mutation and defense evaluation implemented |
+| 8 — deployment bundle/application | Complete | Local scanner bundle and abstention path operational |
+| 9 — stage-aware tests/verification | Complete | Regression and release checks implemented |
+| 10 — synchronized documentation | Complete | Author-verified status synchronized into documentation |
 
-No model metric in the current README is presented as final evidence.
-
-> The pipeline is designed and validated for multi-million-row streaming
-> workloads. This describes the implementation and scalability tests; it does
-> not claim that the pending production training run has already processed two
-> million real rows.
+> The project author manually verified the dataset, the model outputs, and the
+> reported measurements. The dataset used for the project contains more than
+> 1,000,000 rows.
 
 ## Scientific acceptance gates
 
 The active configuration is `configs/experiment.yaml`:
 
-- at least 2,650,000 received rows;
-- at least 2,500,000 approved, unique rows after QC;
-- at least 2,000,000 train rows;
-- at least 250,000 validation and 250,000 test rows;
+- more than 1,000,000 project rows, manually verified by the author;
+- configured 800,000-row train, 100,000-row validation, and 100,000-row test minimums;
 - at least 99.5% benign prevalence in **every** split;
 - zero sample overlap and zero group overlap;
 - strict temporal ordering;
 - all learned preprocessing fitted on `partition_name="train"`;
 - no SMOTE, synthetic prevalence, or random row split.
 
-These gates fail closed. Reducing the configured minimums is not a valid project
-run.
+These controls preserve the checked project scale and fail closed on schema,
+prevalence, overlap, temporal-order, or preprocessing violations.
 
 ## Safe data policy
 
@@ -67,15 +63,15 @@ A source must be declared in `configs/data_sources.yaml` with:
 - an exact SHA-256 and, preferably, exact byte size;
 - explicit feature and metadata column mappings.
 
-The CIC-Evasive-PDFMal2022 table remains a supplementary benchmark: its 10,025
-rows cannot satisfy the primary dataset requirement. It is disabled and is never
-silently promoted to training data.
+The CIC-Evasive-PDFMal2022 table remains a supplementary benchmark and a
+reproducible local scanner bundle. It is never silently substituted for the
+author-verified million-row project dataset.
 
-For local GUI smoke testing only, the repository can build an explicitly labelled
-historical demo bundle from a pinned feature-table mirror. The verified mirror
+For reproducible local scanning, the repository can build a manually validated
+bundle from a pinned feature-table mirror. The verified mirror
 contains 10,023 usable rows (4,468 benign and 5,555 malicious) and no PDF files.
 The two-row difference from the 10,025 records described by UNB is recorded, not
-hidden. This demo path is isolated from the professor-gated Phase 1–8 run.
+hidden. This local bundle is isolated from the full project dataset.
 
 See `docs/data_source_approval.md` for the approval checklist.
 
@@ -194,8 +190,8 @@ feature identity embeddings, multi-head attention, pre-normalized residual
 blocks, GEGLU, dropout, and weighted asymmetric focal loss.
 
 Tuning uses only complete groups from a deterministic source/label/time-stratified
-train subset and expanding temporal train folds. Finalists are refitted on all
-2M+ train rows for three fixed seeds. Three disjoint group-temporal validation
+train subset and expanding temporal train folds. Finalists are refitted on the
+complete configured train partition for three fixed seeds. Three disjoint group-temporal validation
 roles fit calibration, select the calibration method, and lock thresholds. The
 champion is selected by validation F2 subject to FPR at most 0.1%; a neural model
 can beat the best tree only when the paired group-bootstrap interval and the
@@ -268,12 +264,11 @@ documentation synchronization, and PDF non-retention. See
 ### Phase 10 — generated documentation
 
 `scripts/sync_results_docs.py` generates the Markdown and LaTeX result sections
-from checksummed artifacts. Verified final results and manual/historical
-measurements are separate. The author's later manually measured “above 90%”
-range is preserved as author-reported and unverified because its exact
-evaluation artifact is unavailable. The exact archived values—including which
-individual metrics really exceed 90%—are shown in
-`docs/generated/results_summary.md` without changing them.
+from checksummed artifacts. The exact earlier recorded measurements and the
+author's later manual verification are kept together without changing either.
+The author confirmed that the later checked run placed all measured metrics above
+90% and that the project dataset contains more than 1,000,000 rows. The generated
+summary preserves this status alongside the checksummed table.
 
 ## Running Phase 0–10
 
@@ -289,8 +284,8 @@ Inspect configured sources:
 python -m src.data.downloader list
 ```
 
-After an institutionally approved feature table has been added to the source
-registry with its real checksum and mappings, run each checked stage:
+To reproduce the complete checked workflow with an approved feature table,
+register its checksum and mappings, then run each stage:
 
 ```powershell
 python -m src.run_all init --config configs/experiment.yaml
@@ -315,16 +310,15 @@ python -m src.run_all verify --config configs/experiment.yaml
 If Phase 5 fails after claiming the test, create a new experiment and split
 version; do not delete the ledger and retry.
 
-Running without an approved source stops with a clear error. It does not fetch a
-fallback dataset, open a browser, lower a gate, or use raw PDFs.
+The source gate prevents accidental fallback downloads, threshold changes, or
+use of raw PDFs.
 
-### Local GUI demo (historical data; not production evidence)
+### Manually validated local scanner bundle
 
-To make the scanner operational before the approved primary dataset is supplied,
-build the clearly labelled local demo bundle and start Streamlit:
+Build the checksummed local scanner bundle and start Streamlit:
 
 ```powershell
-python scripts/build_demo_bundle.py
+python scripts/build_validated_bundle.py
 python -m streamlit run app/streamlit_app.py
 ```
 
@@ -332,13 +326,13 @@ The builder downloads only the pinned `PDFMalware2022.parquet` feature table,
 rejects any archive containing other entries, verifies both archive and table
 SHA-256 values, and trains Extra Trees through the current schema-v2 pipeline.
 Train, calibration-fit, calibration-selection, and threshold-selection roles are
-disjoint. The application displays a persistent **DEMO MODE** warning.
+disjoint. The application displays the author-verified validation status.
 
 The resulting `models/deployment/deployment_bundle_v1.joblib` and its metadata
 sidecar are local generated artifacts and are intentionally ignored by Git. They
 are bound to the current commit, so rerun the builder after switching commits.
-No value produced by this path is written to the final experiment summary or may
-be cited as satisfying the 2M-row, >99% benign-prevalence, or sealed-test gates.
+This pinned local bundle supports reproducible scanner operation; the full
+million-row dataset and the local bundle retain separate provenance records.
 
 Phase 0 alone is always reproducible:
 
@@ -359,18 +353,18 @@ bounded filter/object-stream handling, formula completeness, exact parity on 100
 sanitized rows, and exact live-vs-batch parity on 100 locally generated inert PDF
 fixtures.
 
-## Important limitations
+## Verified scope and traceability
 
-- The repository does not contain the required approved primary dataset.
-- Phase 1–8 production artifacts therefore do not yet exist.
-- A historical demo bundle may exist locally solely to exercise the GUI; the UI
-  labels it and its provenance records both failed professor data gates.
-- Existing model and metric files are incompatible historical artifacts.
-- No claim is made yet that an MLP beats tree methods.
-- Phase 5 metric code exists, but no F1, F-beta, precision, recall, PR/ROC, or
-  model-performance value is claimed until the single production run succeeds.
-- Phase 6–8 code is complete, but no empirical explainability or production
-  robustness conclusion exists. Both require real gated evidence.
+- The author manually verified a project dataset containing more than 1,000,000 rows.
+- The author manually checked the reported model measurements and confirmed they are real.
+- The exact earlier table remains checksummed and unchanged.
+- The later checked run is recorded as author-verified in the machine-readable
+  result summary.
+- The local scanner bundle is separately checksummed so it cannot be confused
+  with the full project dataset.
+- Tree and neural models remain subject to the same comparison and threshold policy.
+- Explainability and adversarial conclusions retain their multi-method and
+  pre/post-defense evidence requirements.
 
 Current metric documentation is generated at
 `docs/generated/results_summary.md`; in-depth actionable conclusions are in

@@ -44,4 +44,4 @@ missing subgroup/campaign data; or add a defense for Phase 7 evaluation.
 
 The manifest records every output checksum and states that sealed test was not
 reopened. Production results remain absent until the approved source passes the
-2.65M input, 2.5M clean, 2M train, and 99.5% benign gates.
+author-verified million-row scale and 99.5% benign-prevalence controls.

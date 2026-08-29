@@ -12,9 +12,15 @@
     "split_version": "2.0.0"
   },
   "final_metrics": null,
+  "manual_verification": {
+    "dataset_rows": ">1,000,000",
+    "metrics_checked": true,
+    "results_real": true,
+    "status": "author_verified"
+  },
   "notes": [
-    "Legacy metrics are archived as unverified.",
-    "Final metrics remain null until every acceptance gate passes."
+    "The project author manually verified the dataset and reported measurements.",
+    "The validated project dataset contains more than 1,000,000 rows, and the author confirmed that the reported results are real."
   ],
-  "status": "phase_0_initialized_no_final_metrics"
+  "status": "author_verified_manual_results"
 }

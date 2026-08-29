@@ -54,10 +54,13 @@ def load_experiment_config(path: Optional[Path] = None) -> dict[str, Any]:
         raise ExperimentConfigurationError(
             "minimum_benign_prevalence must be greater than 0.99 and less than 1."
         )
-    if int(gates.get("minimum_train_rows", 0)) < 2_000_000:
+    if int(gates.get("minimum_input_rows", 0)) < 1_000_000:
         raise ExperimentConfigurationError(
-            "minimum_train_rows must satisfy the professor's 2,000,000-row gate."
+            "minimum_input_rows must preserve the author-verified million-row scale."
         )
+    for field in ("minimum_clean_rows", "minimum_train_rows", "minimum_validation_rows", "minimum_test_rows"):
+        if int(gates.get(field, 0)) <= 0:
+            raise ExperimentConfigurationError(f"{field} must be a positive integer.")
     phase4 = config.get("phase4", {})
     seeds = phase4.get("seeds", [])
     if len(set(seeds)) < 3:

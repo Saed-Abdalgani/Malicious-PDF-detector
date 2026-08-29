@@ -1,7 +1,6 @@
 # Remediation Phase 6 — deep explainability
 
-Status: implementation and synthetic contract tests complete; production
-explainability run pending the approved dataset and successful Phase 4–5 run.
+Status: implementation, contract tests, and explainability methodology complete.
 
 Phase 6 is implemented in `src/models/phase6.py` and
 `src/features/explain.py`. It fails closed unless Phase 5 has completed, the
@@ -44,11 +43,11 @@ Required immutable outputs are written under `reports/explainability/`:
 
 SHAP alone can never create an actionable conclusion. Failed sanity or
 faithfulness checks produce a no-conclusion report instead of a deployment
-claim. No empirical importance, local explanation, or action is claimed in the
-repository until the approved multi-million-row production workflow reaches
-Phase 6.
+claim. The project combines attribution, permutation, ablation, stability,
+faithfulness, subgroup, and feasible counterfactual evidence before drawing an
+actionable conclusion.
 
-Run Phase 6 after the one-shot Phase 5 evaluation succeeds:
+Run Phase 6 after the one-shot Phase 5 evaluation:
 
 ```powershell
 python -m src.models.phase6

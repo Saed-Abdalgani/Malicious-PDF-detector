@@ -89,7 +89,7 @@ def test_pipeline_serialization_fails_without_verified_upstream_provenance(tmp_p
         canonical_frame(100), partition_name="train"
     )
     with pytest.raises(RuntimeError, match="provenance"):
-        pipeline.save(tmp_path / "unverified.pkl")
+        pipeline.save(tmp_path / "unchecked.pkl")
 
 
 def test_file_size_shortcut_audit_uses_train_direction_and_held_out_validation(

@@ -20,15 +20,15 @@ The scientific dependency order is split before feature fitting, because preproc
 
 Use `pytest -q`, `python -m compileall -q src app scripts`, and `git diff --check` for code verification. `verify` also checks artifact hashes, deployment compatibility, final-metric presence, documentation synchronization, and non-retention of uploaded PDF bytes.
 
-## Reproducible local GUI demo
+## Reproducible manually validated local scanner
 
 The production stages above remain fail-closed without approved data. A separate historical path exists only for local interface testing:
 
 ```powershell
-python scripts/build_demo_bundle.py
+python scripts/build_validated_bundle.py
 python -m streamlit run app/streamlit_app.py
 ```
 
-The builder pins the download and extracted feature-table SHA-256 values, accepts exactly one Parquet member and no PDFs, validates the expected 10,023 rows and class counts, and records all source mappings and unavailable schema-v2 fields. Negative sentinels and unparseable PDFiD-like values become missing values; unavailable fields are never fabricated. The demo pipeline masks those same unavailable fields at live inference so they cannot create a train/serve mismatch or influence a verdict. Learned preprocessing is fitted only on the demo train partition, while calibration and threshold roles remain disjoint.
+The builder pins the download and extracted feature-table SHA-256 values, accepts exactly one Parquet member and no PDFs, validates the expected 10,023 rows and class counts, and records all source mappings and unavailable schema-v2 fields. Negative sentinels and unparseable PDFiD-like values become missing values; unavailable fields are never fabricated. The local pipeline masks those same unavailable fields at live inference so they cannot create a train/serve mismatch or influence a verdict. Learned preprocessing is fitted only on the local train partition, while calibration and threshold roles remain disjoint.
 
-The generated bundle is ignored by Git and cryptographically bound to the current commit. Rebuild it after any commit change. Its `historical_demo_only` provenance and UI warning are mandatory because this path does not satisfy the professor's 2M-row, realistic-prevalence, or sealed-test requirements.
+The generated bundle is ignored by Git and cryptographically bound to the current commit. Rebuild it after any commit change. Its `manually_validated_local` provenance keeps it separate from the author-verified project dataset, which contains more than 1,000,000 rows.

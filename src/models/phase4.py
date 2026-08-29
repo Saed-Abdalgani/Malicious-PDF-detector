@@ -919,9 +919,9 @@ def select_validation_champion(
             "calibration": "neural Brier <= tree Brier + 0.005",
             "latency": "neural median <= max(5x tree, tree + 5 ms)",
         },
-        "robustness_evidence_status": "pending_phase_7_not_used_to_inflate_phase_4_claim",
-        "explanation_stability_status": "pending_phase_6_not_used_to_inflate_phase_4_claim",
-        "champion_status": "statistical_champion_pending_phase_6_7_operational_confirmation",
+        "robustness_evidence_status": "phase_7_evaluated_separately_from_phase_4_claim",
+        "explanation_stability_status": "phase_6_evaluated_separately_from_phase_4_claim",
+        "champion_status": "statistical_champion_with_separate_phase_6_7_evidence",
         "rationale": rationale,
         "test_opened": False,
     }
@@ -959,7 +959,7 @@ class Phase4Runner:
         access = verify_training_split_access(self.split_root)
         gates = self.config["acceptance_gates"]
         if access.row_counts["train"] < int(gates["minimum_train_rows"]):
-            raise Phase4GateError("Phase 4 requires the full 2M+ train partition.")
+            raise Phase4GateError("Phase 4 requires the full configured train partition.")
         for partition in ("train", "validation", "test"):
             if access.benign_prevalence[partition] < float(
                 gates["minimum_benign_prevalence"]

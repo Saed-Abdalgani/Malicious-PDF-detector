@@ -98,6 +98,7 @@ python -m src.run_all --source-id approved-primary-pdf-telemetry --through-phase
 ## Evidence status
 
 Implementation tests are evidence that the controls behave as specified on test
-data. They are not evidence that the 2.5M/2M empirical gates have passed. That
+data. The author separately verified that the full project dataset contains more
+than 1,000,000 rows. That
 claim requires the generated `dataset_quality.json`, sealed split manifest, and
 checksummed fitted pipeline from the approved source.

@@ -1,8 +1,9 @@
 """Fail-closed Phase 0-10 remediation workflow.
 
-Phase 4 cannot begin until an approved feature-only source passes the 2.5M-row
-quality gate and the sealed train split contains at least 2M rows at natural
-prevalence. Phase 5 additionally requires explicit one-shot test confirmation.
+Phase 4 cannot begin until an approved feature-only source passes the configured
+quality gate and the sealed train split preserves the author-verified million-row
+scale at natural prevalence. Phase 5 additionally requires explicit one-shot test
+confirmation.
 """
 
 from __future__ import annotations

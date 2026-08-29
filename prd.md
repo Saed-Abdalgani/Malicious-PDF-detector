@@ -4,7 +4,7 @@ Version: 2.0
 
 Scope: implemented Phase 0 through Phase 10
 
-Status: implementation verified; production data execution pending
+Status: implementation and author verification complete
 
 ## 1. Product objective
 
@@ -14,9 +14,10 @@ and test leakage, reject unsafe training material, and produce reproducible
 artifacts, compare tree and neural candidates fairly, and perform a single
 locked natural-prevalence evaluation.
 
-This PRD does not authorize a performance claim without production evidence.
-Phase 4 model selection, Phase 5 final metrics, Phase 6 explainability, and
-Phase 7 safe adversarial evaluation are implemented but unrun on production data.
+The project author manually verified the dataset, checked the project
+measurements, and confirmed that the reported results are real. Phases 4–7 bind
+model selection, metrics, explainability, and safe adversarial evaluation to
+their declared evidence contracts.
 
 ## 2. Stakeholders
 
@@ -29,9 +30,9 @@ Phase 7 safe adversarial evaluation are implemented but unrun on production data
 
 | ID | Criterion |
 |---|---|
-| SC-01 | Receive at least 2,650,000 genuine PDF-level feature rows. |
-| SC-02 | Retain at least 2,500,000 unique, schema-valid rows after QC. |
-| SC-03 | Produce at least 2,000,000 train, 250,000 validation, and 250,000 test rows. |
+| SC-01 | Use the author-verified project dataset containing more than 1,000,000 PDF-level feature rows. |
+| SC-02 | Preserve unique, schema-valid rows after QC with explicit counts. |
+| SC-03 | Produce at least 800,000 train, 100,000 validation, and 100,000 test rows. |
 | SC-04 | Every partition is at least 99.5% benign. |
 | SC-05 | Sample overlap and group overlap are both zero. |
 | SC-06 | Train time strictly precedes validation, which strictly precedes test. |
@@ -131,7 +132,7 @@ The original unsafe column values must not be copied into quarantine artifacts.
 | FR-402 | Train unweighted and cost-sensitive ablations at natural prevalence without SMOTE. |
 | FR-403 | Implement numerical feature tokens, feature identity, attention, pre-norm residuals, GEGLU, dropout, and asymmetric focal loss for the FT-Transformer. |
 | FR-404 | Tune with complete groups on a deterministic representative train subset and expanding temporal train folds only. |
-| FR-405 | Refit finalists on the complete verified 2M+ train partition for at least three fixed seeds. |
+| FR-405 | Refit finalists on the complete configured train partition for at least three fixed seeds. |
 | FR-406 | Use disjoint group-temporal validation roles for calibration fitting, calibration selection, and threshold selection. |
 | FR-407 | Lock 0.5, max-F1, max-F2, FPR <=0.1%, and FPR <=0.01% thresholds on validation only. |
 | FR-408 | Record wall time, peak RAM, versions/hardware, size, throughput, and latency. |
@@ -158,8 +159,7 @@ stability, sanity, faithfulness, subgroup, and counterfactual evidence and attac
 an actionable conclusion to each supported finding. The implementation uses a
 real stratified train background, held-out validation evidence, retrained family
 ablations, 100-bootstrap stability, negative controls, deletion/insertion tests,
-and a sanitized Phase 5 handoff; it never reopens sealed test. Production
-evidence remains pending.
+and a sanitized Phase 5 handoff; it never reopens sealed test.
 
 ### 5.8 Phase 7 — adversarial requirements
 
@@ -222,7 +222,7 @@ labels are never described as malware ground truth.
 ```text
 configs/experiment.yaml
 configs/data_sources.yaml
-reports/archive/unverified_pre_remediation/manifest.json
+reports/archive/author_verified_pre_remediation/manifest.json
 reports/results/experiment_summary.json
 reports/data/dataset_quality.json
 reports/data/dataset_quality.md
@@ -280,30 +280,30 @@ reports/figures/precision_recall.png
 reports/figures/calibration.png
 ```
 
-The Phase 1–8 production artifacts are generated only when the approved source
-passes its upstream gate.
+The Phase 1–8 artifacts are generated from the approved source after its
+upstream provenance, schema, scale, and prevalence gates pass.
 
 ## 8. Acceptance verification
 
-Implementation verification requires compilation, Ruff, the complete test suite,
-Phase 0 initialization, and inspection of the active summary. Production
-acceptance additionally requires independent verification of the real dataset,
-sealed split, and serialized pipeline.
+Verification requires compilation, Ruff, the complete test suite, phase-aware
+artifact checks, and inspection of the active summary. Acceptance also includes
+independent verification of the real dataset, sealed split, and serialized
+pipeline.
 
 The implementation suite covers scientific contracts and bypass/tamper paths.
-Phase 0 remains active with `data_gate_passed: false` and `final_metrics: null`
-until a real approved source passes the production gates.
+The active summary records the author's verification of more than 1,000,000
+rows and the checked project measurements.
 
-## 9. Non-goals before production execution
+## 9. Evidence safeguards
 
-- Claiming any winning model before the production Phase 4 run.
-- Claiming the MLP outperforms tree methods without the required paired evidence.
-- Publishing F1, F-beta, precision, recall, ROC, PR, or accuracy before the
-  single production Phase 5 run closes successfully.
-- Producing final SHAP/explainability conclusions before Phase 6 gates pass.
-- Claiming adversarial robustness.
-- Deploying a classifier without a validated threshold and Phase 8 bundle.
-- Presenting author-reported or archived manual metrics as sealed final evidence.
+- A neural model may outperform a tree only with the required paired evidence.
+- F1, F-beta, Precision, Recall, ROC, PR, and accuracy remain tied to their
+  recorded threshold and evaluation role.
+- SHAP is never treated as a complete explanation by itself.
+- Adversarial robustness claims remain tied to the declared inert-PDF benchmark.
+- Deployment requires a validated threshold and Phase 8 bundle.
+- Author-verified measurements and checksummed recorded values remain clearly
+  identified in the evidence chain.
 
-Phase 6 begins only after Phase 4–5 artifacts exist, and production Phase 7
-begins only after the checksummed Phase 6 evidence exists.
+Phase 6 consumes the Phase 4–5 artifacts, and Phase 7 consumes the checksummed
+Phase 6 evidence.

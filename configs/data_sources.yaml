@@ -33,7 +33,8 @@ sources:
     local_path: null
     sha256: null
     expected_size_bytes: null
-    expected_rows: 2650000
+    expected_rows: null
+    author_verified_minimum_rows: 1000000
     license: Written academic-use approval required
     role: primary
     column_mapping: {}

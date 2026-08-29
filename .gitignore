@@ -109,3 +109,7 @@ data/external/hf_cache/*
 htmlcov/
 .coverage
 coverage.xml
+
+# Local artifact-authoring scratch space and inspection reports
+tmp/
+output/**/*.inspect.ndjson

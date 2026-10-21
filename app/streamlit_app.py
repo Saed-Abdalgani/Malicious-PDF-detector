@@ -84,16 +84,17 @@ def _scanner() -> None:
                     st.markdown("### Structural feature overview")
                     render_feature_radar(result.features)
 
-                st.markdown("### Raw actionable indicators")
-                st.caption("Direct parser observations; these are not model attributions or proof of intent.")
-                st.dataframe(pd.DataFrame(result.raw_indicators), hide_index=True, use_container_width=True)
-                st.markdown("### Local model attributions")
-                st.caption(
-                    "Probability deltas from replacing one feature with its real train-only "
-                    "reference median; these are model-behavior evidence, not raw indicators."
-                )
-                st.dataframe(pd.DataFrame(result.model_attributions), hide_index=True, use_container_width=True)
-                with st.expander("Complete extracted feature breakdown"):
+                with st.expander("Advanced Technical Details & Indicators", expanded=False):
+                    st.markdown("### Raw actionable indicators")
+                    st.caption("Direct parser observations; these are not model attributions or proof of intent.")
+                    st.dataframe(pd.DataFrame(result.raw_indicators), hide_index=True, use_container_width=True)
+                    st.markdown("### Local model attributions")
+                    st.caption(
+                        "Probability deltas from replacing one feature with its real train-only "
+                        "reference median; these are model-behavior evidence, not raw indicators."
+                    )
+                    st.dataframe(pd.DataFrame(result.model_attributions), hide_index=True, use_container_width=True)
+                    st.markdown("### Complete extracted feature breakdown")
                     st.dataframe(
                         st.session_state.analyzer.get_feature_breakdown(result.features),
                         hide_index=True,

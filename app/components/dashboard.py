@@ -163,5 +163,5 @@ def render_scan_history() -> None:
                 "Speed": f"{scan['time_ms']:.1f} ms",
             }
         )
-    st.markdown("### Session history")
-    st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+    with st.expander("Session History", expanded=False):
+        st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)

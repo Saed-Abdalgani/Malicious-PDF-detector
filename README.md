@@ -20,6 +20,14 @@ run is recorded as author-verified in `reports/results/experiment_summary.json`.
 > - Technical Report (LaTeX): [`report/main.tex`](report/main.tex)
 > - Windows 1-Click Launchers: [`setup.bat`](setup.bat) | [`run_scanner.bat`](run_scanner.bat) | [`run_tests.bat`](run_tests.bat)
 
+## Application Preview
+
+The interactive Streamlit scanner performs real-time static PDF feature extraction, calibrated risk scoring, and fail-closed abstention:
+
+| Safe Document (Benign Verdict) | Threat Detected (Malicious Verdict) |
+|:---:|:---:|
+| ![Safe PDF Scan](docs/assets/scanner_verdict_benign.png) | ![Malicious PDF Scan](docs/assets/scanner_verdict_malicious.png) |
+
 ## Current status
 
 | Phase | Implementation | Empirical gate |

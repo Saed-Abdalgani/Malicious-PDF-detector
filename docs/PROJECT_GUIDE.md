@@ -32,6 +32,12 @@ All primary presentation assets, reports, code modules, and apps are organized a
 
 ---
 
+### Interactive Scanner Preview
+
+| Safe Document (Benign Verdict) | Threat Detected (Malicious Verdict) |
+|:---:|:---:|
+| ![Safe PDF Scan](assets/scanner_verdict_benign.png) | ![Malicious PDF Scan](assets/scanner_verdict_malicious.png) |
+
 ## 3. Quick Start & One-Click Launchers (Windows)
 
 To make running and evaluating the project effortless on Windows, three launcher scripts are included in the repository root:

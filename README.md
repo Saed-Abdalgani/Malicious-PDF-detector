@@ -11,6 +11,13 @@ The checksummed earlier measurements are preserved under
 `reports/archive/author_verified_pre_remediation/`. The later manually checked
 run is recorded as author-verified in `reports/results/experiment_summary.json`.
 
+> 📘 **Quick Navigation & Presentation Assets**:
+> - Detailed Project Roadmap & File Index: [`PROJECT_GUIDE.md`](PROJECT_GUIDE.md)
+> - Defense Slide Deck: [`output/presentation/malicious_pdf_detector_final_presentation.pptx`](output/presentation/malicious_pdf_detector_final_presentation.pptx)
+> - Speaker Notes: [English Guide](output/pdf/malicious_pdf_detector_speaker_guide.pdf) | [Arabic Guide](output/pdf/malicious_pdf_detector_speaker_guide_ar.pdf)
+> - Technical Report (LaTeX): [`report/main.tex`](report/main.tex)
+> - Windows 1-Click Launchers: [`setup.bat`](setup.bat) | [`run_scanner.bat`](run_scanner.bat) | [`run_tests.bat`](run_tests.bat)
+
 ## Current status
 
 | Phase | Implementation | Empirical gate |
@@ -315,7 +322,9 @@ use of raw PDFs.
 
 ### Manually validated local scanner bundle
 
-Build the checksummed local scanner bundle and start Streamlit:
+On Windows, double-click [`run_scanner.bat`](run_scanner.bat) to automatically verify/build the bundle and launch the UI.
+
+Alternatively, build the checksummed local scanner bundle and start Streamlit manually:
 
 ```powershell
 python scripts/build_validated_bundle.py

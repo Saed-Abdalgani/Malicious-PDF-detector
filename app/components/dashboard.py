@@ -11,9 +11,9 @@ import streamlit as st
 
 def render_verdict(
     outcome: str,
-    malicious_probability: float | None,
-    threshold: float,
-    time_ms: float,
+    malicious_probability: float | None = None,
+    threshold: float = 0.5,
+    time_ms: float = 0.0,
 ) -> None:
     styles = {
         "benign": {
@@ -25,7 +25,6 @@ def render_verdict(
             "title_color": "#15803d",
             "badge_bg": "#16a34a",
             "desc": "No malicious indicators detected. Structural features match safe documents.",
-            "prob_color": "#16a34a",
         },
         "malicious": {
             "title": "VERDICT: MALICIOUS",
@@ -36,7 +35,6 @@ def render_verdict(
             "title_color": "#b91c1c",
             "badge_bg": "#dc2626",
             "desc": "High probability of malicious payload, suspicious actions, or evasive structures.",
-            "prob_color": "#dc2626",
         },
         "uncertain/abstain": {
             "title": "VERDICT: UNCERTAIN / ABSTAIN",
@@ -47,28 +45,26 @@ def render_verdict(
             "title_color": "#b45309",
             "badge_bg": "#d97706",
             "desc": "Fail-closed security triggered. Parser disagreement or out-of-distribution features detected.",
-            "prob_color": "#d97706",
         },
     }
     cfg = styles.get(outcome, styles["uncertain/abstain"])
-    score_str = "Not Scored" if malicious_probability is None else f"{malicious_probability * 100:.2f}%"
 
     html = f"""
     <div style="
         background: {cfg['bg']};
         border: 2px solid {cfg['border']};
         border-radius: 16px;
-        padding: 24px 28px;
+        padding: 22px 28px;
         margin-bottom: 24px;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     ">
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
-            <div style="display: flex; align-items: center; gap: 14px;">
-                <span style="font-size: 2.6rem; line-height: 1;">{cfg['icon']}</span>
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <span style="font-size: 2.8rem; line-height: 1;">{cfg['icon']}</span>
                 <div>
                     <div style="
-                        font-size: 2.1rem;
+                        font-size: 2.2rem;
                         font-weight: 800;
                         color: {cfg['title_color']} !important;
                         letter-spacing: -0.5px;
@@ -76,7 +72,7 @@ def render_verdict(
                     ">{cfg['title']}</div>
                     <div style="
                         margin-top: 4px;
-                        font-size: 0.95rem;
+                        font-size: 1rem;
                         color: #334155 !important;
                         font-weight: 500;
                     ">{cfg['desc']}</div>
@@ -85,67 +81,15 @@ def render_verdict(
             <div style="
                 background: {cfg['badge_bg']};
                 color: #ffffff !important;
-                padding: 6px 18px;
+                padding: 8px 22px;
                 border-radius: 9999px;
-                font-size: 0.85rem;
+                font-size: 0.9rem;
                 font-weight: 700;
                 letter-spacing: 0.5px;
                 text-transform: uppercase;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.12);
             ">
                 {cfg['badge']}
-            </div>
-        </div>
-        
-        <div style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-top: 18px;
-            padding-top: 16px;
-            border-top: 1px solid rgba(0, 0, 0, 0.08);
-        ">
-            <div style="
-                background: #ffffff;
-                border: 1px solid #cbd5e1;
-                border-radius: 12px;
-                padding: 14px 18px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            ">
-                <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b !important; margin-bottom: 4px;">
-                    Malicious Probability
-                </div>
-                <div style="font-size: 1.6rem; font-weight: 800; color: {cfg['prob_color']} !important;">
-                    {score_str}
-                </div>
-            </div>
-            <div style="
-                background: #ffffff;
-                border: 1px solid #cbd5e1;
-                border-radius: 12px;
-                padding: 14px 18px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            ">
-                <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b !important; margin-bottom: 4px;">
-                    Decision Threshold
-                </div>
-                <div style="font-size: 1.6rem; font-weight: 800; color: #0f172a !important;">
-                    {threshold:.4f}
-                </div>
-            </div>
-            <div style="
-                background: #ffffff;
-                border: 1px solid #cbd5e1;
-                border-radius: 12px;
-                padding: 14px 18px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            ">
-                <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b !important; margin-bottom: 4px;">
-                    Analysis Speed
-                </div>
-                <div style="font-size: 1.6rem; font-weight: 800; color: #0f172a !important;">
-                    {time_ms:.1f} <span style="font-size: 1rem; font-weight: 600; color: #64748b !important;">ms</span>
-                </div>
             </div>
         </div>
     </div>

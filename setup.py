@@ -10,7 +10,7 @@ setup(
     name="malicious-pdf-detector",
     version="1.0.0",
     author="Saed Abdalgani",
-    author_email="example@example.com",
+    author_email="Saed-Abdalgani@users.noreply.github.com",
     description="A fail-closed malicious PDF detector with calibrated static analysis and abstention",
     long_description=long_description,
     long_description_content_type="text/markdown",

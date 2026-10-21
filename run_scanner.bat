@@ -3,6 +3,7 @@ setlocal enabledelayedexpansion
 
 echo ============================================================
 echo   Malicious PDF Detector - Interactive Scanner
+echo   Author: Saed Abdalgani
 echo ============================================================
 echo.
 

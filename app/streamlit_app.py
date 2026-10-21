@@ -146,6 +146,11 @@ def _about() -> None:
         "a dataset containing more than 1,000,000 rows. The author-verified result status "
         "is synchronized through the active experiment summary."
     )
+    st.markdown(
+        "---\n"
+        "**Author:** Saed Abdalgani  \n"
+        "**Documentation:** [Project Roadmap and Architecture](docs/PROJECT_GUIDE.md)"
+    )
 
 
 def main() -> None:

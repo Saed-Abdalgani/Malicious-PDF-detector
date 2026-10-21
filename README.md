@@ -1,5 +1,7 @@
 # Malicious PDF Detector
 
+**Author:** [Saed Abdalgani](https://github.com/Saed-Abdalgani)
+
 This repository implements a leakage-resistant, reproducible malicious-PDF
 detection workflow built for realistic base rates and safe feature-only data.
 Phases 0-10 of the professor-feedback remediation are implemented. The project

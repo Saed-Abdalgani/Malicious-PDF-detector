@@ -3,6 +3,7 @@ setlocal enabledelayedexpansion
 
 echo ============================================================
 echo   Malicious PDF Detector - Environment Setup
+echo   Author: Saed Abdalgani
 echo ============================================================
 echo.
 

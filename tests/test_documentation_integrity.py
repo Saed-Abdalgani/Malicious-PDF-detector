@@ -14,12 +14,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 def _active_document_paths() -> list[Path]:
     paths = [
         PROJECT_ROOT / "README.md",
-        PROJECT_ROOT / "implementation_plan.md",
-        PROJECT_ROOT / "Todo.md",
-        PROJECT_ROOT / "prd.md",
         PROJECT_ROOT / "report" / "README.md",
         PROJECT_ROOT / "report" / "main.tex",
     ]
+    for name in ("implementation_plan.md", "Todo.md", "prd.md"):
+        for base in (PROJECT_ROOT, PROJECT_ROOT / "docs"):
+            p = base / name
+            if p.exists():
+                paths.append(p)
     paths.extend(PROJECT_ROOT.glob("phase*_implementation.md"))
     paths.extend((PROJECT_ROOT / "docs").glob("*.md"))
     # Generated historical metrics are checked by a dedicated provenance test;
@@ -73,9 +75,10 @@ def test_documented_status_matches_fail_closed_experiment_and_source_registry():
 
 def test_phases4_10_are_documented_as_implemented_without_production_results():
     readme = (PROJECT_ROOT / "README.md").read_text(encoding="utf-8")
-    implementation = (PROJECT_ROOT / "implementation_plan.md").read_text(
-        encoding="utf-8"
-    )
+    impl_path = PROJECT_ROOT / "docs" / "implementation_plan.md"
+    if not impl_path.exists():
+        impl_path = PROJECT_ROOT / "implementation_plan.md"
+    implementation = impl_path.read_text(encoding="utf-8")
     metrics = (PROJECT_ROOT / "docs" / "metrics_and_thresholds.md").read_text(
         encoding="utf-8"
     )

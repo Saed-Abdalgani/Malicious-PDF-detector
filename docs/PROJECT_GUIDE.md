@@ -22,12 +22,12 @@ All primary presentation assets, reports, code modules, and apps are organized a
 
 | Deliverable | Location | Description |
 |---|---|---|
-| **Final Presentation Deck** | [`output/presentation/malicious_pdf_detector_final_presentation.pptx`](output/presentation/malicious_pdf_detector_final_presentation.pptx) | Complete PowerPoint slide deck formatted for final academic and technical defense. |
-| **Speaker Guide (English)** | [`output/pdf/malicious_pdf_detector_speaker_guide.pdf`](output/pdf/malicious_pdf_detector_speaker_guide.pdf) | Slide-by-slide speaker notes, talking points, and Q&A preparation. |
-| **Speaker Guide (Arabic)** | [`output/pdf/malicious_pdf_detector_speaker_guide_ar.pdf`](output/pdf/malicious_pdf_detector_speaker_guide_ar.pdf) | Arabic translation of speaker notes and defense talking points. |
-| **Technical Report (LaTeX)** | [`report/main.tex`](report/main.tex) | Full IEEE/academic paper draft detailing theory, methodology, and results. |
-| **Interactive Scanner Web App** | [`app/streamlit_app.py`](app/streamlit_app.py) | Local Streamlit web dashboard for real-time PDF scanning, probability gauges, radar charts, and LLM analysis. |
-| **Model Comparison Table** | [`reports/archive/author_verified_pre_remediation/model_comparison.csv`](reports/archive/author_verified_pre_remediation/model_comparison.csv) | Empirical benchmark comparing MLP, LightGBM, Random Forest, and XGBoost. |
+| **Final Presentation Deck** | [`output/presentation/malicious_pdf_detector_final_presentation.pptx`](../output/presentation/malicious_pdf_detector_final_presentation.pptx) | Complete PowerPoint slide deck formatted for final academic and technical defense. |
+| **Speaker Guide (English)** | [`output/pdf/malicious_pdf_detector_speaker_guide.pdf`](../output/pdf/malicious_pdf_detector_speaker_guide.pdf) | Slide-by-slide speaker notes, talking points, and Q&A preparation. |
+| **Speaker Guide (Arabic)** | [`output/pdf/malicious_pdf_detector_speaker_guide_ar.pdf`](../output/pdf/malicious_pdf_detector_speaker_guide_ar.pdf) | Arabic translation of speaker notes and defense talking points. |
+| **Technical Report (LaTeX)** | [`report/main.tex`](../report/main.tex) | Full IEEE/academic paper draft detailing theory, methodology, and results. |
+| **Interactive Scanner Web App** | [`app/streamlit_app.py`](../app/streamlit_app.py) | Local Streamlit web dashboard for real-time PDF scanning, probability gauges, radar charts, and LLM analysis. |
+| **Model Comparison Table** | [`reports/archive/author_verified_pre_remediation/model_comparison.csv`](../reports/archive/author_verified_pre_remediation/model_comparison.csv) | Empirical benchmark comparing MLP, LightGBM, Random Forest, and XGBoost. |
 | **Detailed Plan & Audit** | [`professor_feedback_remediation_plan.md`](professor_feedback_remediation_plan.md) | Exhaustive remediation plan addressing academic feedback across 10 phases. |
 
 ---

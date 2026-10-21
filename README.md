@@ -12,7 +12,7 @@ The checksummed earlier measurements are preserved under
 run is recorded as author-verified in `reports/results/experiment_summary.json`.
 
 > 📘 **Quick Navigation & Presentation Assets**:
-> - Detailed Project Roadmap & File Index: [`PROJECT_GUIDE.md`](PROJECT_GUIDE.md)
+> - Detailed Project Roadmap & File Index: [`docs/PROJECT_GUIDE.md`](docs/PROJECT_GUIDE.md)
 > - Defense Slide Deck: [`output/presentation/malicious_pdf_detector_final_presentation.pptx`](output/presentation/malicious_pdf_detector_final_presentation.pptx)
 > - Speaker Notes: [English Guide](output/pdf/malicious_pdf_detector_speaker_guide.pdf) | [Arabic Guide](output/pdf/malicious_pdf_detector_speaker_guide_ar.pdf)
 > - Technical Report (LaTeX): [`report/main.tex`](report/main.tex)
@@ -232,7 +232,7 @@ observed-row counterfactuals. SHAP always uses a real stratified train backgroun
 and can never support a conclusion alone. Phase 6 consumes only the sanitized,
 bounded handoff created during Phase 5 and never reopens sealed test.
 
-See `docs/explainability.md` and `phase6_implementation.md`.
+See `docs/explainability.md` and `docs/phase6_implementation.md`.
 
 ### Phase 7 — safe adversarial attacks and defenses
 
@@ -243,7 +243,7 @@ worst cases. Fixtures are strictly parsed, never rendered, and never retained.
 probability drop, mutated-benign FPR, clean deltas, abstention, latency, and peak
 RSS. Reports distinguish demonstrated defenses, controls implemented elsewhere,
 and future recommendations. These inert markers are not malware ground truth.
-See `docs/adversarial_robustness.md` and `phase7_implementation.md`.
+See `docs/adversarial_robustness.md` and `docs/phase7_implementation.md`.
 
 ### Phase 8 — deployment bundle and application
 
@@ -258,7 +258,7 @@ near the locked threshold trigger abstention. Raw actionable observations and
 local model attributions are displayed separately. Uploaded PDF bytes remain
 local and are deleted after bounded extraction. The optional LLM sees structured
 evidence only and cannot invent CVEs, indicators, payloads, intent, or certainty.
-See `phase8_implementation.md` and `docs/model_card.md`.
+See `docs/phase8_implementation.md` and `docs/model_card.md`.
 
 ### Phase 9 — tests and reproducibility
 
@@ -266,7 +266,7 @@ See `phase8_implementation.md` and `docs/model_card.md`.
 upstream status, and each runner repeats artifact/hash checks. The final verifier
 checks sealed metrics, the Phase 5–8 manifest chain, deployment compatibility,
 documentation synchronization, and PDF non-retention. See
-`phase9_implementation.md` and `docs/reproducibility.md`.
+`docs/phase9_implementation.md` and `docs/reproducibility.md`.
 
 ### Phase 10 — generated documentation
 
@@ -378,4 +378,4 @@ fixtures.
 Current metric documentation is generated at
 `docs/generated/results_summary.md`; in-depth actionable conclusions are in
 `docs/conclusions.md`. The full roadmap and acceptance criteria are in
-`professor_feedback_remediation_plan.md`.
+`docs/professor_feedback_remediation_plan.md`.

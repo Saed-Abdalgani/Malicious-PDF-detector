@@ -19,6 +19,8 @@ if not exist ".venv\Scripts\activate.bat" (
 )
 
 call .venv\Scripts\activate.bat
+set "PYTHONPATH=%~dp0"
+cd /d "%~dp0"
 
 :: Check for model bundle
 if not exist "models\deployment\deployment_bundle_v1.joblib" (

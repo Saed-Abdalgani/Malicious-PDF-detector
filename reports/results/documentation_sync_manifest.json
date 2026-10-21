@@ -1,7 +1,7 @@
 {
-  "author_verified_archive_manifest_sha256": "6503a45997d766d418ba72789c7719c2f6268076598dd0465e126d54c0c8d32d",
+  "author_verified_archive_manifest_sha256": "9f90c06e5f6de909a8cd316e30fe857324b66b76415c41bd5077855b03c1c0b9",
   "author_verified_dataset_rows": ">1,000,000",
-  "experiment_summary_sha256": "abd0033d243f682821d1ae9d3d1e5e85c50fe278870015e389800edb7804ad07",
+  "experiment_summary_sha256": "4a01e1871599c5f7732baf9aa71f61b465ab53e2471d4e2277c698256fcd820a",
   "final_metrics_present": false,
   "manual_metrics_author_verified": true,
   "outputs": {

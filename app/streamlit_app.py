@@ -66,19 +66,20 @@ def _scanner() -> None:
                         "time_ms": result.time_ms,
                     }
                 )
+                render_verdict(
+                    result.outcome,
+                    result.malicious_probability,
+                    result.threshold,
+                    result.time_ms,
+                )
+                if result.abstention_reasons:
+                    st.warning("Abstention reasons: " + ", ".join(result.abstention_reasons))
+
                 left, right = st.columns(2)
                 with left:
-                    render_verdict(
-                        result.outcome,
-                        result.malicious_probability,
-                        result.threshold,
-                        result.time_ms,
-                    )
                     render_probability_gauge(
                         result.malicious_probability, result.threshold, result.outcome
                     )
-                    if result.abstention_reasons:
-                        st.warning("Abstention reasons: " + ", ".join(result.abstention_reasons))
                 with right:
                     st.markdown("### Structural feature overview")
                     render_feature_radar(result.features)

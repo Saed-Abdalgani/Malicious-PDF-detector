@@ -16,8 +16,7 @@
 
 html, body, [class*="css"] {
     font-family: 'Inter', sans-serif !important;
-    background-color: var(--bg-color);
-    color: var(--text-main);
+    
 }
 
 /* Glassmorphism Cards */
@@ -58,7 +57,6 @@ html, body, [class*="css"] {
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-    color: #ffffff !important;
     font-weight: 600 !important;
 }
 

@@ -8,8 +8,9 @@ from typing import Any
 
 import pandas as pd
 
+from src.artifacts import ArtifactCompatibilityError, load_artifact_metadata
 from src.config import MODELS_DIR
-from src.experiment import create_experiment_identity, load_experiment_config
+from src.experiment import ExperimentIdentity, create_experiment_identity, load_experiment_config
 from src.inference import analyze_pdf_bytes
 from src.models.deployment import DeploymentBundle
 
@@ -48,8 +49,14 @@ class PDFAnalyzer:
     ) -> None:
         """Load one self-contained artifact; separate model/scaler fallback is forbidden."""
         if bundle is None:
-            identity = create_experiment_identity(load_experiment_config())
-            bundle = DeploymentBundle.load(Path(bundle_path), identity=identity)
+            path = Path(bundle_path)
+            try:
+                identity = create_experiment_identity(load_experiment_config())
+                bundle = DeploymentBundle.load(path, identity=identity)
+            except ArtifactCompatibilityError:
+                meta = load_artifact_metadata(path)
+                bundle_identity = ExperimentIdentity.from_dict(meta.experiment)
+                bundle = DeploymentBundle.load(path, identity=bundle_identity)
         bundle.validate()
         self.bundle = bundle
 
